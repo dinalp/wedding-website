@@ -1,117 +1,107 @@
 import { NextRequest, NextResponse } from "next/server";
-import type { Party, RSVPSubmission } from "@/lib/types";
+import { getParty, saveRSVP } from "@/lib/airtable";
+import { EVENT_KEYS, type EventKey, type RSVPSubmission } from "@/lib/types";
 
-// Mock data for development — will be replaced with Airtable
-const mockParties: Record<string, Party> = {
-  k7x9m: {
-    id: "party_1",
-    code: "k7x9m",
-    name: "The Smith Family",
-    members: [
-      {
-        id: "m1",
-        name: "John Smith",
-        attending: false,
-        events: { welcomeDinner: false, recoveryDay: false, wedding: false },
-        dietaryRequirements: "",
-      },
-      {
-        id: "m2",
-        name: "Jane Smith",
-        attending: false,
-        events: { welcomeDinner: false, recoveryDay: false, wedding: false },
-        dietaryRequirements: "",
-      },
-      {
-        id: "m3",
-        name: "Timmy Smith",
-        attending: false,
-        events: { welcomeDinner: false, recoveryDay: false, wedding: false },
-        dietaryRequirements: "",
-      },
-    ],
-    email: "",
-    songRequest: "",
-    message: "",
-    submittedAt: null,
-    updatedAt: null,
-  },
-  p3q8r: {
-    id: "party_2",
-    code: "p3q8r",
-    name: "Sarah & Tom",
-    members: [
-      {
-        id: "m4",
-        name: "Sarah Jones",
-        attending: false,
-        events: { welcomeDinner: false, recoveryDay: false, wedding: false },
-        dietaryRequirements: "",
-      },
-      {
-        id: "m5",
-        name: "Tom Jones",
-        attending: false,
-        events: { welcomeDinner: false, recoveryDay: false, wedding: false },
-        dietaryRequirements: "",
-      },
-    ],
-    email: "",
-    songRequest: "",
-    message: "",
-    submittedAt: null,
-    updatedAt: null,
-  },
-};
+export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
-  const code = request.nextUrl.searchParams.get("code");
+  const handle =
+    request.nextUrl.searchParams.get("party") ??
+    request.nextUrl.searchParams.get("code");
 
-  if (!code) {
-    return NextResponse.json({ error: "Missing party code" }, { status: 400 });
+  if (!handle) {
+    return NextResponse.json({ error: "Missing party" }, { status: 400 });
   }
 
-  const party = mockParties[code];
+  try {
+    const party = await getParty(handle);
+    if (!party) {
+      return NextResponse.json({ error: "Party not found" }, { status: 404 });
+    }
+    return NextResponse.json(party);
+  } catch (err) {
+    console.error("[rsvp] lookup failed", err);
+    return NextResponse.json(
+      { error: "Could not load your invitation" },
+      { status: 500 }
+    );
+  }
+}
 
-  if (!party) {
-    return NextResponse.json({ error: "Party not found" }, { status: 404 });
+function str(value: unknown, max: number): string {
+  return typeof value === "string" ? value.trim().slice(0, max) : "";
+}
+
+/** Validate the browser payload before it reaches Airtable. */
+function parseSubmission(body: unknown): RSVPSubmission | null {
+  if (typeof body !== "object" || body === null) return null;
+  const b = body as Record<string, unknown>;
+
+  const partyId = str(b.partyId, 100);
+  if (!partyId) return null;
+  if (!Array.isArray(b.members) || b.members.length === 0) return null;
+
+  const members: RSVPSubmission["members"] = [];
+  for (const raw of b.members) {
+    if (typeof raw !== "object" || raw === null) return null;
+    const m = raw as Record<string, unknown>;
+    const id = str(m.id, 100);
+    if (!id) return null;
+
+    const rawEvents = (m.events ?? {}) as Record<string, unknown>;
+    const events = Object.fromEntries(
+      EVENT_KEYS.map((k) => [k, rawEvents[k] === true])
+    ) as Record<EventKey, boolean>;
+
+    members.push({
+      id,
+      attending: m.attending === true,
+      events,
+      dietary: Array.isArray(m.dietary)
+        ? m.dietary.filter((d): d is string => typeof d === "string").slice(0, 20)
+        : [],
+      dietaryNotes: str(m.dietaryNotes, 2000),
+    });
   }
 
-  return NextResponse.json(party);
+  const email = str(b.email, 320);
+  // Deliberately permissive — a guest mistyping their email should not block an RSVP.
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return null;
+
+  return {
+    partyId,
+    email,
+    phone: str(b.phone, 40),
+    songRequest: str(b.songRequest, 2000),
+    message: str(b.message, 5000),
+    members,
+  };
 }
 
 export async function POST(request: NextRequest) {
-  const body: RSVPSubmission = await request.json();
-
-  if (!body.code) {
-    return NextResponse.json({ error: "Missing party code" }, { status: 400 });
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 
-  const party = mockParties[body.code];
-
-  if (!party) {
-    return NextResponse.json({ error: "Party not found" }, { status: 404 });
+  const submission = parseSubmission(body);
+  if (!submission) {
+    return NextResponse.json(
+      { error: "Some of those answers didn't look right. Please check and try again." },
+      { status: 400 }
+    );
   }
 
-  // Update mock data in memory
-  party.email = body.email;
-  party.songRequest = body.songRequest;
-  party.message = body.message;
-
-  for (const memberUpdate of body.members) {
-    const member = party.members.find((m) => m.id === memberUpdate.id);
-    if (member) {
-      member.attending = memberUpdate.attending;
-      member.events = memberUpdate.events;
-      member.dietaryRequirements = memberUpdate.dietaryRequirements;
-    }
+  try {
+    const party = await saveRSVP(submission);
+    return NextResponse.json(party);
+  } catch (err) {
+    console.error("[rsvp] save failed", err);
+    return NextResponse.json(
+      { error: "We couldn't save your RSVP. Please try again." },
+      { status: 500 }
+    );
   }
-
-  const now = new Date().toISOString();
-  if (!party.submittedAt) {
-    party.submittedAt = now;
-  }
-  party.updatedAt = now;
-
-  return NextResponse.json({ success: true, party });
 }

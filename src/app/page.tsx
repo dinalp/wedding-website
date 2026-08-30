@@ -592,12 +592,19 @@ export default function Home() {
             </h2>
             <div className="divider mx-auto mt-6" />
             <p className="font-[family-name:var(--font-montserrat)] text-white/60 mt-8 leading-relaxed">
-              You&apos;ll receive a personal invite link to RSVP for you and your
-              party. Please respond by January 20th, 2027.
+              Find your name below and you can RSVP for everyone on your
+              invitation at once. Please respond by January 20th, 2027.
             </p>
-            <p className="font-[family-name:var(--font-montserrat)] text-white/40 mt-4 text-sm leading-relaxed">
-              If you&apos;ve already received your link, check your email or
-              message from us to find it.
+
+            <a
+              href="/rsvp"
+              className="inline-block mt-10 bg-accent hover:bg-accent-dark text-white font-[family-name:var(--font-montserrat)] tracking-[0.2em] text-xs px-12 py-4 rounded-sm transition-colors"
+            >
+              RSVP NOW
+            </a>
+
+            <p className="font-[family-name:var(--font-montserrat)] text-white/40 mt-6 text-sm leading-relaxed">
+              You can change your answers any time before the deadline.
             </p>
           </motion.div>
         </div>

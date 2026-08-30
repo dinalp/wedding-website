@@ -3,7 +3,12 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import type { Party, PartyMember } from "@/lib/types";
+import {
+  DIETARY_OPTIONS,
+  type EventKey,
+  type Party,
+  type PartyMember,
+} from "@/lib/types";
 
 const EVENTS = [
   {
@@ -29,8 +34,10 @@ const EVENTS = [
 ];
 
 export default function RSVPPage() {
+  // The URL segment is a party record id from name search, or a short Code
+  // from a direct link. The API resolves either.
   const params = useParams<{ code: string }>();
-  const code = params.code;
+  const handle = params.code;
 
   const [party, setParty] = useState<Party | null>(null);
   const [loading, setLoading] = useState(true);
@@ -41,42 +48,57 @@ export default function RSVPPage() {
   // Form state
   const [members, setMembers] = useState<PartyMember[]>([]);
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [songRequest, setSongRequest] = useState("");
   const [message, setMessage] = useState("");
   const [expandedDietary, setExpandedDietary] = useState<Set<string>>(
     new Set()
   );
 
+  const applyParty = useCallback((data: Party) => {
+    setParty(data);
+    setMembers(
+      data.members.map((m) => ({
+        ...m,
+        events: { ...m.events },
+        dietary: [...m.dietary],
+      }))
+    );
+    setEmail(data.email);
+    setPhone(data.phone);
+    setSongRequest(data.songRequest);
+    setMessage(data.message);
+
+    // Open the dietary panel for anyone who already told us something.
+    setExpandedDietary(
+      new Set(
+        data.members
+          .filter((m) => m.dietary.length > 0 || m.dietaryNotes)
+          .map((m) => m.id)
+      )
+    );
+  }, []);
+
   const fetchParty = useCallback(async () => {
     try {
-      const res = await fetch(`/api/rsvp?code=${code}`);
+      const res = await fetch(`/api/rsvp?party=${encodeURIComponent(handle)}`);
       if (!res.ok) {
         if (res.status === 404) {
-          setError("This invite link is not valid. Please check your link and try again.");
+          setError(
+            "We couldn't find that invitation. Try finding your name again, or message Dinal or Shayani."
+          );
         } else {
           setError("Something went wrong. Please try again later.");
         }
         return;
       }
-      const data: Party = await res.json();
-      setParty(data);
-      setMembers(data.members.map((m) => ({ ...m, events: { ...m.events } })));
-      setEmail(data.email);
-      setSongRequest(data.songRequest);
-      setMessage(data.message);
-
-      // Expand dietary for members who already have requirements
-      const withDietary = new Set<string>();
-      for (const m of data.members) {
-        if (m.dietaryRequirements) withDietary.add(m.id);
-      }
-      setExpandedDietary(withDietary);
+      applyParty(await res.json());
     } catch {
       setError("Unable to connect. Please check your internet and try again.");
     } finally {
       setLoading(false);
     }
-  }, [code]);
+  }, [handle, applyParty]);
 
   useEffect(() => {
     fetchParty();
@@ -98,10 +120,7 @@ export default function RSVPPage() {
     );
   }
 
-  function toggleEvent(
-    memberId: string,
-    event: "welcomeDinner" | "recoveryDay" | "wedding"
-  ) {
+  function toggleEvent(memberId: string, event: EventKey) {
     setMembers((prev) =>
       prev.map((m) => {
         if (m.id !== memberId) return m;
@@ -113,11 +132,21 @@ export default function RSVPPage() {
     );
   }
 
-  function setDietary(memberId: string, value: string) {
+  function toggleDietary(memberId: string, option: string) {
     setMembers((prev) =>
-      prev.map((m) =>
-        m.id === memberId ? { ...m, dietaryRequirements: value } : m
-      )
+      prev.map((m) => {
+        if (m.id !== memberId) return m;
+        const dietary = m.dietary.includes(option)
+          ? m.dietary.filter((d) => d !== option)
+          : [...m.dietary, option];
+        return { ...m, dietary };
+      })
+    );
+  }
+
+  function setDietaryNotes(memberId: string, value: string) {
+    setMembers((prev) =>
+      prev.map((m) => (m.id === memberId ? { ...m, dietaryNotes: value } : m))
     );
   }
 
@@ -126,10 +155,10 @@ export default function RSVPPage() {
       const next = new Set(prev);
       if (next.has(memberId)) {
         next.delete(memberId);
-        // Clear dietary when collapsing
+        // Collapsing means "no requirements", so clear what was entered.
         setMembers((prevMembers) =>
           prevMembers.map((m) =>
-            m.id === memberId ? { ...m, dietaryRequirements: "" } : m
+            m.id === memberId ? { ...m, dietary: [], dietaryNotes: "" } : m
           )
         );
       } else {
@@ -141,37 +170,54 @@ export default function RSVPPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!party) return;
+
     setSubmitting(true);
+    setError(null);
 
     try {
       const res = await fetch("/api/rsvp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          code,
+          partyId: party.id,
           email,
+          phone,
+          songRequest,
+          message,
           members: members.map((m) => ({
             id: m.id,
             attending: m.attending,
             events: m.events,
-            dietaryRequirements: m.dietaryRequirements,
+            dietary: m.dietary,
+            dietaryNotes: m.dietaryNotes,
           })),
-          songRequest,
-          message,
         }),
       });
 
-      if (!res.ok) {
-        throw new Error("Failed to submit");
-      }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Failed to submit");
 
+      // Re-seed from what was actually stored, so the confirmation reflects
+      // the saved record rather than local state.
+      applyParty(data as Party);
       setSubmitted(true);
-    } catch {
-      setError("Failed to submit your RSVP. Please try again.");
+    } catch (err) {
+      setError(
+        err instanceof Error && err.message
+          ? err.message
+          : "Failed to submit your RSVP. Please try again."
+      );
     } finally {
       setSubmitting(false);
     }
   }
+
+  /** Only ask about events this party was actually invited to. */
+  const visibleEvents = EVENTS.filter(
+    (e) => party?.invitedTo.includes(e.key) ?? true
+  );
+  const attendingCount = members.filter((m) => m.attending).length;
 
   if (loading) {
     return (
@@ -244,11 +290,49 @@ export default function RSVPPage() {
           </motion.div>
           <h2 className="font-serif text-5xl text-white mb-4">Thank You</h2>
           <div className="divider mx-auto mb-6" />
-          <p className="font-sans text-white/70 leading-relaxed mb-2">
+          <p className="font-sans text-white/70 leading-relaxed mb-8">
             Your RSVP has been received, {party?.name}.
           </p>
+
+          {/* Echo back what was stored, so guests can see it landed correctly. */}
+          <div className="text-left bg-white/5 border border-white/10 rounded-sm p-5 mb-8">
+            {members.map((m) => (
+              <div
+                key={m.id}
+                className="py-2 border-b border-white/5 last:border-0"
+              >
+                <div className="flex items-baseline justify-between gap-3">
+                  <span className="font-serif text-lg text-white">
+                    {m.name}
+                  </span>
+                  <span
+                    className={`font-sans text-xs tracking-wider ${
+                      m.attending ? "text-accent-light" : "text-white/40"
+                    }`}
+                  >
+                    {m.attending ? "ATTENDING" : "CAN'T MAKE IT"}
+                  </span>
+                </div>
+                {m.attending && (
+                  <p className="font-sans text-xs text-white/40 mt-1">
+                    {visibleEvents
+                      .filter((e) => m.events[e.key])
+                      .map((e) => e.label)
+                      .join(" · ") || "No events selected"}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+
           <p className="font-sans text-white/50 text-sm leading-relaxed">
-            You can revisit this link any time to update your response.
+            {attendingCount > 0
+              ? "We'll be in touch with more details, and we'll send you into the WDING guest app closer to the date."
+              : "We're sorry to miss you, but thank you for letting us know."}
+          </p>
+          <p className="font-sans text-white/40 text-xs leading-relaxed mt-3">
+            You can come back to this page any time before January 20th, 2027 to
+            change your answers.
           </p>
           <button
             onClick={() => setSubmitted(false)}
@@ -402,7 +486,7 @@ export default function RSVPPage() {
                           EVENTS
                         </p>
 
-                        {EVENTS.map((event) => (
+                        {visibleEvents.map((event) => (
                           <label
                             key={event.key}
                             className={`flex items-start gap-3 p-3 rounded-sm cursor-pointer transition-colors ${
@@ -475,14 +559,43 @@ export default function RSVPPage() {
                                 transition={{ duration: 0.2 }}
                                 className="overflow-hidden"
                               >
+                                <p className="font-sans text-white/30 text-[11px] mt-3 mb-2">
+                                  Applies to all events
+                                  {member.name.split(" ")[0]
+                                    ? ` ${member.name.split(" ")[0]} attends`
+                                    : ""}
+                                  .
+                                </p>
+                                <div className="flex flex-wrap gap-2">
+                                  {DIETARY_OPTIONS.map((option) => {
+                                    const on = member.dietary.includes(option);
+                                    return (
+                                      <button
+                                        key={option}
+                                        type="button"
+                                        aria-pressed={on}
+                                        onClick={() =>
+                                          toggleDietary(member.id, option)
+                                        }
+                                        className={`font-sans text-xs px-3 py-1.5 rounded-full border transition-colors ${
+                                          on
+                                            ? "bg-accent text-white border-accent"
+                                            : "bg-white/[0.03] text-white/60 border-white/15 hover:border-white/30"
+                                        }`}
+                                      >
+                                        {option}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
                                 <textarea
                                   rows={2}
-                                  value={member.dietaryRequirements}
+                                  value={member.dietaryNotes}
                                   onChange={(e) =>
-                                    setDietary(member.id, e.target.value)
+                                    setDietaryNotes(member.id, e.target.value)
                                   }
                                   className="mt-3 w-full bg-white/5 border border-white/10 rounded-sm px-3 py-2 text-white placeholder:text-white/20 font-sans text-sm resize-none focus:border-accent focus:outline-none"
-                                  placeholder={`Allergies or dietary needs for ${member.name.split(" ")[0]}...`}
+                                  placeholder="Anything else the kitchen should know? Severity of an allergy, etc."
                                 />
                               </motion.div>
                             )}
@@ -519,8 +632,32 @@ export default function RSVPPage() {
               placeholder="your@email.com"
             />
             <p className="font-sans text-white/30 text-xs mt-2">
-              For any updates about the celebration
+              So we can send you updates and your invite to the WDING guest app
             </p>
+          </motion.div>
+
+          {/* Phone */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.45 }}
+            className="mb-8"
+          >
+            <label
+              htmlFor="phone"
+              className="font-sans text-white/80 text-xs tracking-wider block mb-2"
+            >
+              MOBILE NUMBER{" "}
+              <span className="text-white/30">(OPTIONAL)</span>
+            </label>
+            <input
+              id="phone"
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="w-full bg-white/10 border border-white/20 rounded-sm px-4 py-3 text-white placeholder:text-white/30 font-sans text-sm focus:border-accent focus:outline-none"
+              placeholder="+61 400 000 000"
+            />
           </motion.div>
 
           {/* Song Request */}

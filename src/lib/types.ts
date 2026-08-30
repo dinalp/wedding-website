@@ -1,21 +1,26 @@
+export const EVENT_KEYS = ["welcomeDinner", "wedding", "recoveryDay"] as const;
+export type EventKey = (typeof EVENT_KEYS)[number];
+
 export interface PartyMember {
+  /** Airtable record id of the guest. */
   id: string;
   name: string;
   attending: boolean;
-  events: {
-    welcomeDinner: boolean;
-    recoveryDay: boolean;
-    wedding: boolean;
-  };
-  dietaryRequirements: string;
+  events: Record<EventKey, boolean>;
+  dietary: string[];
+  dietaryNotes: string;
 }
 
 export interface Party {
+  /** Airtable record id of the party. Doubles as the URL handle. */
   id: string;
   code: string;
   name: string;
+  /** Only these events are shown on the form. Not every party is invited to all three. */
+  invitedTo: EventKey[];
   members: PartyMember[];
   email: string;
+  phone: string;
   songRequest: string;
   message: string;
   submittedAt: string | null;
@@ -23,18 +28,38 @@ export interface Party {
 }
 
 export interface RSVPSubmission {
-  code: string;
+  partyId: string;
   email: string;
+  phone: string;
+  songRequest: string;
+  message: string;
   members: {
     id: string;
     attending: boolean;
-    events: {
-      welcomeDinner: boolean;
-      recoveryDay: boolean;
-      wedding: boolean;
-    };
-    dietaryRequirements: string;
+    events: Record<EventKey, boolean>;
+    dietary: string[];
+    dietaryNotes: string;
   }[];
-  songRequest: string;
-  message: string;
 }
+
+/** Search hit — deliberately thin, this endpoint is public. */
+export interface PartyMatch {
+  id: string;
+  name: string;
+  memberNames: string[];
+  alreadySubmitted: boolean;
+}
+
+export const DIETARY_OPTIONS = [
+  "Vegetarian",
+  "Vegan",
+  "Pescatarian",
+  "Gluten Free",
+  "Dairy Free",
+  "Nut Allergy",
+  "Shellfish Allergy",
+  "Halal",
+  "No Pork",
+  "No Beef",
+  "Other",
+] as const;
