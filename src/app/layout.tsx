@@ -15,7 +15,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "Dinal & Shayani | May 20, 2027 | Bali",
+  title: "Dinal & Shayani | May 19–21, 2027 | Bali",
   description: "Join us for our wedding celebration in Uluwatu, Bali",
 };
 

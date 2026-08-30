@@ -44,7 +44,7 @@ export default function Home() {
   return (
     <main className="bg-background">
       {/* Navigation - Translucent Overlay */}
-      <nav className="fixed top-0 left-0 right-0 z-50 px-8 py-6 bg-gradient-to-b from-black/30 to-transparent">
+      <nav className="fixed top-0 left-0 right-0 z-50 px-4 md:px-8 py-4 md:py-6 bg-gradient-to-b from-black/30 to-transparent">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <motion.span
             initial={{ opacity: 0 }}
@@ -58,7 +58,7 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.7 }}
-            className="flex gap-8 font-[family-name:var(--font-montserrat)] text-sm tracking-wider"
+            className="flex gap-4 md:gap-8 font-[family-name:var(--font-montserrat)] text-xs md:text-sm tracking-wider"
           >
             <a
               href="#about"
@@ -174,28 +174,28 @@ export default function Home() {
             style={{ opacity: centerOpacity, y: centerY }}
             className="absolute text-center z-0 px-4"
           >
-            <p className="font-[family-name:var(--font-montserrat)] text-accent tracking-[0.3em] text-sm mb-4">
+            <p className="font-[family-name:var(--font-montserrat)] text-accent tracking-[0.15em] md:tracking-[0.3em] text-xs md:text-sm mb-4">
               TOGETHER WITH THEIR FAMILIES
             </p>
-            <h1 className="font-[family-name:var(--font-cormorant)] text-6xl md:text-8xl lg:text-9xl font-light text-charcoal mb-6">
+            <h1 className="font-[family-name:var(--font-cormorant)] text-4xl md:text-8xl lg:text-9xl font-light text-charcoal mb-4 md:mb-6">
               Dinal
-              <span className="font-[family-name:var(--font-cormorant)] italic text-accent mx-4 md:mx-8">
+              <span className="font-[family-name:var(--font-cormorant)] italic text-accent mx-2 md:mx-8">
                 &
               </span>
               Shayani
             </h1>
-            <div className="divider mx-auto mb-6" />
-            <p className="font-[family-name:var(--font-montserrat)] text-charcoal/70 tracking-[0.2em] text-sm md:text-base">
+            <div className="divider mx-auto mb-4 md:mb-6" />
+            <p className="font-[family-name:var(--font-montserrat)] text-charcoal/70 tracking-[0.1em] md:tracking-[0.2em] text-xs md:text-base">
               REQUEST THE PLEASURE OF YOUR COMPANY
             </p>
-            <p className="font-[family-name:var(--font-montserrat)] text-charcoal/70 tracking-[0.2em] text-sm md:text-base mt-2">
+            <p className="font-[family-name:var(--font-montserrat)] text-charcoal/70 tracking-[0.1em] md:tracking-[0.2em] text-xs md:text-base mt-2">
               AT THEIR WEDDING CELEBRATION
             </p>
-            <div className="mt-12">
-              <p className="font-[family-name:var(--font-cormorant)] text-3xl md:text-4xl text-charcoal">
-                May 20th, 2027
+            <div className="mt-8 md:mt-12">
+              <p className="font-[family-name:var(--font-cormorant)] text-2xl md:text-4xl text-charcoal">
+                May 19th &ndash; 21st, 2027
               </p>
-              <p className="font-[family-name:var(--font-montserrat)] text-accent tracking-[0.15em] text-sm mt-2">
+              <p className="font-[family-name:var(--font-montserrat)] text-accent tracking-[0.15em] text-xs md:text-sm mt-2">
                 ULUWATU, BALI
               </p>
             </div>
@@ -235,7 +235,7 @@ export default function Home() {
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-32 px-8 bg-cream">
+      <section id="about" className="py-16 md:py-32 px-4 md:px-8 bg-cream">
         <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -244,16 +244,16 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-20"
           >
-            <p className="font-[family-name:var(--font-montserrat)] text-accent tracking-[0.3em] text-xs mb-4">
+            <p className="font-[family-name:var(--font-montserrat)] text-accent tracking-[0.2em] md:tracking-[0.3em] text-xs mb-4">
               OUR STORY
             </p>
-            <h2 className="font-[family-name:var(--font-cormorant)] text-5xl md:text-6xl font-light text-charcoal">
+            <h2 className="font-[family-name:var(--font-cormorant)] text-4xl md:text-6xl font-light text-charcoal">
               About Us
             </h2>
             <div className="divider mx-auto mt-6" />
           </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-16 md:gap-24">
+          <div className="grid md:grid-cols-2 gap-12 md:gap-24">
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -307,7 +307,7 @@ export default function Home() {
             viewport={{ once: true }}
             className="mt-24 text-center"
           >
-            <p className="font-[family-name:var(--font-cormorant)] text-2xl md:text-3xl text-charcoal italic leading-relaxed max-w-2xl mx-auto">
+            <p className="font-[family-name:var(--font-cormorant)] text-xl md:text-3xl text-charcoal italic leading-relaxed max-w-2xl mx-auto">
               &quot;Two souls with but a single thought, two hearts that beat as
               one.&quot;
             </p>
@@ -319,7 +319,7 @@ export default function Home() {
       </section>
 
       {/* Destination Section */}
-      <section className="py-32 px-8 bg-background">
+      <section className="py-16 md:py-32 px-4 md:px-8 bg-background">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -328,10 +328,10 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <p className="font-[family-name:var(--font-montserrat)] text-accent tracking-[0.3em] text-xs mb-4">
+            <p className="font-[family-name:var(--font-montserrat)] text-accent tracking-[0.2em] md:tracking-[0.3em] text-xs mb-4">
               A DESTINATION CELEBRATION
             </p>
-            <h2 className="font-[family-name:var(--font-cormorant)] text-5xl md:text-6xl font-light text-charcoal">
+            <h2 className="font-[family-name:var(--font-cormorant)] text-4xl md:text-6xl font-light text-charcoal">
               Uluwatu, Bali
             </h2>
             <div className="divider mx-auto mt-6" />
@@ -373,7 +373,7 @@ export default function Home() {
       </section>
 
       {/* Itinerary Section */}
-      <section id="itinerary" className="py-32 px-8 bg-cream">
+      <section id="itinerary" className="py-16 md:py-32 px-4 md:px-8 bg-cream">
         <div className="max-w-5xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -382,10 +382,10 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-20"
           >
-            <p className="font-[family-name:var(--font-montserrat)] text-accent tracking-[0.3em] text-xs mb-4">
+            <p className="font-[family-name:var(--font-montserrat)] text-accent tracking-[0.2em] md:tracking-[0.3em] text-xs mb-4">
               THREE DAYS OF CELEBRATION
             </p>
-            <h2 className="font-[family-name:var(--font-cormorant)] text-5xl md:text-6xl font-light text-charcoal">
+            <h2 className="font-[family-name:var(--font-cormorant)] text-4xl md:text-6xl font-light text-charcoal">
               The Schedule
             </h2>
             <div className="divider mx-auto mt-6" />
@@ -405,13 +405,13 @@ export default function Home() {
                   DAY ONE
                 </p>
                 <h3 className="font-[family-name:var(--font-cormorant)] text-4xl text-charcoal mt-2">
-                  May 18
+                  May 19
                 </h3>
                 <p className="font-[family-name:var(--font-montserrat)] text-charcoal/50 text-sm mt-1">
-                  Sunday
+                  Wednesday
                 </p>
               </div>
-              <div className="bg-background p-8 md:p-12 rounded-sm shadow-sm">
+              <div className="bg-background p-6 md:p-12 rounded-sm shadow-sm">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center">
                     <svg
@@ -462,70 +462,13 @@ export default function Home() {
                   DAY TWO
                 </p>
                 <h3 className="font-[family-name:var(--font-cormorant)] text-4xl text-charcoal mt-2">
-                  May 19
-                </h3>
-                <p className="font-[family-name:var(--font-montserrat)] text-charcoal/50 text-sm mt-1">
-                  Monday
-                </p>
-              </div>
-              <div className="bg-background p-8 md:p-12 rounded-sm shadow-sm">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 rounded-full bg-sage/20 flex items-center justify-center">
-                    <svg
-                      className="w-6 h-6 text-sage"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
-                      />
-                    </svg>
-                  </div>
-                  <h4 className="font-[family-name:var(--font-cormorant)] text-3xl text-charcoal">
-                    Boat Party
-                  </h4>
-                </div>
-                <p className="font-[family-name:var(--font-montserrat)] text-charcoal/70 leading-relaxed">
-                  Set sail on the beautiful waters surrounding Bali for a day of
-                  fun, sun, and celebration. Enjoy stunning views, refreshing
-                  drinks, delicious food, and great music as we cruise along the
-                  coast. This is our chance to let loose before the big day!
-                </p>
-                <div className="mt-6 flex flex-wrap gap-4">
-                  <span className="font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-sage bg-sage/10 px-4 py-2 rounded-full">
-                    ALL DAY EVENT
-                  </span>
-                  <span className="font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-charcoal/50 bg-charcoal/5 px-4 py-2 rounded-full">
-                    10:00 AM - 6:00 PM
-                  </span>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Day 3 */}
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="grid md:grid-cols-[1fr,3fr] gap-8 items-start"
-            >
-              <div className="text-center md:text-right">
-                <p className="font-[family-name:var(--font-montserrat)] text-accent tracking-[0.2em] text-xs">
-                  DAY THREE
-                </p>
-                <h3 className="font-[family-name:var(--font-cormorant)] text-4xl text-charcoal mt-2">
                   May 20
                 </h3>
                 <p className="font-[family-name:var(--font-montserrat)] text-charcoal/50 text-sm mt-1">
-                  Tuesday
+                  Thursday
                 </p>
               </div>
-              <div className="bg-background p-8 md:p-12 rounded-sm shadow-sm border-2 border-accent/20">
+              <div className="bg-background p-6 md:p-12 rounded-sm shadow-sm border-2 border-accent/20">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center">
                     <svg
@@ -549,13 +492,16 @@ export default function Home() {
                 <p className="font-[family-name:var(--font-montserrat)] text-charcoal/70 leading-relaxed">
                   The moment we&apos;ve all been waiting for. Join us as we
                   exchange vows in a beautiful ceremony overlooking the cliffs
-                  of Uluwatu. Following the ceremony, we&apos;ll celebrate with
-                  an evening reception filled with dinner, dancing, and memories
-                  to last a lifetime.
+                  of Uluwatu. Cocktail hour follows as the sun goes down, and
+                  then we celebrate with an evening reception filled with
+                  dinner, dancing, and memories to last a lifetime.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-4">
                   <span className="font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-accent bg-accent/10 px-4 py-2 rounded-full">
                     CEREMONY
+                  </span>
+                  <span className="font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-accent bg-accent/10 px-4 py-2 rounded-full">
+                    COCKTAIL HOUR
                   </span>
                   <span className="font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-accent bg-accent/10 px-4 py-2 rounded-full">
                     RECEPTION
@@ -566,208 +512,105 @@ export default function Home() {
                 </div>
               </div>
             </motion.div>
+
+            {/* Day 3 */}
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="grid md:grid-cols-[1fr,3fr] gap-8 items-start"
+            >
+              <div className="text-center md:text-right">
+                <p className="font-[family-name:var(--font-montserrat)] text-accent tracking-[0.2em] text-xs">
+                  DAY THREE
+                </p>
+                <h3 className="font-[family-name:var(--font-cormorant)] text-4xl text-charcoal mt-2">
+                  May 21
+                </h3>
+                <p className="font-[family-name:var(--font-montserrat)] text-charcoal/50 text-sm mt-1">
+                  Friday
+                </p>
+              </div>
+              <div className="bg-background p-6 md:p-12 rounded-sm shadow-sm">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-full bg-sage/20 flex items-center justify-center">
+                    <svg
+                      className="w-6 h-6 text-sage"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                      />
+                    </svg>
+                  </div>
+                  <h4 className="font-[family-name:var(--font-cormorant)] text-3xl text-charcoal">
+                    Recovery Day
+                  </h4>
+                </div>
+                <p className="font-[family-name:var(--font-montserrat)] text-charcoal/70 leading-relaxed">
+                  One last day together before everyone heads home. We&apos;re
+                  still finalising the plan &mdash; it may be a boat party out on
+                  the water, or a reserved area at a beach club for all of our
+                  guests. Either way, expect sun, food, and a slow, easy end to
+                  the celebrations. Details to follow closer to the date.
+                </p>
+                <div className="mt-6 flex flex-wrap gap-4">
+                  <span className="font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-sage bg-sage/10 px-4 py-2 rounded-full">
+                    PLANS TO BE CONFIRMED
+                  </span>
+                  <span className="font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-charcoal/50 bg-charcoal/5 px-4 py-2 rounded-full">
+                    ALL DAY
+                  </span>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* RSVP Section */}
-      <section id="rsvp" className="py-32 px-8 bg-charcoal">
+      <section id="rsvp" className="py-16 md:py-32 px-4 md:px-8 bg-charcoal">
         <div className="max-w-2xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center"
           >
-            <p className="font-[family-name:var(--font-montserrat)] text-accent-light tracking-[0.3em] text-xs mb-4">
+            <p className="font-[family-name:var(--font-montserrat)] text-accent-light tracking-[0.2em] md:tracking-[0.3em] text-xs mb-4">
               WE HOPE YOU CAN JOIN US
             </p>
-            <h2 className="font-[family-name:var(--font-cormorant)] text-5xl md:text-6xl font-light text-white">
+            <h2 className="font-[family-name:var(--font-cormorant)] text-4xl md:text-6xl font-light text-white">
               RSVP
             </h2>
             <div className="divider mx-auto mt-6" />
             <p className="font-[family-name:var(--font-montserrat)] text-white/60 mt-8 leading-relaxed">
-              Please let us know if you&apos;ll be joining us in Bali for our
-              wedding celebration. We kindly request your response by March 1st,
-              2027.
+              You&apos;ll receive a personal invite link to RSVP for you and your
+              party. Please respond by January 20th, 2027.
+            </p>
+            <p className="font-[family-name:var(--font-montserrat)] text-white/40 mt-4 text-sm leading-relaxed">
+              If you&apos;ve already received your link, check your email or
+              message from us to find it.
             </p>
           </motion.div>
-
-          <motion.form
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="space-y-6"
-          >
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <label className="font-[family-name:var(--font-montserrat)] text-white/80 text-xs tracking-wider block mb-2">
-                  FIRST NAME
-                </label>
-                <input
-                  type="text"
-                  className="w-full bg-white/10 border border-white/20 rounded-sm px-4 py-3 text-white placeholder:text-white/30 font-[family-name:var(--font-montserrat)] text-sm"
-                  placeholder="Your first name"
-                />
-              </div>
-              <div>
-                <label className="font-[family-name:var(--font-montserrat)] text-white/80 text-xs tracking-wider block mb-2">
-                  LAST NAME
-                </label>
-                <input
-                  type="text"
-                  className="w-full bg-white/10 border border-white/20 rounded-sm px-4 py-3 text-white placeholder:text-white/30 font-[family-name:var(--font-montserrat)] text-sm"
-                  placeholder="Your last name"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="font-[family-name:var(--font-montserrat)] text-white/80 text-xs tracking-wider block mb-2">
-                EMAIL ADDRESS
-              </label>
-              <input
-                type="email"
-                className="w-full bg-white/10 border border-white/20 rounded-sm px-4 py-3 text-white placeholder:text-white/30 font-[family-name:var(--font-montserrat)] text-sm"
-                placeholder="your@email.com"
-              />
-            </div>
-
-            <div>
-              <label className="font-[family-name:var(--font-montserrat)] text-white/80 text-xs tracking-wider block mb-2">
-                NUMBER OF GUESTS IN YOUR PARTY
-              </label>
-              <select className="w-full bg-white/10 border border-white/20 rounded-sm px-4 py-3 text-white font-[family-name:var(--font-montserrat)] text-sm">
-                <option value="1" className="text-charcoal">
-                  1 Guest
-                </option>
-                <option value="2" className="text-charcoal">
-                  2 Guests
-                </option>
-                <option value="3" className="text-charcoal">
-                  3 Guests
-                </option>
-                <option value="4" className="text-charcoal">
-                  4 Guests
-                </option>
-              </select>
-            </div>
-
-            {/* Event Attendance Section */}
-            <div className="pt-4">
-              <label className="font-[family-name:var(--font-montserrat)] text-white/80 text-xs tracking-wider block mb-4">
-                WHICH EVENTS WILL YOU BE ATTENDING?
-              </label>
-              <div className="space-y-4">
-                {/* Welcome Dinner */}
-                <label className="flex items-start gap-4 p-4 bg-white/5 border border-white/10 rounded-sm cursor-pointer hover:bg-white/10 transition-colors group">
-                  <input
-                    type="checkbox"
-                    className="mt-1 w-5 h-5 rounded border-white/30 bg-white/10 text-accent focus:ring-accent focus:ring-offset-0 focus:ring-offset-transparent"
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3">
-                      <span className="font-[family-name:var(--font-cormorant)] text-white text-xl">
-                        Welcome Dinner
-                      </span>
-                      <span className="font-[family-name:var(--font-montserrat)] text-white/40 text-xs">
-                        May 18 · 7:00 PM
-                      </span>
-                    </div>
-                    <p className="font-[family-name:var(--font-montserrat)] text-white/50 text-xs mt-1">
-                      Join us for an intimate dinner to kick off the celebrations
-                    </p>
-                  </div>
-                </label>
-
-                {/* Boat Party */}
-                <label className="flex items-start gap-4 p-4 bg-white/5 border border-white/10 rounded-sm cursor-pointer hover:bg-white/10 transition-colors group">
-                  <input
-                    type="checkbox"
-                    className="mt-1 w-5 h-5 rounded border-white/30 bg-white/10 text-accent focus:ring-accent focus:ring-offset-0 focus:ring-offset-transparent"
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3">
-                      <span className="font-[family-name:var(--font-cormorant)] text-white text-xl">
-                        Boat Party
-                      </span>
-                      <span className="font-[family-name:var(--font-montserrat)] text-white/40 text-xs">
-                        May 19 · 10:00 AM - 6:00 PM
-                      </span>
-                    </div>
-                    <p className="font-[family-name:var(--font-montserrat)] text-white/50 text-xs mt-1">
-                      Set sail for a day of fun, sun, and celebration on the water
-                    </p>
-                  </div>
-                </label>
-
-                {/* Wedding Ceremony & Reception */}
-                <label className="flex items-start gap-4 p-4 bg-accent/10 border border-accent/30 rounded-sm cursor-pointer hover:bg-accent/20 transition-colors group">
-                  <input
-                    type="checkbox"
-                    className="mt-1 w-5 h-5 rounded border-white/30 bg-white/10 text-accent focus:ring-accent focus:ring-offset-0 focus:ring-offset-transparent"
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3">
-                      <span className="font-[family-name:var(--font-cormorant)] text-white text-xl">
-                        Wedding Ceremony & Reception
-                      </span>
-                      <span className="font-[family-name:var(--font-montserrat)] text-accent-light text-xs">
-                        May 20 · 4:00 PM
-                      </span>
-                    </div>
-                    <p className="font-[family-name:var(--font-montserrat)] text-white/50 text-xs mt-1">
-                      The main event - ceremony followed by dinner and dancing
-                    </p>
-                  </div>
-                </label>
-              </div>
-            </div>
-
-            <div>
-              <label className="font-[family-name:var(--font-montserrat)] text-white/80 text-xs tracking-wider block mb-2">
-                DIETARY REQUIREMENTS
-              </label>
-              <textarea
-                rows={3}
-                className="w-full bg-white/10 border border-white/20 rounded-sm px-4 py-3 text-white placeholder:text-white/30 font-[family-name:var(--font-montserrat)] text-sm resize-none"
-                placeholder="Please let us know of any dietary requirements or allergies"
-              />
-            </div>
-
-            <div>
-              <label className="font-[family-name:var(--font-montserrat)] text-white/80 text-xs tracking-wider block mb-2">
-                MESSAGE FOR THE COUPLE
-              </label>
-              <textarea
-                rows={4}
-                className="w-full bg-white/10 border border-white/20 rounded-sm px-4 py-3 text-white placeholder:text-white/30 font-[family-name:var(--font-montserrat)] text-sm resize-none"
-                placeholder="Share your love and wishes..."
-              />
-            </div>
-
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              type="submit"
-              className="w-full bg-accent hover:bg-accent-dark text-white font-[family-name:var(--font-montserrat)] tracking-[0.2em] text-sm py-4 rounded-sm transition-colors mt-8"
-            >
-              SEND RSVP
-            </motion.button>
-          </motion.form>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-16 px-8 bg-charcoal border-t border-white/10">
+      <footer className="py-12 md:py-16 px-4 md:px-8 bg-charcoal border-t border-white/10">
         <div className="max-w-4xl mx-auto text-center">
           <h3 className="font-[family-name:var(--font-cormorant)] text-4xl text-white mb-4">
             Dinal & Shayani
           </h3>
           <p className="font-[family-name:var(--font-montserrat)] text-white/50 tracking-[0.2em] text-xs">
-            MAY 20, 2027 | ULUWATU, BALI
+            MAY 19–21, 2027 | ULUWATU, BALI
           </p>
           <div className="divider mx-auto mt-8 mb-8" />
           <p className="font-[family-name:var(--font-montserrat)] text-white/30 text-xs">
