@@ -267,7 +267,7 @@ export default function Home() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="relative aspect-[3/2] max-w-2xl rounded-sm overflow-hidden mx-auto mb-16"
+            className="relative aspect-[3/2] max-w-2xl rounded-3xl overflow-hidden mx-auto mb-16 shadow-[0_24px_60px_-24px_rgba(42,51,24,0.45)] ring-1 ring-charcoal/5"
           >
             <Image
               src="/photos/about.jpg"
@@ -333,20 +333,35 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Destination Section */}
-      <section className="py-16 md:py-32 px-4 md:px-8 bg-background">
-        <div className="max-w-6xl mx-auto">
+      {/* Destination Section: full-bleed collage of our Bali photos */}
+      <section className="relative min-h-screen overflow-hidden">
+        <div className="absolute inset-0 grid grid-cols-2 grid-rows-4 md:grid-cols-4 md:grid-rows-2 gap-1 bg-background">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+            <div key={n} className="relative overflow-hidden">
+              <Image
+                src={`/photos/bali-${n}.jpg`}
+                alt=""
+                fill
+                sizes="(min-width: 768px) 25vw, 50vw"
+                className="object-cover"
+              />
+            </div>
+          ))}
+        </div>
+        <div className="absolute inset-0 bg-charcoal/60" />
+
+        <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 md:px-8 py-24">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center mb-12"
           >
-            <p className="font-[family-name:var(--font-montserrat)] text-accent tracking-[0.2em] md:tracking-[0.3em] text-xs mb-4">
+            <p className="font-[family-name:var(--font-montserrat)] text-cream tracking-[0.2em] md:tracking-[0.3em] text-xs mb-4">
               A DESTINATION CELEBRATION
             </p>
-            <h2 className="font-[family-name:var(--font-cormorant)] text-4xl md:text-6xl font-light text-charcoal">
+            <h2 className="font-[family-name:var(--font-cormorant)] text-4xl md:text-6xl font-light text-white">
               Uluwatu, Bali
             </h2>
             <div className="divider mx-auto mt-6" />
@@ -355,46 +370,18 @@ export default function Home() {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="mb-12"
-          >
-            <div className="relative aspect-[21/9] rounded-sm overflow-hidden">
-              <Image
-                src="/photos/uluwatu.jpg"
-                alt="Cliffs at Uluwatu, Bali, above the Indian Ocean"
-                fill
-                sizes="(min-width: 1152px) 1152px, 100vw"
-                className="object-cover"
-              />
-            </div>
-            {/* CC BY-SA 4.0 requires attribution */}
-            <p className="font-[family-name:var(--font-montserrat)] text-charcoal/40 text-[10px] text-right mt-2">
-              Photo: Emma THERY,{" "}
-              <a
-                href="https://commons.wikimedia.org/wiki/File:Cliff_at_Uluwatu_temple,_Bali.jpg"
-                className="underline"
-              >
-                CC BY-SA 4.0
-              </a>
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
             viewport={{ once: true }}
             className="max-w-3xl mx-auto text-center"
           >
-            <p className="font-[family-name:var(--font-montserrat)] text-charcoal/70 leading-relaxed">
+            <p className="font-[family-name:var(--font-montserrat)] text-white/85 leading-relaxed">
               We&apos;re inviting our dearest family and friends to join us in
               the magical cliffs of Uluwatu, Bali for a destination wedding
               celebration. We&apos;ve planned an unforgettable three-day
               experience where we&apos;ll celebrate love, friendship, and new
               beginnings together.
             </p>
-            <p className="font-[family-name:var(--font-montserrat)] text-charcoal/70 leading-relaxed mt-6">
+            <p className="font-[family-name:var(--font-montserrat)] text-white/85 leading-relaxed mt-6">
               Flying from Sydney, we encourage you to make this a trip for
               yourselves too. Explore the beauty of Bali, relax on pristine
               beaches, and create memories that will last a lifetime.
