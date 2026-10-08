@@ -477,9 +477,6 @@ export default function Home() {
                 </details>
                 <div className="mt-6 flex flex-wrap gap-4">
                   <span className="font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-accent bg-accent/10 px-4 py-2 rounded-full">
-                    ARRIVAL DAY
-                  </span>
-                  <span className="font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-accent bg-accent/10 px-4 py-2 rounded-full">
                     STONE VILLAS ULUWATU
                   </span>
                   <span className="font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-accent bg-accent/10 px-4 py-2 rounded-full">
