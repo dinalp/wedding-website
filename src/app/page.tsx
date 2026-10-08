@@ -29,18 +29,9 @@ export default function Home() {
   const centerY = useTransform(scrollYProgress, [0.15, 0.4], [50, 0]);
   const photoOpacity = useTransform(scrollYProgress, [0.3, 0.5], [1, 0]);
 
-  // Placeholder images for slideshow (will be replaced with actual photos)
-  const leftSlides = [
-    { id: 1, label: "Dinal Photo 1" },
-    { id: 2, label: "Dinal Photo 2" },
-    { id: 3, label: "Dinal Photo 3" },
-  ];
-
-  const rightSlides = [
-    { id: 1, label: "Shayani Photo 1" },
-    { id: 2, label: "Shayani Photo 2" },
-    { id: 3, label: "Shayani Photo 3" },
-  ];
+  // Order is provisional; reshuffle by moving entries between the two lists
+  const leftSlides = [1, 2, 3].map((n) => ({ id: n, src: `/photos/hero-${n}.jpg` }));
+  const rightSlides = [4, 5, 6].map((n) => ({ id: n, src: `/photos/hero-${n}.jpg` }));
 
   return (
     <main className="bg-background">
@@ -102,11 +93,16 @@ export default function Home() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 1 }}
-                        className="absolute inset-0 photo-placeholder flex items-center justify-center"
+                        className="absolute inset-0"
                       >
-                        <span className="font-[family-name:var(--font-cormorant)] text-white/50 text-3xl italic drop-shadow-lg">
-                          {slide.label}
-                        </span>
+                        <Image
+                          src={slide.src}
+                          alt="Dinal and Shayani"
+                          fill
+                          priority={index === 0}
+                          sizes="50vw"
+                          className="object-cover"
+                        />
                       </motion.div>
                     )
                 )}
@@ -132,11 +128,16 @@ export default function Home() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 1 }}
-                        className="absolute inset-0 photo-placeholder flex items-center justify-center"
+                        className="absolute inset-0"
                       >
-                        <span className="font-[family-name:var(--font-cormorant)] text-white/50 text-3xl italic drop-shadow-lg">
-                          {slide.label}
-                        </span>
+                        <Image
+                          src={slide.src}
+                          alt="Dinal and Shayani"
+                          fill
+                          priority={index === 0}
+                          sizes="50vw"
+                          className="object-cover"
+                        />
                       </motion.div>
                     )
                 )}
