@@ -556,6 +556,9 @@ export default function Home() {
                   <span className="font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-accent bg-accent/10 px-4 py-2 rounded-full">
                     RECEPTION
                   </span>
+                  <span className="font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-accent bg-accent/10 px-4 py-2 rounded-full">
+                    STONE VILLAS ULUWATU
+                  </span>
                   <span className="font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-charcoal/50 bg-charcoal/5 px-4 py-2 rounded-full">
                     4:00 PM ONWARDS
                   </span>
