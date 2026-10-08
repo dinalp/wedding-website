@@ -339,7 +339,7 @@ export default function Home() {
           {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
             <div key={n} className="relative overflow-hidden">
               <Image
-                src={`/photos/bali-${n}.jpg`}
+                src={`/photos/bali-v2-${n}.jpg`}
                 alt=""
                 fill
                 sizes="(min-width: 768px) 25vw, 50vw"
@@ -351,42 +351,45 @@ export default function Home() {
         <div className="absolute inset-0 bg-charcoal/60" />
 
         <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 md:px-8 py-24">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <p className="font-[family-name:var(--font-montserrat)] text-cream tracking-[0.2em] md:tracking-[0.3em] text-xs mb-4">
-              A DESTINATION CELEBRATION
-            </p>
-            <h2 className="font-[family-name:var(--font-cormorant)] text-4xl md:text-6xl font-light text-white">
-              Uluwatu, Bali
-            </h2>
-            <div className="divider mx-auto mt-6" />
-          </motion.div>
+          {/* Light frosting behind the text for readability */}
+          <div className="max-w-3xl rounded-3xl bg-white/5 backdrop-blur-[3px] ring-1 ring-white/10 px-6 py-10 md:px-12 md:py-14">
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="text-center mb-12"
+            >
+              <p className="font-[family-name:var(--font-montserrat)] text-cream tracking-[0.2em] md:tracking-[0.3em] text-xs mb-4">
+                A DESTINATION CELEBRATION
+              </p>
+              <h2 className="font-[family-name:var(--font-cormorant)] text-4xl md:text-6xl font-light text-white">
+                Uluwatu, Bali
+              </h2>
+              <div className="divider mx-auto mt-6" />
+            </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            viewport={{ once: true }}
-            className="max-w-3xl mx-auto text-center"
-          >
-            <p className="font-[family-name:var(--font-montserrat)] text-white/85 leading-relaxed">
-              We&apos;re inviting our dearest family and friends to join us in
-              the magical cliffs of Uluwatu, Bali for a destination wedding
-              celebration. We&apos;ve planned an unforgettable three-day
-              experience where we&apos;ll celebrate love, friendship, and new
-              beginnings together.
-            </p>
-            <p className="font-[family-name:var(--font-montserrat)] text-white/85 leading-relaxed mt-6">
-              Flying from Sydney, we encourage you to make this a trip for
-              yourselves too. Explore the beauty of Bali, relax on pristine
-              beaches, and create memories that will last a lifetime.
-            </p>
-          </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              viewport={{ once: true }}
+              className="max-w-3xl mx-auto text-center"
+            >
+              <p className="font-[family-name:var(--font-montserrat)] text-white/85 leading-relaxed">
+                We&apos;re inviting our dearest family and friends to join us in
+                the magical cliffs of Uluwatu, Bali for a destination wedding
+                celebration. We&apos;ve planned an unforgettable three-day
+                experience where we&apos;ll celebrate love, friendship, and new
+                beginnings together.
+              </p>
+              <p className="font-[family-name:var(--font-montserrat)] text-white/85 leading-relaxed mt-6">
+                Flying from Sydney, we encourage you to make this a trip for
+                yourselves too. Explore the beauty of Bali, relax on pristine
+                beaches, and create memories that will last a lifetime.
+              </p>
+            </motion.div>
+          </div>
         </div>
       </section>
 
