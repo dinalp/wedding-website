@@ -465,15 +465,20 @@ export default function Home() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </summary>
-                  <div className="relative aspect-[1308/736] rounded-2xl overflow-hidden mt-4">
-                    <Image
-                      src="/photos/dress-code-v2.jpg"
-                      alt="Dress code inspiration: linen and patterned island shirts in earthy tones"
-                      fill
-                      sizes="(min-width: 768px) 640px, 100vw"
-                      className="object-cover"
-                    />
-                  </div>
+                  {[
+                    { src: "/photos/dress-code-v2.jpg", alt: "Dress code inspiration: linen and patterned island shirts in earthy tones" },
+                    { src: "/photos/dress-code-2.jpg", alt: "Dress code inspiration: flowing printed and pastel island dresses" },
+                  ].map((img) => (
+                    <div key={img.src} className="relative aspect-[1308/736] rounded-2xl overflow-hidden mt-4">
+                      <Image
+                        src={img.src}
+                        alt={img.alt}
+                        fill
+                        sizes="(min-width: 768px) 640px, 100vw"
+                        className="object-cover"
+                      />
+                    </div>
+                  ))}
                 </details>
                 <div className="mt-6 flex flex-wrap gap-4">
                   <span className="font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-accent bg-accent/10 px-4 py-2 rounded-full">
