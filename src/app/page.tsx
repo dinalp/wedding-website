@@ -290,10 +290,11 @@ export default function Home() {
                 Dinal
               </h3>
               <p className="font-[family-name:var(--font-montserrat)] text-charcoal/70 leading-relaxed text-sm">
-                Born and raised with a love for life&apos;s adventures. When not
-                dreaming of the perfect wedding day, you&apos;ll find Dinal
-                exploring Sydney&apos;s hidden gems and planning the next great
-                adventure.
+                Easygoing until it matters, then all in. Dinal has an eye for
+                the small things, a sense of humour that sneaks up on you, and a
+                habit of turning ordinary plans into something worth
+                remembering. He&apos;s happiest with good people around a long
+                table, and happiest of all next to Shayani.
               </p>
             </motion.div>
 
