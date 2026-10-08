@@ -30,8 +30,15 @@ export default function Home() {
   const photoOpacity = useTransform(scrollYProgress, [0.3, 0.5], [1, 0]);
 
   // Order is provisional; reshuffle by moving entries between the two lists
-  const leftSlides = [3, 1, 2].map((n) => ({ id: n, src: `/photos/hero-${n}.jpg` }));
-  const rightSlides = [5, 4, 7].map((n) => ({ id: n, src: `/photos/hero-${n}.jpg` }));
+  // Subjects sit at the very bottom of these shots, so anchor the crop there
+  const bottomAnchored = [4, 7];
+  const slide = (n: number) => ({
+    id: n,
+    src: `/photos/hero-${n}.jpg`,
+    position: bottomAnchored.includes(n) ? "object-bottom" : "object-center",
+  });
+  const leftSlides = [3, 1, 2].map(slide);
+  const rightSlides = [5, 4, 7].map(slide);
 
   return (
     <main className="bg-background">
@@ -101,7 +108,7 @@ export default function Home() {
                           fill
                           priority={index === 0}
                           sizes="50vw"
-                          className="object-cover"
+                          className={`object-cover ${slide.position}`}
                         />
                       </motion.div>
                     )
@@ -136,7 +143,7 @@ export default function Home() {
                           fill
                           priority={index === 0}
                           sizes="50vw"
-                          className="object-cover"
+                          className={`object-cover ${slide.position}`}
                         />
                       </motion.div>
                     )
