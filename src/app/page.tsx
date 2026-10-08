@@ -30,8 +30,8 @@ export default function Home() {
   const photoOpacity = useTransform(scrollYProgress, [0.3, 0.5], [1, 0]);
 
   // Order is provisional; reshuffle by moving entries between the two lists
-  const leftSlides = [1, 2, 3].map((n) => ({ id: n, src: `/photos/hero-${n}.jpg` }));
-  const rightSlides = [4, 6, 5].map((n) => ({ id: n, src: `/photos/hero-${n}.jpg` }));
+  const leftSlides = [3, 1, 2].map((n) => ({ id: n, src: `/photos/hero-${n}.jpg` }));
+  const rightSlides = [5, 4, 6].map((n) => ({ id: n, src: `/photos/hero-${n}.jpg` }));
 
   return (
     <main className="bg-background">
