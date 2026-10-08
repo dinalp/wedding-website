@@ -466,17 +466,22 @@ export default function Home() {
                     </svg>
                   </summary>
                   {[
-                    { src: "/photos/dress-code-v2.jpg", alt: "Dress code inspiration: linen and patterned island shirts in earthy tones" },
-                    { src: "/photos/dress-code-2.jpg", alt: "Dress code inspiration: flowing printed and pastel island dresses" },
+                    { label: "For her", src: "/photos/dress-code-2.jpg", alt: "Dress code inspiration: flowing printed and pastel island dresses" },
+                    { label: "For him", src: "/photos/dress-code-v2.jpg", alt: "Dress code inspiration: linen and patterned island shirts in earthy tones" },
                   ].map((img) => (
-                    <div key={img.src} className="relative aspect-[1308/736] rounded-2xl overflow-hidden mt-4">
-                      <Image
-                        src={img.src}
-                        alt={img.alt}
-                        fill
-                        sizes="(min-width: 768px) 640px, 100vw"
-                        className="object-cover"
-                      />
+                    <div key={img.src} className="mt-6">
+                      <p className="font-[family-name:var(--font-cormorant)] text-xl italic text-charcoal/70 mb-2">
+                        {img.label}
+                      </p>
+                      <div className="relative aspect-[1308/736] rounded-2xl overflow-hidden">
+                        <Image
+                          src={img.src}
+                          alt={img.alt}
+                          fill
+                          sizes="(min-width: 768px) 640px, 100vw"
+                          className="object-cover"
+                        />
+                      </div>
                     </div>
                   ))}
                 </details>
@@ -488,7 +493,7 @@ export default function Home() {
                     ISLAND SEMI-FORMAL
                   </span>
                   <span className="font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-charcoal/50 bg-charcoal/5 px-4 py-2 rounded-full">
-                    7:00 PM
+                    4:00 PM
                   </span>
                 </div>
               </div>
