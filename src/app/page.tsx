@@ -458,6 +458,27 @@ export default function Home() {
                   perfect opportunity to catch up, meet fellow guests, and begin
                   the celebrations with good food, drinks, and company.
                 </p>
+                <p className="font-[family-name:var(--font-montserrat)] text-charcoal/70 leading-relaxed mt-4">
+                  The location will be at Stone Villas Uluwatu. The dress code
+                  is island semi-formal.
+                </p>
+                {/* Portrait mood board shown whole in a landscape frame; blurred copy fills the sides */}
+                <div className="relative aspect-[16/9] rounded-2xl overflow-hidden mt-6">
+                  <Image
+                    src="/photos/dress-code.jpg"
+                    alt=""
+                    fill
+                    sizes="(min-width: 768px) 640px, 100vw"
+                    className="object-cover blur-2xl scale-110 opacity-70"
+                  />
+                  <Image
+                    src="/photos/dress-code.jpg"
+                    alt="Dress code inspiration: linen and patterned island shirts in earthy tones"
+                    fill
+                    sizes="(min-width: 768px) 640px, 100vw"
+                    className="object-contain"
+                  />
+                </div>
                 <div className="mt-6 flex flex-wrap gap-4">
                   <span className="font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-accent bg-accent/10 px-4 py-2 rounded-full">
                     ARRIVAL DAY
