@@ -462,21 +462,13 @@ export default function Home() {
                   The location will be at Stone Villas Uluwatu. The dress code
                   is island semi-formal.
                 </p>
-                {/* Portrait mood board shown whole in a landscape frame; blurred copy fills the sides */}
-                <div className="relative aspect-[16/9] rounded-2xl overflow-hidden mt-6">
+                <div className="relative aspect-[1308/736] rounded-2xl overflow-hidden mt-6">
                   <Image
-                    src="/photos/dress-code.jpg"
-                    alt=""
-                    fill
-                    sizes="(min-width: 768px) 640px, 100vw"
-                    className="object-cover blur-2xl scale-110 opacity-70"
-                  />
-                  <Image
-                    src="/photos/dress-code.jpg"
+                    src="/photos/dress-code-v2.jpg"
                     alt="Dress code inspiration: linen and patterned island shirts in earthy tones"
                     fill
                     sizes="(min-width: 768px) 640px, 100vw"
-                    className="object-contain"
+                    className="object-cover"
                   />
                 </div>
                 <div className="mt-6 flex flex-wrap gap-4">
