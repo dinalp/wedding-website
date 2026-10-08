@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -253,6 +254,18 @@ export default function Home() {
             <div className="divider mx-auto mt-6" />
           </motion.div>
 
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="photo-placeholder aspect-[4/3] max-w-2xl rounded-sm mx-auto mb-16 flex items-center justify-center"
+          >
+            <span className="font-[family-name:var(--font-cormorant)] text-accent-dark/50 text-2xl italic">
+              Dinal &amp; Shayani
+            </span>
+          </motion.div>
+
           <div className="grid md:grid-cols-2 gap-12 md:gap-24">
             <motion.div
               initial={{ opacity: 0, x: -50 }}
@@ -261,11 +274,6 @@ export default function Home() {
               viewport={{ once: true }}
               className="text-center"
             >
-              <div className="photo-placeholder w-48 h-48 rounded-full mx-auto mb-8 flex items-center justify-center">
-                <span className="font-[family-name:var(--font-cormorant)] text-accent-dark/50 italic">
-                  Dinal
-                </span>
-              </div>
               <h3 className="font-[family-name:var(--font-cormorant)] text-3xl text-charcoal mb-4">
                 Dinal
               </h3>
@@ -284,11 +292,6 @@ export default function Home() {
               viewport={{ once: true }}
               className="text-center"
             >
-              <div className="photo-placeholder w-48 h-48 rounded-full mx-auto mb-8 flex items-center justify-center">
-                <span className="font-[family-name:var(--font-cormorant)] text-accent-dark/50 italic">
-                  Shayani
-                </span>
-              </div>
               <h3 className="font-[family-name:var(--font-cormorant)] text-3xl text-charcoal mb-4">
                 Shayani
               </h3>
@@ -342,11 +345,27 @@ export default function Home() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             viewport={{ once: true }}
-            className="photo-placeholder aspect-[21/9] rounded-sm flex items-center justify-center mb-12"
+            className="mb-12"
           >
-            <span className="font-[family-name:var(--font-cormorant)] text-accent-dark/50 text-2xl italic">
-              Bali Landscape Photo
-            </span>
+            <div className="relative aspect-[21/9] rounded-sm overflow-hidden">
+              <Image
+                src="/photos/uluwatu.jpg"
+                alt="Cliffs at Uluwatu, Bali, above the Indian Ocean"
+                fill
+                sizes="(min-width: 1152px) 1152px, 100vw"
+                className="object-cover"
+              />
+            </div>
+            {/* CC BY-SA 4.0 requires attribution */}
+            <p className="font-[family-name:var(--font-montserrat)] text-charcoal/40 text-[10px] text-right mt-2">
+              Photo: Emma THERY,{" "}
+              <a
+                href="https://commons.wikimedia.org/wiki/File:Cliff_at_Uluwatu_temple,_Bali.jpg"
+                className="underline"
+              >
+                CC BY-SA 4.0
+              </a>
+            </p>
           </motion.div>
 
           <motion.div
