@@ -458,10 +458,6 @@ export default function Home() {
                   perfect opportunity to catch up, meet fellow guests, and begin
                   the celebrations with good food, drinks, and company.
                 </p>
-                <p className="font-[family-name:var(--font-montserrat)] text-charcoal/70 leading-relaxed mt-4">
-                  The location will be at Stone Villas Uluwatu. The dress code
-                  is island semi-formal.
-                </p>
                 <details className="group mt-6">
                   <summary className="inline-flex items-center gap-2 cursor-pointer list-none [&::-webkit-details-marker]:hidden font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-accent bg-accent/10 hover:bg-accent/20 transition-colors px-4 py-2 rounded-full">
                     VIEW DRESS CODE INSPIRATION
@@ -482,6 +478,12 @@ export default function Home() {
                 <div className="mt-6 flex flex-wrap gap-4">
                   <span className="font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-accent bg-accent/10 px-4 py-2 rounded-full">
                     ARRIVAL DAY
+                  </span>
+                  <span className="font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-accent bg-accent/10 px-4 py-2 rounded-full">
+                    STONE VILLAS ULUWATU
+                  </span>
+                  <span className="font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-accent bg-accent/10 px-4 py-2 rounded-full">
+                    ISLAND SEMI-FORMAL
                   </span>
                   <span className="font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-charcoal/50 bg-charcoal/5 px-4 py-2 rounded-full">
                     7:00 PM
