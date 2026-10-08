@@ -31,7 +31,7 @@ export default function Home() {
 
   // Order is provisional; reshuffle by moving entries between the two lists
   const leftSlides = [3, 1, 2].map((n) => ({ id: n, src: `/photos/hero-${n}.jpg` }));
-  const rightSlides = [5, 4, 6].map((n) => ({ id: n, src: `/photos/hero-${n}.jpg` }));
+  const rightSlides = [5, 4, 7].map((n) => ({ id: n, src: `/photos/hero-${n}.jpg` }));
 
   return (
     <main className="bg-background">
