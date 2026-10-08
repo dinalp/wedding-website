@@ -351,8 +351,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-charcoal/60" />
 
         <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 md:px-8 py-24">
-          {/* Light frosting behind the text for readability */}
-          <div className="max-w-3xl rounded-3xl bg-white/5 backdrop-blur-[3px] ring-1 ring-white/10 px-6 py-10 md:px-12 md:py-14">
+          <div className="max-w-3xl">
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
