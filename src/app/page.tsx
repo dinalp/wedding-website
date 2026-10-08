@@ -267,11 +267,15 @@ export default function Home() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="photo-placeholder aspect-[4/3] max-w-2xl rounded-sm mx-auto mb-16 flex items-center justify-center"
+            className="relative aspect-[3/2] max-w-2xl rounded-sm overflow-hidden mx-auto mb-16"
           >
-            <span className="font-[family-name:var(--font-cormorant)] text-accent-dark/50 text-2xl italic">
-              Dinal &amp; Shayani
-            </span>
+            <Image
+              src="/photos/about.jpg"
+              alt="Dinal and Shayani at dinner"
+              fill
+              sizes="(min-width: 672px) 672px, 100vw"
+              className="object-cover"
+            />
           </motion.div>
 
           <div className="grid md:grid-cols-2 gap-12 md:gap-24">
