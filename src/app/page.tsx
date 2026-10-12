@@ -253,9 +253,6 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-20"
           >
-            <p className="font-[family-name:var(--font-montserrat)] text-accent tracking-[0.2em] md:tracking-[0.3em] text-xs mb-4">
-              OUR STORY
-            </p>
             <h2 className="font-[family-name:var(--font-cormorant)] text-4xl md:text-6xl font-light text-charcoal">
               About Us
             </h2>
@@ -309,9 +306,11 @@ export default function Home() {
                 Shayani
               </h3>
               <p className="font-[family-name:var(--font-montserrat)] text-charcoal/70 leading-relaxed text-sm">
-                A heart full of warmth and a spirit that lights up every room.
-                Shayani brings joy and love to everything she does, making every
-                moment together an unforgettable memory.
+                Warm from the first hello, and always the one who remembers.
+                Shayani notices how people are really doing, laughs easily and
+                often, and makes anywhere feel like home. She&apos;s the calm in
+                a busy day, unapologetically herself in every room, and the
+                best thing that ever happened to Dinal.
               </p>
             </motion.div>
           </div>
@@ -324,11 +323,11 @@ export default function Home() {
             className="mt-24 text-center"
           >
             <p className="font-[family-name:var(--font-cormorant)] text-xl md:text-3xl text-charcoal italic leading-relaxed max-w-2xl mx-auto">
-              &quot;Two souls with but a single thought, two hearts that beat as
-              one.&quot;
+              &quot;To love and be loved is to feel the sun from both
+              sides.&quot;
             </p>
             <p className="font-[family-name:var(--font-montserrat)] text-accent tracking-wider text-xs mt-6">
-              - JOHN KEATS
+              - DAVID VISCOTT
             </p>
           </motion.div>
         </div>
