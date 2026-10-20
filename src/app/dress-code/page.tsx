@@ -31,7 +31,7 @@ const EVENTS: { id: string; day: string; title: string; venue: string; code?: st
     day: "Thursday 20 May",
     title: "Wedding Day",
     venue: "Stone Villas Uluwatu",
-    code: "Island formal · Sarees welcome · Suits (open collar, ties optional) · We love to see some colour",
+    code: "Island formal · Sarees welcome · Suits (open collar, ties optional) · We love to see some colour!",
     looks: [{ label: "For her" }, { label: "For him" }],
   },
   {
