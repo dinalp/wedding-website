@@ -8,9 +8,10 @@ export const shortDate = (iso: string) =>
 const TABS = [
   { href: "/flights", label: "Flights" },
   { href: "/stays", label: "Stays" },
+  { href: "/dress-code", label: "Dress Code" },
 ] as const;
 
-export function TravelHeader({ active }: { active: "/flights" | "/stays" }) {
+export function PageHeader({ active }: { active: (typeof TABS)[number]["href"] }) {
   return (
     <header className="px-4 md:px-8 py-6 max-w-5xl mx-auto flex items-center justify-between">
       <Link
@@ -19,13 +20,13 @@ export function TravelHeader({ active }: { active: "/flights" | "/stays" }) {
       >
         D &amp; S
       </Link>
-      <nav className="flex gap-1 bg-cream rounded-sm p-1 font-sans text-xs tracking-wider">
+      <nav className="flex gap-1 bg-cream rounded-sm p-1 font-sans text-[11px] md:text-xs tracking-wider">
         {TABS.map((t) => (
           <Link
             key={t.href}
             href={t.href}
             aria-current={t.href === active ? "page" : undefined}
-            className={`px-4 py-2 rounded-sm transition-colors ${
+            className={`px-3 md:px-4 py-2 rounded-sm whitespace-nowrap transition-colors ${
               t.href === active ? "bg-accent text-white" : "text-charcoal/70 hover:text-charcoal"
             }`}
           >

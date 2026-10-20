@@ -449,33 +449,12 @@ export default function Home() {
                   perfect opportunity to catch up, meet fellow guests, and begin
                   the celebrations with good food, drinks, and company.
                 </p>
-                <details className="group mt-6">
-                  <summary className="inline-flex items-center gap-2 cursor-pointer list-none [&::-webkit-details-marker]:hidden font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-accent bg-accent/10 hover:bg-accent/20 transition-colors px-4 py-2 rounded-full">
-                    VIEW DRESS CODE INSPIRATION
-                    <svg className="w-3 h-3 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </summary>
-                  {[
-                    { label: "For her", src: "/photos/dress-code-2.jpg", alt: "Dress code inspiration: flowing printed and pastel island dresses" },
-                    { label: "For him", src: "/photos/dress-code-v2.jpg", alt: "Dress code inspiration: linen and patterned island shirts in earthy tones" },
-                  ].map((img) => (
-                    <div key={img.src} className="mt-6">
-                      <p className="font-[family-name:var(--font-cormorant)] text-xl italic text-charcoal/70 mb-2">
-                        {img.label}
-                      </p>
-                      <div className="relative aspect-[1308/736] rounded-2xl overflow-hidden">
-                        <Image
-                          src={img.src}
-                          alt={img.alt}
-                          fill
-                          sizes="(min-width: 768px) 640px, 100vw"
-                          className="object-cover"
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </details>
+                <a
+                  href="/dress-code#welcome-dinner"
+                  className="inline-flex items-center gap-2 mt-6 font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-accent bg-accent/10 hover:bg-accent/20 transition-colors px-4 py-2 rounded-full"
+                >
+                  VIEW DRESS CODE &rarr;
+                </a>
                 <div className="mt-6 flex flex-wrap gap-4">
                   <span className="font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-accent bg-accent/10 px-4 py-2 rounded-full">
                     STONE VILLAS ULUWATU
@@ -537,6 +516,12 @@ export default function Home() {
                   then we celebrate with an evening reception filled with
                   dinner, dancing, and memories to last a lifetime.
                 </p>
+                <a
+                  href="/dress-code#wedding"
+                  className="inline-flex items-center gap-2 mt-6 font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-accent bg-accent/10 hover:bg-accent/20 transition-colors px-4 py-2 rounded-full"
+                >
+                  VIEW DRESS CODE &rarr;
+                </a>
                 <div className="mt-6 flex flex-wrap gap-4">
                   <span className="font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-accent bg-accent/10 px-4 py-2 rounded-full">
                     CEREMONY
@@ -604,6 +589,12 @@ export default function Home() {
                   guests. Either way, expect sun, food, and a slow, easy end to
                   the celebrations. Details to follow closer to the date.
                 </p>
+                <a
+                  href="/dress-code#recovery-day"
+                  className="inline-flex items-center gap-2 mt-6 font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-accent bg-accent/10 hover:bg-accent/20 transition-colors px-4 py-2 rounded-full"
+                >
+                  VIEW DRESS CODE &rarr;
+                </a>
                 <div className="mt-6 flex flex-wrap gap-4">
                   <span className="font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-sage bg-sage/10 px-4 py-2 rounded-full">
                     PLANS TO BE CONFIRMED

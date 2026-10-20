@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getFlightChecks, type FlightCheck } from "@/lib/travel";
-import { Stat, SubscribeNote, TravelHeader, TrendChart, aud, shortDate } from "@/components/travel";
+import { Stat, SubscribeNote, PageHeader, TrendChart, aud, shortDate } from "@/components/travel";
 
 export const revalidate = 3600;
 
@@ -35,7 +35,7 @@ export default async function FlightsPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <TravelHeader active="/flights" />
+      <PageHeader active="/flights" />
       <div className="max-w-5xl mx-auto px-4 md:px-8 pb-16">
         <p className="font-sans text-accent tracking-[0.3em] text-xs">SYDNEY TO BALI</p>
         <h1 className="font-[family-name:var(--font-cormorant)] text-4xl md:text-6xl font-light text-charcoal mt-2">
