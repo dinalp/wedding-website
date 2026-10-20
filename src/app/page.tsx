@@ -484,7 +484,7 @@ export default function Home() {
                     ISLAND SEMI-FORMAL
                   </span>
                   <span className="font-[family-name:var(--font-montserrat)] text-xs tracking-wider text-charcoal/50 bg-charcoal/5 px-4 py-2 rounded-full">
-                    9:00 PM
+                    4:00 PM – 9:00 PM
                   </span>
                 </div>
               </div>
