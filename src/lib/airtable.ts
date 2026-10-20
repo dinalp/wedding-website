@@ -27,7 +27,7 @@ function config() {
   return { baseId, pat };
 }
 
-async function at<T>(
+export async function at<T>(
   path: string,
   init?: RequestInit & { query?: Record<string, string | string[]> }
 ): Promise<T> {
@@ -39,13 +39,13 @@ async function at<T>(
   }
 
   const res = await fetch(url, {
+    cache: "no-store",
     ...init,
     headers: {
       Authorization: `Bearer ${pat}`,
       "Content-Type": "application/json",
       ...init?.headers,
     },
-    cache: "no-store",
   });
 
   if (!res.ok) {
@@ -83,6 +83,8 @@ interface PartyFields {
   Phone?: string;
   "Song Request"?: string;
   Message?: string;
+  "Flight Price Emails"?: boolean;
+  "Stay Price Emails"?: boolean;
   "Submitted At"?: string;
   "Updated At"?: string;
 }
@@ -137,6 +139,8 @@ function toParty(rec: Rec<PartyFields>, guests: Rec<GuestFields>[]): Party {
     phone: f.Phone ?? "",
     songRequest: f["Song Request"] ?? "",
     message: f.Message ?? "",
+    flightEmails: !!f["Flight Price Emails"],
+    stayEmails: !!f["Stay Price Emails"],
     submittedAt: f["Submitted At"] ?? null,
     updatedAt: f["Updated At"] ?? null,
   };
@@ -247,6 +251,9 @@ export async function saveRSVP(submission: RSVPSubmission): Promise<Party> {
     Phone: submission.phone.slice(0, 40),
     "Song Request": submission.songRequest.slice(0, 2000),
     Message: submission.message.slice(0, 5000),
+    // The price routines email whoever has these ticked, so no email means no subscription.
+    "Flight Price Emails": submission.flightEmails && !!submission.email,
+    "Stay Price Emails": submission.stayEmails && !!submission.email,
     "Updated At": now,
   };
   // Submitted At records the first response and is never overwritten on edits.

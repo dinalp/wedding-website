@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 
 export default function Home() {
@@ -39,6 +39,9 @@ export default function Home() {
   });
   const leftSlides = [3, 1, 2].map(slide);
   const rightSlides = [5, 4, 7].map(slide);
+  // Each panel is 50vw x 100vh and the photos are 2:3 portrait, so on screens
+  // narrower than 4:3 object-cover sizes them by height (100vh * 2/3), not width
+  const heroSizes = "(max-aspect-ratio: 4/3) 67vh, 50vw";
 
   return (
     <main className="bg-background">
@@ -72,6 +75,12 @@ export default function Home() {
               Itinerary
             </a>
             <a
+              href="#travel"
+              className="text-white/90 hover:text-white transition-colors drop-shadow-md"
+            >
+              Travel
+            </a>
+            <a
               href="#rsvp"
               className="text-white/90 hover:text-white transition-colors drop-shadow-md"
             >
@@ -90,32 +99,23 @@ export default function Home() {
             className="absolute left-0 top-0 w-1/2 h-full z-10"
           >
             <div className="relative w-full h-full overflow-hidden">
-              <AnimatePresence mode="wait">
-                {leftSlides.map(
-                  (slide, index) =>
-                    index === currentSlide && (
-                      <motion.div
-                        key={slide.id}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 1 }}
-                        className="absolute inset-0"
-                      >
-                        <Image
-                          src={slide.src}
-                          alt="Dinal and Shayani"
-                          fill
-                          priority={index === 0}
-                          sizes="50vw"
-                          className={`object-cover ${slide.position}`}
-                        />
-                      </motion.div>
-                    )
-                )}
-              </AnimatePresence>
+              {leftSlides.map((slide, index) => (
+                <Image
+                  key={slide.id}
+                  src={slide.src}
+                  alt="Dinal and Shayani"
+                  fill
+                  priority={index === 0}
+                  loading={index === 0 ? undefined : "eager"}
+                  sizes={heroSizes}
+                  quality={85}
+                  className={`object-cover ${slide.position} transition-opacity duration-1000 ${
+                    index === currentSlide ? "opacity-100 z-10" : "opacity-0 delay-1000"
+                  }`}
+                />
+              ))}
               {/* Subtle gradient overlay for text readability */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/20 pointer-events-none" />
+              <div className="absolute inset-0 z-20 bg-gradient-to-r from-transparent to-black/20 pointer-events-none" />
             </div>
           </motion.div>
 
@@ -125,32 +125,23 @@ export default function Home() {
             className="absolute right-0 top-0 w-1/2 h-full z-10"
           >
             <div className="relative w-full h-full overflow-hidden">
-              <AnimatePresence mode="wait">
-                {rightSlides.map(
-                  (slide, index) =>
-                    index === currentSlide && (
-                      <motion.div
-                        key={slide.id}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 1 }}
-                        className="absolute inset-0"
-                      >
-                        <Image
-                          src={slide.src}
-                          alt="Dinal and Shayani"
-                          fill
-                          priority={index === 0}
-                          sizes="50vw"
-                          className={`object-cover ${slide.position}`}
-                        />
-                      </motion.div>
-                    )
-                )}
-              </AnimatePresence>
+              {rightSlides.map((slide, index) => (
+                <Image
+                  key={slide.id}
+                  src={slide.src}
+                  alt="Dinal and Shayani"
+                  fill
+                  priority={index === 0}
+                  loading={index === 0 ? undefined : "eager"}
+                  sizes={heroSizes}
+                  quality={85}
+                  className={`object-cover ${slide.position} transition-opacity duration-1000 ${
+                    index === currentSlide ? "opacity-100 z-10" : "opacity-0 delay-1000"
+                  }`}
+                />
+              ))}
               {/* Subtle gradient overlay for text readability */}
-              <div className="absolute inset-0 bg-gradient-to-l from-transparent to-black/20 pointer-events-none" />
+              <div className="absolute inset-0 z-20 bg-gradient-to-l from-transparent to-black/20 pointer-events-none" />
             </div>
           </motion.div>
 
@@ -627,6 +618,63 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Travel Section */}
+      <section id="travel" className="py-16 md:py-32 px-4 md:px-8 bg-background">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center"
+          >
+            <p className="font-[family-name:var(--font-montserrat)] text-accent tracking-[0.2em] md:tracking-[0.3em] text-xs mb-4">
+              GETTING THERE
+            </p>
+            <h2 className="font-[family-name:var(--font-cormorant)] text-4xl md:text-6xl font-light text-charcoal">
+              Travel
+            </h2>
+            <div className="divider mx-auto mt-6" />
+            <p className="font-[family-name:var(--font-montserrat)] text-charcoal/70 mt-8 leading-relaxed max-w-2xl mx-auto">
+              We&rsquo;re keeping an eye on flight and accommodation prices so you
+              don&rsquo;t have to. Have a look at how they&rsquo;re moving, or tick
+              price updates on your RSVP to get them by email.
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 gap-4 md:gap-6 mt-12">
+            {[
+              {
+                href: "/flights",
+                title: "Flights",
+                body: "Sydney to Bali return fares for the wedding week, checked every morning.",
+              },
+              {
+                href: "/stays",
+                title: "Stays",
+                body: "Villas and hotels near Stone Villas, around A$100 per person per night or less.",
+              },
+            ].map((card) => (
+              <a
+                key={card.href}
+                href={card.href}
+                className="block bg-cream rounded-sm p-8 text-center border border-transparent hover:border-accent-light transition-colors"
+              >
+                <h3 className="font-[family-name:var(--font-cormorant)] text-3xl text-charcoal">
+                  {card.title}
+                </h3>
+                <p className="font-[family-name:var(--font-montserrat)] text-charcoal/60 text-sm mt-3 leading-relaxed">
+                  {card.body}
+                </p>
+                <span className="inline-block mt-6 font-[family-name:var(--font-montserrat)] text-accent tracking-[0.2em] text-xs">
+                  SEE PRICES &rarr;
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* RSVP Section */}
       <section id="rsvp" className="py-16 md:py-32 px-4 md:px-8 bg-charcoal">
         <div className="max-w-2xl mx-auto">
@@ -671,10 +719,6 @@ export default function Home() {
           </h3>
           <p className="font-[family-name:var(--font-montserrat)] text-white/50 tracking-[0.2em] text-xs">
             MAY 19–21, 2027 | ULUWATU, BALI
-          </p>
-          <div className="divider mx-auto mt-8 mb-8" />
-          <p className="font-[family-name:var(--font-montserrat)] text-white/30 text-xs">
-            Made with love from Sydney, Australia
           </p>
         </div>
       </footer>

@@ -74,6 +74,8 @@ function parseSubmission(body: unknown): RSVPSubmission | null {
     phone: str(b.phone, 40),
     songRequest: str(b.songRequest, 2000),
     message: str(b.message, 5000),
+    flightEmails: b.flightEmails === true,
+    stayEmails: b.stayEmails === true,
     members,
   };
 }

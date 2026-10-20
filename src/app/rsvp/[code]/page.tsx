@@ -51,6 +51,8 @@ export default function RSVPPage() {
   const [phone, setPhone] = useState("");
   const [songRequest, setSongRequest] = useState("");
   const [message, setMessage] = useState("");
+  const [flightEmails, setFlightEmails] = useState(false);
+  const [stayEmails, setStayEmails] = useState(false);
   const [expandedDietary, setExpandedDietary] = useState<Set<string>>(
     new Set()
   );
@@ -68,6 +70,8 @@ export default function RSVPPage() {
     setPhone(data.phone);
     setSongRequest(data.songRequest);
     setMessage(data.message);
+    setFlightEmails(data.flightEmails);
+    setStayEmails(data.stayEmails);
 
     // Open the dietary panel for anyone who already told us something.
     setExpandedDietary(
@@ -185,6 +189,8 @@ export default function RSVPPage() {
           phone,
           songRequest,
           message,
+          flightEmails,
+          stayEmails,
           members: members.map((m) => ({
             id: m.id,
             attending: m.attending,
@@ -634,6 +640,41 @@ export default function RSVPPage() {
             <p className="font-sans text-white/30 text-xs mt-2">
               So we can send you updates and your invite to the WDING guest app
             </p>
+
+            <fieldset className="mt-5 space-y-3">
+              <legend className="font-sans text-white/80 text-xs tracking-wider mb-3">
+                PRICE UPDATES <span className="text-white/30">(OPTIONAL)</span>
+              </legend>
+              <label className="flex items-start gap-3 font-sans text-white/70 text-sm cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={flightEmails}
+                  onChange={(e) => setFlightEmails(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--accent)]"
+                />
+                <span>
+                  Email me Sydney to Bali flight prices (weekly, plus alerts for
+                  big drops).{" "}
+                  <a href="/flights" target="_blank" className="underline text-white/50">
+                    See flights
+                  </a>
+                </span>
+              </label>
+              <label className="flex items-start gap-3 font-sans text-white/70 text-sm cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={stayEmails}
+                  onChange={(e) => setStayEmails(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--accent)]"
+                />
+                <span>
+                  Email me places to stay near the venue (weekly).{" "}
+                  <a href="/stays" target="_blank" className="underline text-white/50">
+                    See stays
+                  </a>
+                </span>
+              </label>
+            </fieldset>
           </motion.div>
 
           {/* Phone */}

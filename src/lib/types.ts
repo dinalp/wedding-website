@@ -23,6 +23,9 @@ export interface Party {
   phone: string;
   songRequest: string;
   message: string;
+  /** Opt-ins for the Bali Flight Watch / Uluwatu Stay Watch guest emails. */
+  flightEmails: boolean;
+  stayEmails: boolean;
   submittedAt: string | null;
   updatedAt: string | null;
 }
@@ -33,6 +36,8 @@ export interface RSVPSubmission {
   phone: string;
   songRequest: string;
   message: string;
+  flightEmails: boolean;
+  stayEmails: boolean;
   members: {
     id: string;
     attending: boolean;
