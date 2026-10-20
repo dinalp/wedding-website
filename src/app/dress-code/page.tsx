@@ -20,7 +20,7 @@ const EVENTS: { id: string; day: string; title: string; venue: string; code?: st
     day: "Wednesday 19 May",
     title: "Welcome Dinner",
     venue: "Stone Villas Uluwatu",
-    code: "Island semi-formal",
+    code: "Island semi-formal · Sarees welcome · Bright colours preferred",
     looks: [
       { label: "For her", src: "/photos/dress-code-2.jpg", alt: "Dress code inspiration: flowing printed and pastel island dresses" },
       { label: "For him", src: "/photos/dress-code-v2.jpg", alt: "Dress code inspiration: linen and patterned island shirts in earthy tones" },
