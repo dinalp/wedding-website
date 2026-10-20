@@ -108,7 +108,7 @@ export default function Home() {
                   priority={index === 0}
                   loading={index === 0 ? undefined : "eager"}
                   sizes={heroSizes}
-                  quality={85}
+                  quality={90}
                   className={`object-cover ${slide.position} transition-opacity duration-1000 ${
                     index === currentSlide ? "opacity-100 z-10" : "opacity-0 delay-1000"
                   }`}
@@ -134,7 +134,7 @@ export default function Home() {
                   priority={index === 0}
                   loading={index === 0 ? undefined : "eager"}
                   sizes={heroSizes}
-                  quality={85}
+                  quality={90}
                   className={`object-cover ${slide.position} transition-opacity duration-1000 ${
                     index === currentSlide ? "opacity-100 z-10" : "opacity-0 delay-1000"
                   }`}
@@ -262,6 +262,7 @@ export default function Home() {
               alt="Dinal and Shayani at dinner"
               fill
               sizes="(min-width: 672px) 672px, 100vw"
+              quality={85}
               className="object-cover"
             />
           </motion.div>
@@ -334,6 +335,7 @@ export default function Home() {
                 alt=""
                 fill
                 sizes="(min-width: 768px) 25vw, 50vw"
+                quality={85}
                 className="object-cover"
               />
             </div>

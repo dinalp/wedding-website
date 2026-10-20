@@ -88,6 +88,7 @@ export default function DressCodePage() {
                         alt={look.alt ?? `${e.title} dress code, ${look.label.toLowerCase()}`}
                         fill
                         sizes="(min-width: 768px) 480px, 100vw"
+                        quality={85}
                         className="object-cover"
                       />
                     </div>
