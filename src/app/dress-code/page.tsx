@@ -39,6 +39,7 @@ const EVENTS: { id: string; day: string; title: string; venue: string; code?: st
     day: "Friday 21 May",
     title: "Recovery Day",
     venue: "Venue to be confirmed",
+    code: "Beach casual",
     looks: [{ label: "For her" }, { label: "For him" }],
   },
 ];
