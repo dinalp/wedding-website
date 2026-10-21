@@ -28,7 +28,7 @@ const DAYS = [
     alt: "Green clifftops above the ocean at Uluwatu",
     body: "The moment we've all been waiting for. Join us as we exchange vows in a beautiful ceremony overlooking the cliffs of Uluwatu. Cocktail hour follows as the sun goes down, and then we celebrate with an evening reception filled with dinner, dancing, and memories to last a lifetime.",
     details: [
-      ["When", "4:00 PM onwards"],
+      ["When", "Ceremony begins at 4:30 PM, please arrive at 4:00 PM"],
       ["Where", "Stone Villas Uluwatu"],
       ["What", "Ceremony, cocktail hour, then the reception"],
     ],

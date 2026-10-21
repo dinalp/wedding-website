@@ -14,7 +14,7 @@ const EVENTS = [
   {
     key: "welcomeDinner" as const,
     label: "Welcome Dinner",
-    detail: "May 19 · 7:00 PM",
+    detail: "May 19 · 4:00 PM",
     description: "Intimate dinner to kick off the celebrations",
   },
   {
@@ -159,12 +159,7 @@ export default function RSVPPage() {
       const next = new Set(prev);
       if (next.has(memberId)) {
         next.delete(memberId);
-        // Collapsing means "no requirements", so clear what was entered.
-        setMembers((prevMembers) =>
-          prevMembers.map((m) =>
-            m.id === memberId ? { ...m, dietary: [], dietaryNotes: "" } : m
-          )
-        );
+        // Closing the section preserves dietary selections and notes.
       } else {
         next.add(memberId);
       }
