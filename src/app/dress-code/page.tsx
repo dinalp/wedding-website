@@ -39,7 +39,7 @@ const EVENTS: { id: string; day: string; title: string; venue: string; code?: st
     day: "Friday 21 May",
     title: "Recovery Day",
     venue: "Venue to be confirmed",
-    code: "Boat party vibes – light, breezy, and easy to move in. Save your sarees for the welcome dinner and wedding!",
+    code: "Boat party vibes – light, breezy, and easy to move in. Save your sarees for the wedding!",
     looks: [{ label: "For her" }, { label: "For him" }],
   },
 ];
