@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { Fragment, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion, useScroll } from "framer-motion";
@@ -89,76 +89,91 @@ export default function Schedule() {
 
           <ol ref={listRef} className="relative space-y-20 md:space-y-32">
             {DAYS.map((day, i) => (
-              <li
-                key={day.date}
-                className="relative grid md:grid-cols-2 gap-8 md:gap-24 items-center"
-              >
-                <span
-                  aria-hidden
-                  className="hidden md:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-accent ring-8 ring-cream"
-                />
+              <Fragment key={day.date}>
+                <li className="relative grid md:grid-cols-2 gap-8 md:gap-24 items-center">
+                  <span
+                    aria-hidden
+                    className="hidden md:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-accent ring-8 ring-cream"
+                  />
 
-                <div
-                  className={`relative w-full max-w-sm mx-auto ${i % 2 ? "md:order-2" : ""}`}
-                >
-                  <div className="relative aspect-[4/5] rounded-t-full overflow-hidden shadow-[0_30px_60px_-30px_rgba(42,51,24,0.45)]">
-                    <Image
-                      src={day.photo}
-                      alt={day.alt}
-                      fill
-                      sizes="(min-width: 768px) 384px, 100vw"
-                      quality={85}
-                      className="object-cover"
-                    />
-                  </div>
-                </div>
-
-                <div className={i % 2 ? "md:order-1" : ""}>
                   <div
-                    className="flex items-end gap-4"
+                    className={`relative w-full max-w-sm mx-auto ${i % 2 ? "md:order-2" : ""}`}
                   >
-                    <span className="font-[family-name:var(--font-cormorant)] font-light text-accent text-[6.5rem] md:text-[9rem] leading-[0.75]">
-                      {day.date}
-                    </span>
-                    <span className="font-[family-name:var(--font-montserrat)] text-charcoal/60 text-sm leading-snug pb-1">
-                      {day.weekday}
-                      <br />
-                      May 2027
-                    </span>
+                    <div className="relative aspect-[4/5] rounded-t-full overflow-hidden shadow-[0_30px_60px_-30px_rgba(42,51,24,0.45)]">
+                      <Image
+                        src={day.photo}
+                        alt={day.alt}
+                        fill
+                        sizes="(min-width: 768px) 384px, 100vw"
+                        quality={85}
+                        className="object-cover"
+                      />
+                    </div>
                   </div>
 
-                  <h3 className="font-[family-name:var(--font-cormorant)] text-4xl md:text-5xl text-charcoal mt-12 md:mt-14">
-                    {day.title}
-                  </h3>
-                  <p className="font-[family-name:var(--font-montserrat)] text-charcoal/70 leading-relaxed mt-4">
-                    {day.body}
-                  </p>
+                  <div className={i % 2 ? "md:order-1" : ""}>
+                    <div className="flex items-end gap-4">
+                      <span className="font-[family-name:var(--font-cormorant)] font-light text-accent text-[6.5rem] md:text-[9rem] leading-[0.75]">
+                        {day.date}
+                      </span>
+                      <span className="font-[family-name:var(--font-montserrat)] text-charcoal/60 text-sm leading-snug pb-1">
+                        {day.weekday}
+                        <br />
+                        May 2027
+                      </span>
+                    </div>
 
-                  <dl className="mt-8 border-t border-charcoal/10 font-[family-name:var(--font-montserrat)] text-sm">
-                    {[...day.details, ["Wear", day.wear] as const].map(
-                      ([label, value]) => (
-                        <div
-                          key={label}
-                          className="flex gap-6 py-3 border-b border-charcoal/10"
-                        >
-                          <dt className="w-14 shrink-0 text-accent">{label}</dt>
-                          <dd className="text-charcoal">
-                            {value}
-                            {label === "Wear" && (
-                              <Link
-                                href={`/dress-code#${day.dressCode}`}
-                                className="ml-3 text-accent underline underline-offset-4 decoration-accent/40 hover:decoration-accent"
-                              >
-                                See the dress code
-                              </Link>
-                            )}
-                          </dd>
-                        </div>
-                      ),
-                    )}
-                  </dl>
-                </div>
-              </li>
+                    <h3 className="font-[family-name:var(--font-cormorant)] text-4xl md:text-5xl text-charcoal mt-12 md:mt-14">
+                      {day.title}
+                    </h3>
+                    <p className="font-[family-name:var(--font-montserrat)] text-charcoal/70 leading-relaxed mt-4">
+                      {day.body}
+                    </p>
+
+                    <dl className="mt-8 border-t border-charcoal/10 font-[family-name:var(--font-montserrat)] text-sm">
+                      {[...day.details, ["Wear", day.wear] as const].map(
+                        ([label, value]) => (
+                          <div
+                            key={label}
+                            className="flex gap-6 py-3 border-b border-charcoal/10"
+                          >
+                            <dt className="w-14 shrink-0 text-accent">
+                              {label}
+                            </dt>
+                            <dd className="text-charcoal">
+                              {value}
+                              {label === "Wear" && (
+                                <Link
+                                  href={`/dress-code#${day.dressCode}`}
+                                  className="ml-3 text-accent underline underline-offset-4 decoration-accent/40 hover:decoration-accent"
+                                >
+                                  See the dress code
+                                </Link>
+                              )}
+                            </dd>
+                          </div>
+                        ),
+                      )}
+                    </dl>
+                  </div>
+                </li>
+                {day.date === "20" && (
+                  <li className="relative z-10 mx-auto max-w-sm rounded-t-full bg-charcoal px-8 pt-20 pb-10 text-center shadow-[0_30px_60px_-30px_rgba(42,51,24,0.6)]">
+                    <p className="font-[family-name:var(--font-montserrat)] text-accent-light text-sm">
+                      Thursday night
+                    </p>
+                    <h3 className="font-[family-name:var(--font-cormorant)] text-4xl md:text-5xl text-white mt-2">
+                      After Party
+                    </h3>
+                    <dl className="mt-6 font-[family-name:var(--font-montserrat)] text-sm text-white/80 space-y-1">
+                      <dt className="sr-only">When</dt>
+                      <dd>From 11:00 PM</dd>
+                      <dt className="sr-only">Where</dt>
+                      <dd>The underground party bunker at Stone Villas</dd>
+                    </dl>
+                  </li>
+                )}
+              </Fragment>
             ))}
           </ol>
         </div>
