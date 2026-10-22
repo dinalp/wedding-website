@@ -4,6 +4,7 @@ import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion, useScroll } from "framer-motion";
+import { MapLinks } from "./map-links";
 
 const DAYS = [
   {
@@ -158,6 +159,9 @@ export default function Schedule() {
                         <dt className="w-14 shrink-0 text-accent">{label}</dt>
                         <dd className="text-charcoal">
                           {value}
+                          {label === "Where" && value.includes("Stone Villas") && (
+                            <MapLinks className="block mt-1" />
+                          )}
                           {label === "Wear" && (
                             <Link
                               href={`/dress-code#${day.dressCode}`}

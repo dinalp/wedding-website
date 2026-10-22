@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { PageHeader } from "@/components/travel";
+import { MapLinks } from "@/components/map-links";
 
 export const metadata: Metadata = {
   title: "Dress Code | Dinal & Shayani",
@@ -75,6 +76,11 @@ export default function DressCodePage() {
               {e.venue}
               {e.code && <> · {e.code}</>}
             </p>
+            {e.venue.includes("Stone Villas") && (
+              <p className="font-sans text-sm mt-1">
+                <MapLinks />
+              </p>
+            )}
             <div className="grid md:grid-cols-2 gap-6 mt-6">
               {e.looks.map((look) => (
                 <div key={look.label}>
