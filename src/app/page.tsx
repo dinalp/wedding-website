@@ -418,6 +418,64 @@ export default function Home() {
             </p>
           </motion.div>
 
+          {/* How long to stay */}
+          <div className="mt-12">
+            <h3 className="font-[family-name:var(--font-cormorant)] text-3xl md:text-4xl font-light text-charcoal text-center">
+              How long to stay
+            </h3>
+            <div className="grid md:grid-cols-3 gap-4 md:gap-6 mt-8">
+              {[
+                {
+                  title: "The full week",
+                  note: "Our pick",
+                  dates: "Sat 15 to Sun 23 May",
+                  body: "Fly in the weekend before (or Monday at the latest) and stay until the following Sunday. Time to settle in, explore Bali and recover after the celebrations.",
+                  leave: "5 days of leave",
+                },
+                {
+                  title: "Comfortable",
+                  dates: "Tue 18 to Sun 23 May",
+                  body: "Arrive the day before the welcome dinner so you're rested, and fly home on Sunday.",
+                  leave: "4 days of leave",
+                },
+                {
+                  title: "Bare minimum",
+                  dates: "Wed 19 to Sat 22 May",
+                  body: "Fly in on Wednesday morning in time for the welcome dinner, and fly home on Saturday after the recovery day.",
+                  leave: "3 days of leave",
+                },
+              ].map((plan) => (
+                <div
+                  key={plan.title}
+                  className={`flex flex-col rounded-sm p-6 md:p-8 ${plan.note ? "bg-accent text-white" : "bg-cream text-charcoal"}`}
+                >
+                  <div className="flex items-baseline justify-between gap-3">
+                    <h4 className="font-[family-name:var(--font-cormorant)] text-2xl">{plan.title}</h4>
+                    {plan.note && (
+                      <span className="font-[family-name:var(--font-montserrat)] text-[11px] bg-white/15 rounded-full px-3 py-1">
+                        {plan.note}
+                      </span>
+                    )}
+                  </div>
+                  <p className="font-[family-name:var(--font-montserrat)] text-sm font-medium mt-2">{plan.dates}</p>
+                  <p
+                    className={`font-[family-name:var(--font-montserrat)] text-sm leading-relaxed mt-4 mb-4 ${plan.note ? "text-white/80" : "text-charcoal/70"}`}
+                  >
+                    {plan.body}
+                  </p>
+                  <p
+                    className={`font-[family-name:var(--font-montserrat)] text-sm mt-auto pt-4 border-t ${plan.note ? "border-white/20" : "border-charcoal/10"}`}
+                  >
+                    {plan.leave}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <p className="font-[family-name:var(--font-montserrat)] text-sm text-charcoal/60 mt-6 text-center leading-relaxed">
+              The full week costs just five days off work, and it&rsquo;s the way we&rsquo;d love to spend it with you.
+            </p>
+          </div>
+
           <div className="grid md:grid-cols-2 gap-4 md:gap-6 mt-12">
             {[
               {

@@ -44,8 +44,8 @@ export default async function FlightsPage() {
           Flights
         </h1>
         <p className="font-sans text-charcoal/70 mt-4 max-w-2xl leading-relaxed">
-          We check return economy fares every morning for the wedding week. Our ideal trip is
-          Tue 18 May to Sun 23 May 2027.
+          We check return economy fares every morning for the wedding week. We suggest flying
+          in Tue 18 May and home Sun 23 May 2027, or making a week of it from Sat 15 May.
         </p>
 
         {!latest || !priced ? (
