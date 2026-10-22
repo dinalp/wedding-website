@@ -9,7 +9,15 @@ export const metadata: Metadata = {
   description: "Places to stay near Stone Villas, Uluwatu, with prices tracked twice a week",
 };
 
-const CATEGORIES = ["Couples", "Families", "Groups", "Big group villa"];
+// Grouped by how many the stay sleeps, not the routine's category, so group sizes are consistent.
+const SIZES = [
+  { label: "Couples", max: 2 },
+  { label: "Families", max: 4 },
+  { label: "Groups of 5 to 10", max: 10 },
+  { label: "Groups of more than 10", max: Infinity },
+];
+const sizeGroup = (s: Stay) =>
+  s.sleeps == null ? s.category : SIZES.find((g) => s.sleeps! <= g.max)!.label;
 
 export default async function StaysPage() {
   let stays: Stay[] = [];
@@ -22,14 +30,12 @@ export default async function StaysPage() {
   const first = trend[0];
   const latest = trend.at(-1);
   const current = latest ? stays.filter((s) => s.date === latest.date) : [];
-  const groups = [
-    ...CATEGORIES,
-    ...new Set(current.map((s) => s.category).filter((c) => !CATEGORIES.includes(c))),
-  ]
+  const labels = SIZES.map((g) => g.label);
+  const groups = [...labels, ...new Set(current.map(sizeGroup).filter((l) => !labels.includes(l)))]
     .map((cat) => ({
       cat,
       items: current
-        .filter((s) => s.category === cat)
+        .filter((s) => sizeGroup(s) === cat)
         .sort((a, b) => (a.perPerson ?? Infinity) - (b.perPerson ?? Infinity)),
     }))
     .filter((g) => g.items.length);
@@ -89,33 +95,51 @@ export default async function StaysPage() {
                       href={s.link || undefined}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block bg-white rounded-sm p-5 border border-transparent hover:border-accent-light transition-colors"
+                      className="block bg-white rounded-sm overflow-hidden border border-transparent hover:border-accent-light transition-colors"
                     >
-                      <div className="flex justify-between gap-4">
-                        <h3 className="font-sans text-charcoal font-medium">{s.property}</h3>
-                        {s.perPerson != null && (
-                          <p className="font-sans text-charcoal whitespace-nowrap">
-                            {aud(s.perPerson)}
-                            <span className="text-charcoal/50 text-xs"> pp/night</span>
+                      <div className="aspect-[3/2] bg-cream flex items-center justify-center">
+                        {!s.image && (
+                          <p className="font-sans text-xs tracking-wider text-charcoal/40">PHOTO COMING SOON</p>
+                        )}
+                        {s.image && (
+                          // Photos are hotlinked from the listing sites; alt="" keeps a broken one invisible.
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={s.image}
+                            alt=""
+                            loading="lazy"
+                            referrerPolicy="no-referrer"
+                            className="w-full h-full object-cover"
+                          />
+                        )}
+                      </div>
+                      <div className="p-5">
+                        <div className="flex justify-between gap-4">
+                          <h3 className="font-sans text-charcoal font-medium">{s.property}</h3>
+                          {s.perPerson != null && (
+                            <p className="font-sans text-charcoal whitespace-nowrap">
+                              {aud(s.perPerson)}
+                              <span className="text-charcoal/50 text-xs"> pp/night</span>
+                            </p>
+                          )}
+                        </div>
+                        <p className="font-sans text-xs text-charcoal/60 mt-2 leading-relaxed">
+                          {[
+                            s.area,
+                            s.sleeps && `sleeps ${s.sleeps}`,
+                            s.nightly != null && `${aud(s.nightly)}/night total`,
+                            s.rating,
+                            s.platform !== "Other" && s.platform,
+                          ]
+                            .filter(Boolean)
+                            .join(" · ")}
+                        </p>
+                        {s.estimate && (
+                          <p className="font-sans text-[11px] text-[#c2703d] mt-2">
+                            Estimated rate, confirm when booking
                           </p>
                         )}
                       </div>
-                      <p className="font-sans text-xs text-charcoal/60 mt-2 leading-relaxed">
-                        {[
-                          s.area,
-                          s.sleeps && `sleeps ${s.sleeps}`,
-                          s.nightly != null && `${aud(s.nightly)}/night total`,
-                          s.rating,
-                          s.platform !== "Other" && s.platform,
-                        ]
-                          .filter(Boolean)
-                          .join(" · ")}
-                      </p>
-                      {s.estimate && (
-                        <p className="font-sans text-[11px] text-[#c2703d] mt-2">
-                          Estimated rate, confirm when booking
-                        </p>
-                      )}
                     </a>
                   ))}
                 </div>

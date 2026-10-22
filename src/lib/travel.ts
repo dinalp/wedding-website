@@ -87,6 +87,7 @@ export interface Stay {
   rating: string;
   platform: string;
   link: string;
+  image: string;
   estimate: boolean;
 }
 
@@ -101,6 +102,7 @@ interface StayFields {
   Rating?: string;
   Platform?: string;
   Link?: string;
+  Image?: string;
   Estimate?: boolean;
 }
 
@@ -116,6 +118,7 @@ export async function getStays(): Promise<Stay[]> {
     "Rating",
     "Platform",
     "Link",
+    "Image",
     "Estimate",
   ]);
   return rows
@@ -131,6 +134,7 @@ export async function getStays(): Promise<Stay[]> {
       rating: f.Rating ?? "",
       platform: f.Platform ?? "",
       link: f.Link ?? "",
+      image: f.Image ?? "",
       estimate: f.Estimate === true,
     }));
 }
