@@ -200,6 +200,12 @@ export default function Home() {
                 ULUWATU, BALI
               </p>
             </div>
+            <a
+              href="/rsvp"
+              className="inline-block mt-8 md:mt-10 bg-accent hover:bg-accent-dark text-white font-[family-name:var(--font-montserrat)] tracking-[0.2em] text-xs px-12 py-4 rounded-sm transition-colors"
+            >
+              RSVP NOW
+            </a>
           </motion.div>
 
           {/* Initial overlay text - positioned over the photos */}
