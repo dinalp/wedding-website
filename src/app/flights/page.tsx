@@ -31,7 +31,9 @@ export default async function FlightsPage() {
     (best, c) => (best && best.cheapest! <= c.cheapest! ? best : c),
     null
   );
-  const weekAgo = checks.findLast((c) => latest && c.date <= offsetDate(latest.date, -7));
+  // Some days the routine finds no fare for the wedding dates; show the most recent day that did.
+  const priced = floors.at(-1);
+  const weekAgo = floors.findLast((c) => priced && c.date <= offsetDate(priced.date, -7));
 
   return (
     <main className="min-h-screen bg-background">
@@ -46,21 +48,19 @@ export default async function FlightsPage() {
           Mon 17 or Tue 18 May 2027 and fly home Sat 22 or Sun 23 May.
         </p>
 
-        {!latest ? (
+        {!latest || !priced ? (
           <p className="font-sans text-charcoal/60 mt-10">
             Prices aren&rsquo;t available right now. Please check back soon.
           </p>
         ) : (
           <>
             <div className="grid sm:grid-cols-3 gap-4 mt-10">
-              <Stat label="Cheapest return today" value={latest.cheapest != null ? aud(latest.cheapest) : "n/a"}>
-                {latest.cheapestAirline}
-                {weekAgo?.cheapest != null && latest.cheapest != null && (
-                  <> · {change(latest.cheapest - weekAgo.cheapest)} vs last week</>
-                )}
+              <Stat label="Cheapest return" value={aud(priced.cheapest!)}>
+                {priced.cheapestAirline}
+                {weekAgo && <> · {change(priced.cheapest! - weekAgo.cheapest!)} vs last week</>}
               </Stat>
-              <Stat label="Direct, full service" value={latest.fullService != null ? aud(latest.fullService) : "n/a"}>
-                {tidy(latest.fullServiceAirline)}
+              <Stat label="Direct, full service" value={priced.fullService != null ? aud(priced.fullService) : "n/a"}>
+                {tidy(priced.fullServiceAirline)}
               </Stat>
               <Stat label="Our take" value={SIGNAL_TEXT[latest.signal] ?? latest.signal}>
                 {lowest && <>Lowest seen: {aud(lowest.cheapest!)} on {shortDate(lowest.date)}</>}
@@ -79,8 +79,22 @@ export default async function FlightsPage() {
 
             <div className="font-sans text-sm text-charcoal/70 mt-6 space-y-2 leading-relaxed">
               <p>
-                <span className="text-charcoal">Today&rsquo;s cheapest dates:</span> {tidy(latest.cheapestDates)}
+                <span className="text-charcoal">Cheapest dates:</span> {tidy(priced.cheapestDates)}
               </p>
+              <a
+                href={bookingUrl(tidy(priced.cheapestDates))}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block font-sans text-xs tracking-wider text-white bg-accent hover:bg-accent/90 transition-colors px-5 py-3 rounded-full"
+              >
+                SEARCH THESE FLIGHTS ON SKYSCANNER
+              </a>
+              {priced !== latest && (
+                <p className="text-xs text-charcoal/60">
+                  Our latest check on {shortDate(latest.date)} found no fares for the wedding dates, so
+                  these prices are from {shortDate(priced.date)}.
+                </p>
+              )}
               {latest.sale && (
                 <details>
                   <summary className="cursor-pointer text-charcoal">Fare sales we&rsquo;re watching</summary>
@@ -105,6 +119,16 @@ function offsetDate(iso: string, days: number) {
   const d = new Date(`${iso}T00:00:00Z`);
   d.setUTCDate(d.getUTCDate() + days);
   return d.toISOString().slice(0, 10);
+}
+
+// ponytail: assumes the dates are in 2027 (the wedding year); falls back to the route page if they don't parse.
+function bookingUrl(dates: string) {
+  const months = "JanFebMarAprMayJunJulAugSepOctNovDec";
+  const [out, back] = [...dates.matchAll(/(\d{1,2}) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)/g)].map(
+    ([, d, m]) => `27${String(months.indexOf(m) / 3 + 1).padStart(2, "0")}${d.padStart(2, "0")}`
+  );
+  const path = out && back ? `${out}/${back}/` : "";
+  return `https://www.skyscanner.com.au/transport/flights/syd/dps/${path}?adultsv2=1&cabinclass=economy`;
 }
 
 function change(diff: number) {
