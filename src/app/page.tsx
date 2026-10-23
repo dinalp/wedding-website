@@ -430,13 +430,13 @@ export default function Home() {
                   note: "Our pick",
                   dates: "Sat 15 to Sun 23 May",
                   body: "Fly in the weekend before (or Monday at the latest) and stay until the following Sunday. Time to settle in, explore Bali and recover after the celebrations.",
-                  leave: "5 days of leave (or 5 sick days, we won't tell)",
+                  leave: "5 days of leave",
                 },
                 {
                   title: "Comfortable",
                   dates: "Tue 18 to Sun 23 May",
                   body: "Arrive the day before the welcome dinner so you're rested, and fly home on Sunday.",
-                  leave: "4 days of leave (or 4 sudden sick days)",
+                  leave: "4 days of leave",
                 },
                 {
                   title: "Bare minimum",
