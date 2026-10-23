@@ -209,5 +209,10 @@ export async function getFlightOptions(): Promise<FlightOption[]> {
       details: f.Details ?? "",
       link: f.Link ?? "",
     }))
+    .filter((o, i, all) => {
+      // The routine and the Google Flights lookup can log the same fare; show it once.
+      const key = (x: FlightOption) => [x.airline, x.from, x.depart, x.return, x.price, x.stops].join("|");
+      return all.findIndex((x) => key(x) === key(o)) === i;
+    })
     .sort((a, b) => (a.price ?? Infinity) - (b.price ?? Infinity));
 }

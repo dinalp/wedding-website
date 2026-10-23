@@ -40,7 +40,7 @@ export async function GET(req: Request) {
   // Already ran today (e.g. a retry): don't spend more searches, just refresh the page.
   const existing = await at<{ records: unknown[] }>(FLIGHT_OPTIONS, {
     query: {
-      filterByFormula: `AND({Check Date}='${today}', FIND('Google Flights', {Details}))`,
+      filterByFormula: `AND(DATETIME_FORMAT({Check Date}, 'YYYY-MM-DD')='${today}', FIND('Google Flights', {Details}))`,
       maxRecords: "1",
     },
   });
