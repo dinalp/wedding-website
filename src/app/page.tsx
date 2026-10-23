@@ -413,13 +413,61 @@ export default function Home() {
             <div className="divider mx-auto mt-6" />
             <p className="font-[family-name:var(--font-montserrat)] text-charcoal/70 mt-8 leading-relaxed max-w-2xl mx-auto">
               We&rsquo;re keeping an eye on flight and accommodation prices so you
-              don&rsquo;t have to. Have a look at how they&rsquo;re moving, or tick
-              price updates on your RSVP to get them by email.
+              don&rsquo;t have to, and we&rsquo;ve put together a guide to getting around
+              once you land.
             </p>
           </motion.div>
 
+          <div className="grid md:grid-cols-3 gap-4 md:gap-6 mt-12">
+            {[
+              {
+                href: "/flights",
+                title: "Flights",
+                body: "Sydney to Bali fares, checked every morning",
+                photo: "/photos/bali-v2-3.jpg",
+              },
+              {
+                href: "/stays",
+                title: "Stays",
+                body: "Villas and hotels near the venue, with photos and prices",
+                photo: "/photos/bali-v2-2.jpg",
+              },
+              {
+                href: "/getting-around",
+                title: "Getting around",
+                body: "How to use Grab and Gojek for rides and food",
+                photo: "/photos/bali-v2-1.jpg",
+              },
+            ].map((card) => (
+              <a
+                key={card.href}
+                href={card.href}
+                className="group relative block aspect-[4/5] md:aspect-[3/4] rounded-sm overflow-hidden"
+              >
+                <Image
+                  src={card.photo}
+                  alt=""
+                  fill
+                  sizes="(min-width: 768px) 300px, 100vw"
+                  quality={85}
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 p-6 text-white">
+                  <h3 className="font-[family-name:var(--font-cormorant)] text-4xl">{card.title}</h3>
+                  <p className="font-[family-name:var(--font-montserrat)] text-white/80 text-sm mt-2 leading-relaxed">
+                    {card.body}
+                  </p>
+                  <span className="inline-block mt-4 font-[family-name:var(--font-montserrat)] tracking-[0.2em] text-xs border-b border-white/50 pb-1 group-hover:border-white">
+                    OPEN &rarr;
+                  </span>
+                </div>
+              </a>
+            ))}
+          </div>
+
           {/* How long to stay */}
-          <div className="mt-12">
+          <div className="mt-16 md:mt-24">
             <h3 className="font-[family-name:var(--font-cormorant)] text-3xl md:text-4xl font-light text-charcoal text-center">
               How long to stay
             </h3>
@@ -476,109 +524,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-4 md:gap-6 mt-12">
-            {[
-              {
-                href: "/flights",
-                title: "Flights",
-                body: "Sydney to Bali return fares for the wedding week, checked every morning.",
-              },
-              {
-                href: "/stays",
-                title: "Stays",
-                body: "Villas and hotels near Stone Villas, around A$100 per person per night or less.",
-              },
-            ].map((card) => (
-              <a
-                key={card.href}
-                href={card.href}
-                className="block bg-cream rounded-sm p-8 text-center border border-transparent hover:border-accent-light transition-colors"
-              >
-                <h3 className="font-[family-name:var(--font-cormorant)] text-3xl text-charcoal">
-                  {card.title}
-                </h3>
-                <p className="font-[family-name:var(--font-montserrat)] text-charcoal/60 text-sm mt-3 leading-relaxed">
-                  {card.body}
-                </p>
-                <span className="inline-block mt-6 font-[family-name:var(--font-montserrat)] text-accent tracking-[0.2em] text-xs">
-                  SEE PRICES &rarr;
-                </span>
-              </a>
-            ))}
-          </div>
 
-          {/* Getting around: Grab and Gojek */}
-          <div className="mt-20 md:mt-28">
-            <div className="text-center">
-              <h3 className="font-[family-name:var(--font-cormorant)] text-3xl md:text-5xl font-light text-charcoal">
-                Getting around Bali
-              </h3>
-              <p className="font-[family-name:var(--font-montserrat)] text-charcoal/70 mt-6 leading-relaxed max-w-2xl mx-auto">
-                There&rsquo;s no Uber in Bali. Everyone uses <strong className="font-medium text-charcoal">Grab</strong>{" "}
-                and <strong className="font-medium text-charcoal">Gojek</strong>, two apps that do rides and food
-                delivery. We highly recommend downloading both before you fly: they&rsquo;re the easiest and
-                cheapest way to get around, and to eat in.
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-4 md:gap-6 mt-10">
-              {[
-                {
-                  title: "Scooter taxi",
-                  apps: "GrabBike · GoRide",
-                  body: "You ride on the back of a scooter. Drivers wear the app's green jacket and hand you a helmet. The quickest way through traffic, best for one person with a small bag.",
-                  price: "Short trips around Uluwatu: about IDR 15,000 to 40,000 (A$1.50 to A$4)",
-                },
-                {
-                  title: "Car",
-                  apps: "GrabCar · GoCar",
-                  body: "A regular air-conditioned car, often a seven-seater like a Toyota Avanza. Best for groups, kids, luggage and dressed-up nights out.",
-                  price: "Around Uluwatu: about IDR 50,000 to 150,000 (A$5 to A$15). Airport to Uluwatu: about IDR 200,000 to 350,000 (A$20 to A$35)",
-                },
-                {
-                  title: "Food delivery",
-                  apps: "GrabFood · GoFood",
-                  body: "Order from local warungs, cafes and even supermarkets straight to your villa. Perfect for a slow recovery-day breakfast.",
-                  price: "Delivery fees are usually under A$2",
-                },
-              ].map((c) => (
-                <div key={c.title} className="bg-cream rounded-sm p-6 md:p-8">
-                  <h4 className="font-[family-name:var(--font-cormorant)] text-2xl text-charcoal">{c.title}</h4>
-                  <p className="font-[family-name:var(--font-montserrat)] text-accent text-xs mt-1">{c.apps}</p>
-                  <p className="font-[family-name:var(--font-montserrat)] text-charcoal/70 text-sm mt-4 leading-relaxed">
-                    {c.body}
-                  </p>
-                  <p className="font-[family-name:var(--font-montserrat)] text-charcoal text-sm mt-4 leading-relaxed">
-                    {c.price}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-8 md:gap-12 mt-10 font-[family-name:var(--font-montserrat)] text-sm text-charcoal/70 leading-relaxed">
-              <div>
-                <h4 className="font-[family-name:var(--font-cormorant)] text-2xl text-charcoal mb-3">How to book a ride</h4>
-                <ol className="list-decimal pl-5 space-y-2">
-                  <li>Download Grab and Gojek and sign up with your Australian mobile number before you leave home.</li>
-                  <li>Add a card, or choose cash and carry small notes.</li>
-                  <li>Enter where you are and where you&rsquo;re going, then pick bike or car. You&rsquo;ll see the price before you book.</li>
-                  <li>Check the number plate and driver photo in the app match before you hop in.</li>
-                </ol>
-              </div>
-              <div>
-                <h4 className="font-[family-name:var(--font-cormorant)] text-2xl text-charcoal mb-3">Why we recommend them</h4>
-                <ul className="list-disc pl-5 space-y-2">
-                  <li>The price is fixed upfront, so there&rsquo;s no haggling and no surprises.</li>
-                  <li>Every trip is tracked and drivers are rated, so you know who&rsquo;s picking you up.</li>
-                  <li>Prices jump around sunset (roughly 3 to 6 PM) when Uluwatu traffic peaks, so leave a little earlier.</li>
-                  <li>A few spots, including the airport, have local taxi zones where app drivers can&rsquo;t pick up. Follow the signs to the app pickup point or walk a short way out.</li>
-                </ul>
-              </div>
-            </div>
-            <p className="font-[family-name:var(--font-montserrat)] text-xs text-charcoal/50 mt-8 text-center">
-              Prices are approximate and change with demand. The app always shows the exact fare before you book.
-            </p>
-          </div>
         </div>
       </section>
 

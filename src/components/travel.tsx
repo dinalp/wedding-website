@@ -8,19 +8,20 @@ export const shortDate = (iso: string) =>
 const TABS = [
   { href: "/flights", label: "Flights" },
   { href: "/stays", label: "Stays" },
+  { href: "/getting-around", label: "Getting Around" },
   { href: "/dress-code", label: "Dress Code" },
 ] as const;
 
 export function PageHeader({ active }: { active: (typeof TABS)[number]["href"] }) {
   return (
-    <header className="px-4 md:px-8 py-6 max-w-5xl mx-auto flex items-center justify-between">
+    <header className="px-4 md:px-8 py-6 max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-y-3">
       <Link
         href="/"
         className="font-[family-name:var(--font-cormorant)] text-xl tracking-widest text-charcoal"
       >
         D &amp; S
       </Link>
-      <nav className="flex gap-1 bg-cream rounded-sm p-1 font-sans text-[11px] md:text-xs tracking-wider">
+      <nav className="flex gap-1 bg-cream rounded-sm p-1 font-sans text-[11px] md:text-xs tracking-wider max-w-full overflow-x-auto">
         {TABS.map((t) => (
           <Link
             key={t.href}

@@ -179,6 +179,18 @@ export default function Schedule() {
             ))}
           </ol>
         </div>
+
+        <div className="text-center mt-20 md:mt-32">
+          <p className="font-[family-name:var(--font-cormorant)] text-3xl md:text-4xl text-charcoal">
+            Ready to RSVP?
+          </p>
+          <Link
+            href="/rsvp"
+            className="inline-block mt-6 bg-accent hover:bg-accent-dark text-white font-[family-name:var(--font-montserrat)] tracking-[0.2em] text-xs px-12 py-4 rounded-sm transition-colors"
+          >
+            RSVP NOW
+          </Link>
+        </div>
       </div>
     </section>
   );
