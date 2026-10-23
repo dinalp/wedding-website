@@ -430,19 +430,19 @@ export default function Home() {
                   note: "Our pick",
                   dates: "Sat 15 to Sun 23 May",
                   body: "Fly in the weekend before (or Monday at the latest) and stay until the following Sunday. Time to settle in, explore Bali and recover after the celebrations.",
-                  leave: "5 days of leave",
+                  leave: "5 days of leave (or 5 sick days, we won't tell)",
                 },
                 {
                   title: "Comfortable",
                   dates: "Tue 18 to Sun 23 May",
                   body: "Arrive the day before the welcome dinner so you're rested, and fly home on Sunday.",
-                  leave: "4 days of leave",
+                  leave: "4 days of leave (or 4 sudden sick days)",
                 },
                 {
                   title: "Bare minimum",
                   dates: "Wed 19 to Sat 22 May",
                   body: "Fly in on Wednesday morning in time for the welcome dinner, and fly home on Saturday after the recovery day.",
-                  leave: "3 days of leave",
+                  leave: "3 days of leave (or 3 very convincing sick days)",
                 },
               ].map((plan) => (
                 <div
