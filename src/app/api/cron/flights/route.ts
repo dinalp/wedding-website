@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import { at } from "@/lib/airtable";
 
 // Runs daily via vercel.json. Looks up Google Flights (through SerpApi) for each suggested trip
@@ -35,6 +36,18 @@ export async function GET(req: Request) {
   if (!key) return new Response("SERPAPI_KEY is not set", { status: 500 });
 
   const today = new Date().toLocaleDateString("en-CA", { timeZone: "Australia/Sydney" });
+
+  // Already ran today (e.g. a retry): don't spend more searches, just refresh the page.
+  const existing = await at<{ records: unknown[] }>(FLIGHT_OPTIONS, {
+    query: {
+      filterByFormula: `AND({Check Date}='${today}', FIND('Google Flights', {Details}))`,
+      maxRecords: "1",
+    },
+  });
+  if (existing.records.length) {
+    revalidatePath("/flights");
+    return Response.json({ date: today, logged: 0, skipped: "already ran today" });
+  }
   const records: { fields: Record<string, string | number> }[] = [];
   const errors: string[] = [];
 
@@ -97,5 +110,6 @@ export async function GET(req: Request) {
     });
   }
 
+  revalidatePath("/flights");
   return Response.json({ date: today, logged: records.length, errors });
 }
