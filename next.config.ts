@@ -7,6 +7,11 @@ const nextConfig: NextConfig = {
     qualities: [85, 90],
     // AVIF keeps more detail than WebP at the same size; browsers without it get WebP.
     formats: ["image/avif", "image/webp"],
+    // Bali guide photos (Unsplash License).
+    remotePatterns: [{ protocol: "https", hostname: "images.unsplash.com" }],
+  },
+  async redirects() {
+    return [{ source: "/getting-around", destination: "/bali#getting-around", permanent: true }];
   },
 };
 

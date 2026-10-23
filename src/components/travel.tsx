@@ -8,7 +8,7 @@ export const shortDate = (iso: string) =>
 const TABS = [
   { href: "/flights", label: "Flights" },
   { href: "/stays", label: "Stays" },
-  { href: "/getting-around", label: "Getting Around" },
+  { href: "/bali", label: "Bali Guide" },
   { href: "/dress-code", label: "Dress Code" },
 ] as const;
 

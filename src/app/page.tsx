@@ -413,8 +413,8 @@ export default function Home() {
             <div className="divider mx-auto mt-6" />
             <p className="font-[family-name:var(--font-montserrat)] text-charcoal/70 mt-8 leading-relaxed max-w-2xl mx-auto">
               We&rsquo;re keeping an eye on flight and accommodation prices so you
-              don&rsquo;t have to, and we&rsquo;ve put together a guide to getting around
-              once you land.
+              don&rsquo;t have to, and we&rsquo;ve put together a guide to making the most
+              of Uluwatu once you land.
             </p>
           </motion.div>
 
@@ -433,9 +433,9 @@ export default function Home() {
                 photo: "/photos/bali-v2-2.jpg",
               },
               {
-                href: "/getting-around",
-                title: "Getting around",
-                body: "How to use Grab and Gojek for rides and food",
+                href: "/bali",
+                title: "Bali guide",
+                body: "Things to do, beach clubs, money and getting around",
                 photo: "/photos/bali-v2-1.jpg",
               },
             ].map((card) => (
