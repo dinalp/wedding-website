@@ -307,12 +307,17 @@ export default function BaliPage() {
             Bali runs on Indonesian rupiah (IDR). Most Australian bank cards charge about 3% on every overseas
             purchase and ATM withdrawal, so set up a travel-friendly account before you fly.
           </p>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 mt-8">
             {[
               [
                 "Up",
                 "https://up.com.au",
                 "Our pick for everyday spending and ATMs: no Up fees on international purchases or withdrawals.",
+              ],
+              [
+                "ubank",
+                "https://www.ubank.com.au",
+                "Another fee-free everyday account: no international transaction fees and no ubank fee at overseas ATMs.",
               ],
               [
                 "Wise",
@@ -335,7 +340,7 @@ export default function BaliPage() {
                 href={url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block bg-cream rounded-sm p-6 border border-transparent hover:border-accent-light transition-colors"
+                className="block bg-cream rounded-sm p-5 border border-transparent hover:border-accent-light transition-colors"
               >
                 <h3 className="font-[family-name:var(--font-cormorant)] text-3xl text-charcoal">{name}</h3>
                 <p className="font-sans text-sm text-charcoal/70 leading-relaxed mt-2">{text}</p>

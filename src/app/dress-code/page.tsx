@@ -23,8 +23,16 @@ const EVENTS: { id: string; day: string; title: string; venue: string; code?: st
     venue: "Stone Villas Uluwatu",
     code: "Island semi-formal · Bright colours preferred",
     looks: [
-      { label: "For her", src: "/photos/dress-code-2.jpg", alt: "Dress code inspiration: flowing printed and pastel island dresses" },
-      { label: "For him", src: "/photos/dress-code-v2.jpg", alt: "Dress code inspiration: linen and patterned island shirts in earthy tones" },
+      {
+        label: "For her",
+        src: "/photos/dress-code-2.jpg",
+        alt: "Dress code inspiration: flowing printed and pastel island dresses",
+      },
+      {
+        label: "For him",
+        src: "/photos/dress-code-v2.jpg",
+        alt: "Dress code inspiration: linen and patterned island shirts in earthy tones",
+      },
     ],
   },
   {
@@ -81,31 +89,42 @@ export default function DressCodePage() {
                 <MapLinks />
               </p>
             )}
-            <div className="grid md:grid-cols-2 gap-6 mt-6">
-              {e.looks.map((look) => (
-                <div key={look.label}>
-                  <p className="font-[family-name:var(--font-cormorant)] text-xl italic text-charcoal/70 mb-2">
-                    {look.label}
-                  </p>
-                  {look.src ? (
-                    <div className="relative aspect-[1308/736] rounded-2xl overflow-hidden">
-                      <Image
-                        src={look.src}
-                        alt={look.alt ?? `${e.title} dress code, ${look.label.toLowerCase()}`}
-                        fill
-                        sizes="(min-width: 768px) 480px, 100vw"
-                        quality={85}
-                        className="object-cover"
-                      />
-                    </div>
-                  ) : (
-                    <div className="aspect-[1308/736] rounded-2xl border border-dashed border-charcoal/20 bg-cream flex items-center justify-center">
-                      <p className="font-sans text-xs tracking-wider text-charcoal/40">INSPIRATION COMING SOON</p>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
+            <details className="group mt-5">
+              <summary className="inline-flex items-center gap-2 cursor-pointer list-none [&::-webkit-details-marker]:hidden font-sans text-xs tracking-wider text-accent bg-accent/10 hover:bg-accent/20 transition-colors px-4 py-2 rounded-full">
+                <span className="group-open:hidden">SHOW INSPIRATION PHOTOS</span>
+                <span className="hidden group-open:inline">HIDE INSPIRATION PHOTOS</span>
+                <span aria-hidden className="transition-transform group-open:rotate-180">
+                  &#9662;
+                </span>
+              </summary>
+              <div className="grid md:grid-cols-2 gap-6 mt-6">
+                {e.looks.map((look) => (
+                  <div key={look.label}>
+                    <p className="font-[family-name:var(--font-cormorant)] text-xl italic text-charcoal/70 mb-2">
+                      {look.label}
+                    </p>
+                    {look.src ? (
+                      <div className="relative aspect-[1308/736] rounded-2xl overflow-hidden">
+                        <Image
+                          src={look.src}
+                          alt={look.alt ?? `${e.title} dress code, ${look.label.toLowerCase()}`}
+                          fill
+                          sizes="(min-width: 768px) 480px, 100vw"
+                          quality={85}
+                          className="object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="aspect-[1308/736] rounded-2xl border border-dashed border-charcoal/20 bg-cream flex items-center justify-center">
+                        <p className="font-sans text-xs tracking-wider text-charcoal/40">
+                          INSPIRATION COMING SOON
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </details>
           </section>
         ))}
       </div>
