@@ -155,3 +155,59 @@ export function stayTrend(stays: Stay[]) {
       return { date, median: Math.round(median), min: v[0] };
     });
 }
+
+const FLIGHT_OPTIONS = "tblA9A5l4U3cLAANV";
+
+export interface FlightOption {
+  date: string;
+  airline: string;
+  from: string;
+  depart: string;
+  return: string;
+  price: number | null;
+  stops: number | null;
+  details: string;
+  link: string;
+}
+
+interface FlightOptionFields {
+  Airline?: string;
+  "Check Date"?: string;
+  From?: string;
+  Depart?: string;
+  Return?: string;
+  "Price (A$)"?: number;
+  Stops?: number;
+  Details?: string;
+  Link?: string;
+}
+
+/** The individual fares from the most recent check, cheapest first. */
+export async function getFlightOptions(): Promise<FlightOption[]> {
+  const rows = await listAll<FlightOptionFields>(FLIGHT_OPTIONS, [
+    "Airline",
+    "Check Date",
+    "From",
+    "Depart",
+    "Return",
+    "Price (A$)",
+    "Stops",
+    "Details",
+    "Link",
+  ]);
+  const latest = rows.reduce((d, f) => (f["Check Date"] && f["Check Date"] > d ? f["Check Date"] : d), "");
+  return rows
+    .filter((f) => f["Check Date"] === latest && f.Airline)
+    .map((f) => ({
+      date: latest,
+      airline: f.Airline!,
+      from: f.From ?? "SYD",
+      depart: f.Depart ?? "",
+      return: f.Return ?? "",
+      price: f["Price (A$)"] ?? null,
+      stops: f.Stops ?? null,
+      details: f.Details ?? "",
+      link: f.Link ?? "",
+    }))
+    .sort((a, b) => (a.price ?? Infinity) - (b.price ?? Infinity));
+}

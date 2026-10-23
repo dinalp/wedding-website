@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { getFlightChecks, type FlightCheck } from "@/lib/travel";
+import { getFlightChecks, getFlightOptions, type FlightCheck, type FlightOption } from "@/lib/travel";
+import { FlightSearch } from "@/components/flight-search";
 import { Stat, SubscribeNote, PageHeader, TrendChart, aud, shortDate } from "@/components/travel";
 
 export const revalidate = 3600;
@@ -20,8 +21,9 @@ const tidy = (s: string) => s.split(" (")[0];
 
 export default async function FlightsPage() {
   let checks: FlightCheck[] = [];
+  let options: FlightOption[] = [];
   try {
-    checks = await getFlightChecks();
+    [checks, options] = await Promise.all([getFlightChecks(), getFlightOptions()]);
   } catch (err) {
     console.error("[flights] load failed", err);
   }
@@ -81,14 +83,6 @@ export default async function FlightsPage() {
               <p>
                 <span className="text-charcoal">Cheapest dates:</span> {tidy(priced.cheapestDates)}
               </p>
-              <a
-                href="https://www.skyscanner.com.au/transport/flights/syd/dps/270518/270523/?adultsv2=1&cabinclass=economy"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block font-sans text-xs tracking-wider text-white bg-accent hover:bg-accent/90 transition-colors px-5 py-3 rounded-full"
-              >
-                SEARCH 18 TO 23 MAY ON SKYSCANNER
-              </a>
               {priced !== latest && (
                 <p className="text-xs text-charcoal/60">
                   Our latest check on {shortDate(latest.date)} found no fares for the wedding dates, so
@@ -109,11 +103,83 @@ export default async function FlightsPage() {
           </>
         )}
 
+        {options.length > 0 && (
+          <section className="mt-14">
+            <h2 className="font-[family-name:var(--font-cormorant)] text-3xl md:text-4xl text-charcoal">
+              Latest fares
+            </h2>
+            <p className="font-sans text-sm text-charcoal/60 mt-1">
+              {options.length} fares we found on {shortDate(options[0].date)}, cheapest first. Tap one to
+              see it.
+            </p>
+            <div className="grid md:grid-cols-2 gap-4 mt-6">
+              {options.map((o, i) => (
+                <a
+                  key={i}
+                  href={o.link || undefined}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block bg-white rounded-sm p-5 border border-transparent hover:border-accent-light transition-colors"
+                >
+                  <div className="flex justify-between gap-4">
+                    <h3 className="font-sans text-charcoal font-medium">{o.airline}</h3>
+                    {o.price != null && <p className="font-sans text-charcoal whitespace-nowrap">{aud(o.price)}</p>}
+                  </div>
+                  <p className="font-sans text-sm text-charcoal/70 mt-2">
+                    {o.from} to Bali · {o.depart && dayDate(o.depart)}
+                    {o.return && <> to {dayDate(o.return)}</>}
+                  </p>
+                  <p className="font-sans text-xs text-charcoal/60 mt-1">
+                    {[o.stops === 0 ? "Direct" : o.stops != null && `${o.stops} stop${o.stops > 1 ? "s" : ""}`, o.details]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </p>
+                  {o.link && (
+                    <p className="font-sans text-xs tracking-wider text-accent mt-3">VIEW FARE &rarr;</p>
+                  )}
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <section className="mt-14">
+          <h2 className="font-[family-name:var(--font-cormorant)] text-3xl md:text-4xl text-charcoal">
+            Search for yourself
+          </h2>
+          <p className="font-sans text-sm text-charcoal/60 mt-1 mb-6">
+            Pick where you&rsquo;re flying from, then open a search with the dates already filled in.
+          </p>
+          <FlightSearch />
+          <p className="font-sans text-sm text-charcoal/70 mt-6 leading-relaxed">
+            <span className="text-charcoal">Flying direct from Sydney:</span>{" "}
+            {DIRECT.map(([name, url], i) => (
+              <span key={name}>
+                {i > 0 && ", "}
+                <a href={url} target="_blank" rel="noopener noreferrer" className="text-accent underline underline-offset-4 decoration-accent/40 hover:decoration-accent">
+                  {name}
+                </a>
+              </span>
+            ))}
+            . Booking with the airline directly can make changes easier.
+          </p>
+        </section>
+
         <SubscribeNote />
       </div>
     </main>
   );
 }
+
+const DIRECT = [
+  ["Jetstar", "https://www.jetstar.com/au/en/home"],
+  ["Virgin Australia", "https://www.virginaustralia.com/au/en/"],
+  ["Qantas", "https://www.qantas.com/au/en.html"],
+  ["Garuda Indonesia", "https://www.garuda-indonesia.com/au/en/"],
+] as const;
+
+const dayDate = (iso: string) =>
+  new Date(`${iso}T00:00:00`).toLocaleDateString("en-AU", { weekday: "short", day: "numeric", month: "short" });
 
 function offsetDate(iso: string, days: number) {
   const d = new Date(`${iso}T00:00:00Z`);
