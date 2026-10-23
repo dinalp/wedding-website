@@ -359,10 +359,10 @@ export default function Home() {
               viewport={{ once: true }}
               className="text-center mb-12"
             >
-              <p className="font-[family-name:var(--font-montserrat)] text-cream tracking-[0.2em] md:tracking-[0.3em] text-xs mb-4">
+              <p className="font-[family-name:var(--font-montserrat)] text-cream tracking-[0.2em] md:tracking-[0.3em] text-sm md:text-base mb-4">
                 A DESTINATION CELEBRATION
               </p>
-              <h2 className="font-[family-name:var(--font-cormorant)] text-4xl md:text-6xl font-light text-white">
+              <h2 className="font-[family-name:var(--font-cormorant)] text-5xl md:text-7xl font-light text-white">
                 Uluwatu, Bali
               </h2>
               <div className="divider mx-auto mt-6" />
@@ -375,14 +375,14 @@ export default function Home() {
               viewport={{ once: true }}
               className="max-w-3xl mx-auto text-center"
             >
-              <p className="font-[family-name:var(--font-montserrat)] text-white/85 leading-relaxed">
+              <p className="font-[family-name:var(--font-montserrat)] text-white/90 text-lg md:text-xl leading-relaxed">
                 We&apos;re inviting our dearest family and friends to join us in
                 the magical cliffs of Uluwatu, Bali for a destination wedding
                 celebration. We&apos;ve planned an unforgettable three-day
                 experience where we&apos;ll celebrate love, friendship, and new
                 beginnings together.
               </p>
-              <p className="font-[family-name:var(--font-montserrat)] text-white/85 leading-relaxed mt-6">
+              <p className="font-[family-name:var(--font-montserrat)] text-white/90 text-lg md:text-xl leading-relaxed mt-6">
                 Flying from Sydney, we encourage you to make this a trip for
                 yourselves too. Explore the beauty of Bali, relax on pristine
                 beaches, and create memories that will last a lifetime.
