@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import { UnsplashImage as Image } from "@/components/unsplash-image";
 import { PageHeader } from "@/components/travel";
 
 export const metadata: Metadata = {
@@ -8,8 +8,12 @@ export const metadata: Metadata = {
     "Make a week of it: things to do in Uluwatu, where to eat and swim, working remotely, money and getting around",
 };
 
-// Free-to-use photos from Unsplash (Unsplash License), served through next/image.
+// Free-to-use photos from Unsplash (Unsplash License), resized by Unsplash's CDN.
 const photo = (id: string) => `https://images.unsplash.com/photo-${id}`;
+
+// A 24px copy of the hero, shown blurred while the full image loads.
+const HERO_BLUR =
+  "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/4gKISUNDX1BST0ZJTEUAAQEAAAJ4AAAAAAQwAABtbnRyUkdCIFhZWiAH5gAHAAEAAAAAAABhY3NwU0VDAAAAAABTRUMAAAAAAAAAAAAAAAAAAAAAAAAA9tYAAQAAAADTLVNFQwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAApkZXNjAAAA/AAAAGRjcHJ0AAABYAAAAHx3dHB0AAAB3AAAABRjaGFkAAAB8AAAACxyWFlaAAACHAAAABRnWFlaAAACMAAAABRiWFlaAAACRAAAABRyVFJDAAACWAAAACBnVFJDAAACWAAAACBiVFJDAAACWAAAACBtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAEYAAAAcAEQAQwBJAC0AUAAzACAARAA2ADUAIABHAGEAbQB1AHQAIAB3AGkAdABoACAAcwBSAEcAQgAgAFQAcgBhAG4AcwBmAGUAcgAAbWx1YwAAAAAAAAABAAAADGVuVVMAAABgAAAAHABDAG8AcAB5AHIAaQBnAGgAdAAgACgAYwApACAAMgAwADIAMgAgAFMAYQBtAHMAdQBuAGcAIABFAGwAZQBjAHQAcgBvAG4AaQBjAHMAIABDAG8ALgAsACAATAB0AGQALlhZWiAAAAAAAAD21gABAAAAANMtc2YzMgAAAAAAAQw9AAAF3P//8ysAAAeQAAD9kP//+6P///2jAAAD2gAAwIxYWVogAAAAAAAAg9wAAD29////u1hZWiAAAAAAAABKvQAAsTYAAAq5WFlaIAAAAAAAACg9AAARDAAAyNhwYXJhAAAAAAADAAAAAmZmAADypwAADVkAABPQAAAKW//bAIQABgcHCQsJDA0NDBAREBEQGBYUFBYYIxkbGRsZIzUhJyEhJyE1LzkvKy85L1RCOztCVGFSTlJhdmlpdpSNlMHB/wEGBwcJCwkMDQ0MEBEQERAYFhQUFhgjGRsZGxkjNSEnISEnITUvOS8rLzkvVEI7O0JUYVJOUmF2aWl2lI2UwcH//8AAEQgADgAYAwEiAAIRAQMRAf/EAGUAAAMBAAAAAAAAAAAAAAAAAAAEBgUQAAIBBAAGAwAAAAAAAAAAAAECAwAEBREGEhRBUWEhNGMBAQEBAAAAAAAAAAAAAAAAAAQCAxEAAgIDAQAAAAAAAAAAAAAAAQIAAwQRIRL/2gAMAwEAAhEDEQA/AFLbJThtPGr+xta0Ic6Y3+pojsSRS046C4fkAYLAu9/pV/FFb5O3WC9hV3VNiQfDa9HsayxcuxlYNJuoUEak7DxeUct0g3556KheI8ZNi7tUE5eNwSnkAdjRTfQPYfo5P//Z";
 
 const SECTIONS = [
   ["week", "Make a week of it"],
@@ -93,13 +97,15 @@ export default function BaliPage() {
     <main className="min-h-screen bg-background">
       <PageHeader active="/bali" />
 
-      <section className="relative h-[70vh] min-h-[420px] max-h-[720px]">
+      <section className="relative h-[70vh] min-h-[420px] max-h-[720px] bg-[#2f4a4c]">
         <Image
           src={photo("1759657231646-32109da61330")}
           alt="Waves rolling in beneath the green cliffs of Uluwatu"
           fill
           priority
           sizes="100vw"
+          placeholder="blur"
+          blurDataURL={HERO_BLUR}
           quality={85}
           className="object-cover"
         />
