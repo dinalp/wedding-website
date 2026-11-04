@@ -32,6 +32,31 @@ function isDate(value: string) {
     Number.isFinite(Date.parse(value)) && new Date(value).toISOString().slice(0, 10) === value;
 }
 
+export interface FlightTrendPoint { date: string; cheapest: number | null }
+
+/** Keep the earlier broad price history on the same line without replacing newer quotes. */
+export function withHistoricalTrend(current: FlightTrendPoint[], history: FlightTrendPoint[]): FlightTrendPoint[] {
+  if (!current.length) return [];
+  const start = current[0].date;
+  const end = current.at(-1)!.date;
+  const byDate = new Map<string, number | null>();
+  for (const point of history) {
+    if (isDate(point.date) && point.date < start) {
+      byDate.set(point.date, typeof point.cheapest === "number" && Number.isFinite(point.cheapest) && point.cheapest > 0 ? point.cheapest : null);
+    }
+  }
+  for (const point of current) byDate.set(point.date, point.cheapest);
+  const first = [...byDate.keys()].sort()[0];
+  const trend: FlightTrendPoint[] = [];
+  for (let date = first; date <= end;) {
+    trend.push({ date, cheapest: byDate.get(date) ?? null });
+    const next = new Date(`${date}T00:00:00Z`);
+    next.setUTCDate(next.getUTCDate() + 1);
+    date = next.toISOString().slice(0, 10);
+  }
+  return trend;
+}
+
 export function quoteSource(quote: FlightOption): string {
   if (/Google Flights/i.test(quote.details)) return "Google Flights";
   try {

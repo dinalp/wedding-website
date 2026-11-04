@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildFlightData } from '../src/lib/flight-data.ts';
+import { buildFlightData, withHistoricalTrend } from '../src/lib/flight-data.ts';
 
 const quote = (overrides = {}) => ({
   date: '2026-11-03', airline: 'Jetstar', from: 'SYD',
@@ -38,4 +38,15 @@ test('missing summary rows recover from observations; missing quote days remain 
 
 test('an empty dataset has no synthetic price history', () => {
   assert.deepEqual(buildFlightData([], '2026-11-04'), {checks:[],options:[]});
+});
+
+
+test('restores older trend while current observations win and current gaps stay gaps', () => {
+  const current = [{date:'2026-10-23',cheapest:608},{date:'2026-10-24',cheapest:null}];
+  const history = [{date:'2026-10-21',cheapest:570},{date:'2026-10-23',cheapest:400},
+    {date:'2026-10-24',cheapest:410},{date:'2026-10-25',cheapest:420}];
+  assert.deepEqual(withHistoricalTrend(current, history), [
+    {date:'2026-10-21',cheapest:570},{date:'2026-10-22',cheapest:null},...current,
+  ]);
+  assert.deepEqual(withHistoricalTrend(current, []), current);
 });

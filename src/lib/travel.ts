@@ -1,5 +1,5 @@
 import { at } from "./airtable";
-import { buildFlightData, type FlightOption } from "./flight-data";
+import { buildFlightData, withHistoricalTrend, type FlightOption } from "./flight-data";
 export type { FlightOption } from "./flight-data";
 
 // Written by the "Bali Flight Watch" and "Uluwatu Stay Watch" Claude routines.
@@ -122,7 +122,7 @@ interface FlightOptionFields {
 
 /** Derive both the trend and latest list from individual fare observations. */
 export async function getFlightData() {
-  const [rows, published] = await Promise.all([listAll<FlightOptionFields>(FLIGHT_OPTIONS, [
+  const [rows, published, history] = await Promise.all([listAll<FlightOptionFields>(FLIGHT_OPTIONS, [
     "Airline",
     "Check Date",
     "From",
@@ -132,7 +132,11 @@ export async function getFlightData() {
     "Stops",
     "Details",
     "Link",
-  ]).catch(() => [] as FlightOptionFields[]), getPublishedFlights()]);
+  ]).catch(() => [] as FlightOptionFields[]), getPublishedFlights(),
+    listAll<{ "Check Date"?: string; "Cheapest Return (A$)"?: number }>("tblXg2RRTEgBPD7D8", [
+      "Check Date", "Cheapest Return (A$)",
+    ]).catch(() => []),
+  ]);
   const raw: FlightOption[] = rows.map((f) => ({
     date: f["Check Date"] ?? "",
     airline: f.Airline ?? "",
@@ -144,8 +148,10 @@ export async function getFlightData() {
     details: f.Details ?? "",
     link: f.Link ?? "",
   }));
+  const data = buildFlightData([...raw, ...published.quotes], new Date().toLocaleDateString("en-CA", { timeZone: "Australia/Sydney" }));
   return {
-    ...buildFlightData([...raw, ...published.quotes], new Date().toLocaleDateString("en-CA", { timeZone: "Australia/Sydney" })),
+    ...data,
+    trend: withHistoricalTrend(data.checks, history.map((f) => ({ date: f["Check Date"] ?? "", cheapest: f["Cheapest Return (A$)"] ?? null }))),
     publishedStatus: published.status,
   };
 }

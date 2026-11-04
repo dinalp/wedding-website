@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getFlightData, type FlightOption } from "@/lib/travel";
-import { quoteSource, type FlightDay } from "@/lib/flight-data";
+import { quoteSource, type FlightDay, type FlightTrendPoint } from "@/lib/flight-data";
 import { FlightSearch } from "@/components/flight-search";
 import { Stat, SubscribeNote, PageHeader, TrendChart, aud, shortDate } from "@/components/travel";
 
@@ -13,10 +13,11 @@ export const metadata: Metadata = {
 
 export default async function FlightsPage() {
   let checks: FlightDay[] = [];
+  let trend: FlightTrendPoint[] = [];
   let options: FlightOption[] = [];
   let publishedStatus = "";
   try {
-    ({ checks, options, publishedStatus } = await getFlightData());
+    ({ checks, trend, options, publishedStatus } = await getFlightData());
   } catch (err) {
     console.error("[flights] load failed", err);
   }
@@ -129,9 +130,9 @@ export default async function FlightsPage() {
 
             <div className="bg-white rounded-sm p-4 md:p-6 mt-6">
               <TrendChart
-                dates={checks.map((c) => c.date)}
+                dates={trend.map((c) => c.date)}
                 series={[
-                  { label: "Cheapest return", color: "#c2703d", values: checks.map((c) => c.cheapest) },
+                  { label: "Cheapest return", color: "#c2703d", values: trend.map((c) => c.cheapest) },
                 ]}
               />
             </div>
@@ -146,8 +147,8 @@ export default async function FlightsPage() {
                 </p>
               )}
               <p>
-                Each day shows the lowest recorded quote across available sources for departures
-                15–19 May and returns 22–23 May 2027. Gaps mean no quotes were recorded.
+                Earlier checks used a wider range of travel dates, so the full history is a guide
+                to the overall trend. From 23 October, prices cover departures 15–19 May and returns 22–23 May 2027.
               </p>
               <p>{publishedStatus} Skyscanner and Garuda searches are currently unavailable.</p>
               <p className="text-xs text-charcoal/50">
