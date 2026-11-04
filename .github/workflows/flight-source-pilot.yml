@@ -1,0 +1,45 @@
+name: Flight source pilot
+
+on:
+  push:
+    branches: [codex/flight-source-pilot]
+    paths:
+      - '.github/workflows/flight-source-pilot.yml'
+      - 'scripts/flight-source-pilot.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: flight-source-pilot
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      LIGHTPANDA_DISABLE_TELEMETRY: 'true'
+      LIGHTPANDA_DISABLE_CORE_DUMP: 'true'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Install pinned Lightpanda binary
+        run: |
+          curl --fail --location --retry 2 --output /tmp/lightpanda https://github.com/lightpanda-io/browser/releases/download/1.0.2/lightpanda-x86_64-linux
+          echo 'ae7d01d261efb9e480e18ce3424533332883863bcf70b12a4321b5733f37e19e  /tmp/lightpanda' | sha256sum --check
+          chmod +x /tmp/lightpanda
+          /tmp/lightpanda version
+          /tmp/lightpanda fetch --help
+      - name: Read public sources without credentials or writes
+        run: python3 scripts/flight-source-pilot.py /tmp/lightpanda
+      - name: Preserve diagnostic report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: flight-source-pilot
+          path: pilot-results/
+          retention-days: 3
+
