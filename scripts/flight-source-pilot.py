@@ -23,7 +23,7 @@ SOURCES = [
 
 def classify(code, output, error):
     combined = output + "\n" + error
-    if re.search(r"robots\.txt.*(?:disallow|denied)|disallowed by robots", combined, re.I):
+    if re.search(r"RobotsBlocked|robots\.txt.*(?:disallow|denied)|disallowed by robots", combined, re.I):
         return "robots-disallowed"
     if re.search(r"captcha|verify (?:that )?you are (?:a )?human|verify you are not a bot|performing security verification|access denied|just a moment|403 forbidden", combined, re.I):
         return "blocked"

@@ -1,7 +1,8 @@
 import { at } from "./airtable";
+import { buildFlightData, type FlightOption } from "./flight-data";
+export type { FlightOption } from "./flight-data";
 
 // Written by the "Bali Flight Watch" and "Uluwatu Stay Watch" Claude routines.
-const FLIGHT_LOG = "tblXg2RRTEgBPD7D8";
 const STAY_LOG = "tblEvqcQM4JsxlaB5";
 
 // The routines log at most once a day, so an hourly refresh is plenty.
@@ -23,57 +24,6 @@ async function listAll<F>(table: string, fields: string[]): Promise<F[]> {
     offset = page.offset;
   } while (offset);
   return out;
-}
-
-export interface FlightCheck {
-  date: string;
-  cheapest: number | null;
-  cheapestAirline: string;
-  cheapestDates: string;
-  fullService: number | null;
-  fullServiceAirline: string;
-  signal: string;
-  sale: string;
-}
-
-interface FlightFields {
-  "Check Date"?: string;
-  "Cheapest Return (A$)"?: number;
-  "Cheapest Airline"?: string;
-  "Cheapest Dates"?: string;
-  "Full-Service Direct (A$)"?: number;
-  "Full-Service Airline"?: string;
-  Signal?: string;
-  "Active Sale"?: string;
-}
-
-/** One row per check date, oldest first. Notes/Source are couple-only and never fetched. */
-export async function getFlightChecks(): Promise<FlightCheck[]> {
-  const rows = await listAll<FlightFields>(FLIGHT_LOG, [
-    "Check Date",
-    "Cheapest Return (A$)",
-    "Cheapest Airline",
-    "Cheapest Dates",
-    "Full-Service Direct (A$)",
-    "Full-Service Airline",
-    "Signal",
-    "Active Sale",
-  ]);
-  const byDate = new Map<string, FlightCheck>();
-  for (const f of rows) {
-    if (!f["Check Date"]) continue;
-    byDate.set(f["Check Date"], {
-      date: f["Check Date"],
-      cheapest: f["Cheapest Return (A$)"] ?? null,
-      cheapestAirline: f["Cheapest Airline"] ?? "",
-      cheapestDates: f["Cheapest Dates"] ?? "",
-      fullService: f["Full-Service Direct (A$)"] ?? null,
-      fullServiceAirline: f["Full-Service Airline"] ?? "",
-      signal: f.Signal ?? "",
-      sale: f["Active Sale"] ?? "",
-    });
-  }
-  return [...byDate.values()].sort((a, b) => a.date.localeCompare(b.date));
 }
 
 export interface Stay {
@@ -158,18 +108,6 @@ export function stayTrend(stays: Stay[]) {
 
 const FLIGHT_OPTIONS = "tblA9A5l4U3cLAANV";
 
-export interface FlightOption {
-  date: string;
-  airline: string;
-  from: string;
-  depart: string;
-  return: string;
-  price: number | null;
-  stops: number | null;
-  details: string;
-  link: string;
-}
-
 interface FlightOptionFields {
   Airline?: string;
   "Check Date"?: string;
@@ -182,8 +120,8 @@ interface FlightOptionFields {
   Link?: string;
 }
 
-/** The individual fares from the most recent check, cheapest first. */
-export async function getFlightOptions(): Promise<FlightOption[]> {
+/** Derive both the trend and latest list from individual fare observations. */
+export async function getFlightData() {
   const rows = await listAll<FlightOptionFields>(FLIGHT_OPTIONS, [
     "Airline",
     "Check Date",
@@ -195,24 +133,16 @@ export async function getFlightOptions(): Promise<FlightOption[]> {
     "Details",
     "Link",
   ]);
-  const latest = rows.reduce((d, f) => (f["Check Date"] && f["Check Date"] > d ? f["Check Date"] : d), "");
-  return rows
-    .filter((f) => f["Check Date"] === latest && f.Airline)
-    .map((f) => ({
-      date: latest,
-      airline: f.Airline!,
-      from: f.From ?? "SYD",
-      depart: f.Depart ?? "",
-      return: f.Return ?? "",
-      price: f["Price (A$)"] ?? null,
-      stops: f.Stops ?? null,
-      details: f.Details ?? "",
-      link: f.Link ?? "",
-    }))
-    .filter((o, i, all) => {
-      // The routine and the Google Flights lookup can log the same fare; show it once.
-      const key = (x: FlightOption) => [x.airline, x.from, x.depart, x.return, x.price, x.stops].join("|");
-      return all.findIndex((x) => key(x) === key(o)) === i;
-    })
-    .sort((a, b) => (a.price ?? Infinity) - (b.price ?? Infinity));
+  const raw: FlightOption[] = rows.map((f) => ({
+    date: f["Check Date"] ?? "",
+    airline: f.Airline ?? "",
+    from: f.From ?? "",
+    depart: f.Depart ?? "",
+    return: f.Return ?? "",
+    price: f["Price (A$)"] ?? null,
+    stops: f.Stops ?? null,
+    details: f.Details ?? "",
+    link: f.Link ?? "",
+  }));
+  return buildFlightData(raw, new Date().toLocaleDateString("en-CA", { timeZone: "Australia/Sydney" }));
 }

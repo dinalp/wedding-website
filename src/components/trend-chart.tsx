@@ -31,7 +31,9 @@ export function TrendChart({
   if (all.length === 0) return null;
   const pad = Math.max((Math.max(...all) - Math.min(...all)) * 0.1, 5);
   const lo = Math.min(...all) - pad, hi = Math.max(...all) + pad;
-  const x = (i: number) => L + (dates.length === 1 ? 0 : (i * (W - L - R)) / (dates.length - 1));
+  const times = dates.map((date) => Date.parse(`${date}T00:00:00Z`));
+  const span = times.at(-1)! - times[0];
+  const x = (i: number) => L + (span === 0 ? 0 : ((times[i] - times[0]) * (W - L - R)) / span);
   const y = (v: number) => T + ((hi - v) * (H - T - B)) / (hi - lo);
 
   const step = [5, 10, 20, 25, 50, 100, 200].find((s) => (hi - lo) / s <= 5) ?? 500;
@@ -42,7 +44,7 @@ export function TrendChart({
   const pick = (e: React.PointerEvent<SVGSVGElement>) => {
     const r = e.currentTarget.getBoundingClientRect();
     const vx = ((e.clientX - r.left) / r.width) * W;
-    const i = Math.round(((vx - L) / (W - L - R)) * (dates.length - 1));
+    const i = dates.reduce((best, _, index) => Math.abs(x(index) - vx) < Math.abs(x(best) - vx) ? index : best, 0);
     setHover(Math.min(Math.max(i, 0), dates.length - 1));
   };
 
@@ -94,16 +96,20 @@ export function TrendChart({
         {series.map((s) => {
           const pts = s.values.flatMap((v, i) => (v == null ? [] : [[x(i), y(v)] as const]));
           const last = pts[pts.length - 1];
+          const path = s.values.map((v, i) => v == null ? "" :
+            `${i === 0 || s.values[i - 1] == null ? "M" : "L"}${x(i)},${y(v)}`).join(" ");
           return (
             <g key={s.label}>
-              <polyline
-                points={pts.map((p) => p.join(",")).join(" ")}
+              <path
+                d={path}
                 fill="none"
                 stroke={s.color}
                 strokeWidth={2.5}
                 strokeLinejoin="round"
                 strokeLinecap="round"
               />
+              {s.values.map((v, i) => v != null && s.values[i - 1] == null && s.values[i + 1] == null
+                ? <circle key={i} cx={x(i)} cy={y(v)} r={3} fill={s.color} /> : null)}
               {last && hover == null && <circle cx={last[0]} cy={last[1]} r={4} fill={s.color} />}
             </g>
           );

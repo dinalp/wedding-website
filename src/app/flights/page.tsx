@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { getFlightChecks, getFlightOptions, type FlightCheck, type FlightOption } from "@/lib/travel";
+import { getFlightData, type FlightOption } from "@/lib/travel";
+import { quoteSource, type FlightDay } from "@/lib/flight-data";
 import { FlightSearch } from "@/components/flight-search";
 import { Stat, SubscribeNote, PageHeader, TrendChart, aud, shortDate } from "@/components/travel";
 
@@ -10,26 +11,17 @@ export const metadata: Metadata = {
   description: "Sydney to Bali fares for the wedding week, checked daily",
 };
 
-const SIGNAL_TEXT: Record<string, string> = {
-  "BOOK NOW": "Book now",
-  "GOOD TIME": "Good time to book",
-  "WAIT AND WATCH": "Wait and watch",
-};
-
-// The routine appends a long "(nearest fit: ...)" explanation; guests only need the dates.
-const tidy = (s: string) => s.split(" (")[0];
-
 export default async function FlightsPage() {
-  let checks: FlightCheck[] = [];
+  let checks: FlightDay[] = [];
   let options: FlightOption[] = [];
   try {
-    [checks, options] = await Promise.all([getFlightChecks(), getFlightOptions()]);
+    ({ checks, options } = await getFlightData());
   } catch (err) {
     console.error("[flights] load failed", err);
   }
   const latest = checks.at(-1);
   const floors = checks.filter((c) => c.cheapest != null);
-  const lowest = floors.reduce<FlightCheck | null>(
+  const lowest = floors.reduce<FlightDay | null>(
     (best, c) => (best && best.cheapest! <= c.cheapest! ? best : c),
     null
   );
@@ -50,6 +42,71 @@ export default async function FlightsPage() {
           in Tue 18 May and home Sun 23 May 2027, or making a week of it from Sat 15 May.
         </p>
 
+        <section aria-labelledby="points-heading" className="mt-10 bg-cream rounded-sm p-5 md:p-8 text-charcoal">
+          <h2 id="points-heading" className="font-[family-name:var(--font-cormorant)] text-3xl md:text-4xl">
+            Got points? Start here
+          </h2>
+          <p className="font-sans text-base mt-3 leading-relaxed max-w-2xl">
+            Have Qantas, Velocity or other airline points? Check reward seats first —
+            they could save you a lot on flights to Bali.
+          </p>
+          <table className="w-full mt-6 font-sans text-sm sm:text-base text-left leading-relaxed">
+            <caption className="text-left text-sm text-charcoal/80 pb-3">
+              Sydney → Bali · one way · economy · per person
+            </caption>
+            <thead>
+              <tr className="border-b border-charcoal/20">
+                <th scope="col" className="pb-3 pr-4 font-medium w-1/2">Airline &amp; programme</th>
+                <th scope="col" className="pb-3 font-medium">Points + cash</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-charcoal/15">
+              <tr>
+                <th scope="row" className="py-4 pr-4 align-top font-normal">
+                  <span className="block font-medium">Jetstar</span>
+                  <span className="block text-sm text-charcoal/80">Qantas · Classic Reward</span>
+                </th>
+                <td className="py-4 align-top">
+                  <span className="block font-semibold tabular-nums">20,700 points</span>
+                  <span className="block">+ A$154</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" className="py-4 pr-4 align-top font-normal">
+                  <span className="block font-medium">Qantas</span>
+                  <span className="block text-sm text-charcoal/80">Qantas · Classic Plus</span>
+                </th>
+                <td className="py-4 align-top">
+                  <span className="block font-semibold tabular-nums">37,700 points</span>
+                  <span className="block">+ A$158</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" className="py-4 pr-4 align-top font-normal">
+                  <span className="block font-medium">Virgin Australia</span>
+                  <span className="block text-sm text-charcoal/80">Velocity · Reward Seat</span>
+                </th>
+                <td className="py-4 align-top">
+                  <span className="block font-semibold tabular-nums">From 22,500 points</span>
+                  <span className="block">+ taxes &amp; fees</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p className="font-sans text-sm text-charcoal/80 mt-3 leading-relaxed max-w-2xl">
+            Qantas search examples and Velocity&rsquo;s published rate, checked 4 Nov 2026.
+            Prices and seats vary; May 2027 availability isn&rsquo;t confirmed. Compare with cash fares.
+          </p>
+          <div className="flex flex-wrap gap-x-6 gap-y-2 mt-4 font-sans text-base font-medium">
+            <a href="https://www.qantas.com/au/en.html" target="_blank" rel="noopener noreferrer" className="py-2 underline underline-offset-4 decoration-charcoal/40 hover:decoration-charcoal">
+              Search Qantas &rarr;
+            </a>
+            <a href="https://www.virginaustralia.com/au/en/" target="_blank" rel="noopener noreferrer" className="py-2 underline underline-offset-4 decoration-charcoal/40 hover:decoration-charcoal">
+              Search Virgin Australia &rarr;
+            </a>
+          </div>
+        </section>
+
         {!latest || !priced ? (
           <p className="font-sans text-charcoal/60 mt-10">
             Prices aren&rsquo;t available right now. Please check back soon.
@@ -61,11 +118,11 @@ export default async function FlightsPage() {
                 {priced.cheapestAirline}
                 {weekAgo && <> · {change(priced.cheapest! - weekAgo.cheapest!)} vs last week</>}
               </Stat>
-              <Stat label="Direct, full service" value={priced.fullService != null ? aud(priced.fullService) : "n/a"}>
-                {tidy(priced.fullServiceAirline)}
+              <Stat label="Fares found" value={String(priced.quoteCount)}>
+                {priced.sources.join(" · ")}
               </Stat>
-              <Stat label="Our take" value={SIGNAL_TEXT[latest.signal] ?? latest.signal}>
-                {lowest && <>Lowest seen: {aud(lowest.cheapest!)} on {shortDate(lowest.date)}</>}
+              <Stat label="Lowest recorded" value={lowest ? aud(lowest.cheapest!) : "n/a"}>
+                {lowest && shortDate(lowest.date)}
               </Stat>
             </div>
 
@@ -74,30 +131,26 @@ export default async function FlightsPage() {
                 dates={checks.map((c) => c.date)}
                 series={[
                   { label: "Cheapest return", color: "#c2703d", values: checks.map((c) => c.cheapest) },
-                  { label: "Direct full service", color: "#5B6F35", values: checks.map((c) => c.fullService) },
                 ]}
               />
             </div>
 
             <div className="font-sans text-sm text-charcoal/70 mt-6 space-y-2 leading-relaxed">
               <p>
-                <span className="text-charcoal">Cheapest dates:</span> {tidy(priced.cheapestDates)}
+                <span className="text-charcoal">Cheapest dates:</span> {priced.cheapestDates.split(" to ").map(dayDate).join(" to ")}
               </p>
               {priced !== latest && (
                 <p className="text-xs text-charcoal/60">
-                  Our latest check on {shortDate(latest.date)} found no fares for the wedding dates, so
-                  these prices are from {shortDate(priced.date)}.
+                  No new quotes have been recorded since {shortDate(priced.date)}. These are the most recent prices available.
                 </p>
               )}
-              {latest.sale && (
-                <details>
-                  <summary className="cursor-pointer text-charcoal">Fare sales we&rsquo;re watching</summary>
-                  <p className="mt-2">{latest.sale}</p>
-                </details>
-              )}
+              <p>
+                Each day shows the lowest recorded quote across available sources for departures
+                15–19 May and returns 22–23 May 2027. Gaps mean no quotes were recorded.
+              </p>
               <p className="text-xs text-charcoal/50">
                 Per adult, A$, return economy. Prices are indicative and change quickly, so check
-                with the airline before booking. Last checked {shortDate(latest.date)}.
+                with the airline before booking. Last quotes recorded {shortDate(priced.date)}.
               </p>
             </div>
           </>
@@ -130,10 +183,11 @@ export default async function FlightsPage() {
                     {o.return && <> to {dayDate(o.return)}</>}
                   </p>
                   <p className="font-sans text-xs text-charcoal/60 mt-1">
-                    {[o.stops === 0 ? "Direct" : o.stops != null && `${o.stops} stop${o.stops > 1 ? "s" : ""}`, o.details]
+                    {[o.stops === 0 ? "Outbound direct" : o.stops != null && `Outbound: ${o.stops} stop${o.stops > 1 ? "s" : ""}`, o.details]
                       .filter(Boolean)
                       .join(" · ")}
                   </p>
+                  <p className="font-sans text-xs text-charcoal/70 mt-2">Source: {quoteSource(o)}</p>
                   {o.link && (
                     <p className="font-sans text-xs tracking-wider text-accent mt-3">VIEW FARE &rarr;</p>
                   )}
