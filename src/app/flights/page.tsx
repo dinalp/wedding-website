@@ -14,8 +14,9 @@ export const metadata: Metadata = {
 export default async function FlightsPage() {
   let checks: FlightDay[] = [];
   let options: FlightOption[] = [];
+  let publishedStatus = "";
   try {
-    ({ checks, options } = await getFlightData());
+    ({ checks, options, publishedStatus } = await getFlightData());
   } catch (err) {
     console.error("[flights] load failed", err);
   }
@@ -148,6 +149,7 @@ export default async function FlightsPage() {
                 Each day shows the lowest recorded quote across available sources for departures
                 15–19 May and returns 22–23 May 2027. Gaps mean no quotes were recorded.
               </p>
+              <p>{publishedStatus} Skyscanner and Garuda searches are currently unavailable.</p>
               <p className="text-xs text-charcoal/50">
                 Per adult, A$, return economy. Prices are indicative and change quickly, so check
                 with the airline before booking. Last quotes recorded {shortDate(priced.date)}.
@@ -189,7 +191,7 @@ export default async function FlightsPage() {
                   </p>
                   <p className="font-sans text-xs text-charcoal/70 mt-2">Source: {quoteSource(o)}</p>
                   {o.link && (
-                    <p className="font-sans text-xs tracking-wider text-accent mt-3">VIEW FARE &rarr;</p>
+                    <p className="font-sans text-xs tracking-wider text-accent mt-3">SEARCH THESE DATES &rarr;</p>
                   )}
                 </a>
               ))}

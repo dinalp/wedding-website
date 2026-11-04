@@ -122,7 +122,7 @@ interface FlightOptionFields {
 
 /** Derive both the trend and latest list from individual fare observations. */
 export async function getFlightData() {
-  const rows = await listAll<FlightOptionFields>(FLIGHT_OPTIONS, [
+  const [rows, published] = await Promise.all([listAll<FlightOptionFields>(FLIGHT_OPTIONS, [
     "Airline",
     "Check Date",
     "From",
@@ -132,7 +132,7 @@ export async function getFlightData() {
     "Stops",
     "Details",
     "Link",
-  ]);
+  ]).catch(() => [] as FlightOptionFields[]), getPublishedFlights()]);
   const raw: FlightOption[] = rows.map((f) => ({
     date: f["Check Date"] ?? "",
     airline: f.Airline ?? "",
@@ -144,5 +144,44 @@ export async function getFlightData() {
     details: f.Details ?? "",
     link: f.Link ?? "",
   }));
-  return buildFlightData(raw, new Date().toLocaleDateString("en-CA", { timeZone: "Australia/Sydney" }));
+  return {
+    ...buildFlightData([...raw, ...published.quotes], new Date().toLocaleDateString("en-CA", { timeZone: "Australia/Sydney" })),
+    publishedStatus: published.status,
+  };
+}
+
+/** Public observations only; the scheduled collector has no access to wedding guest data. */
+async function getPublishedFlights(): Promise<{ quotes: FlightOption[]; status: string }> {
+  try {
+    const response = await fetch("https://raw.githubusercontent.com/dinalp/wedding-website/flight-data/quotes.json", {
+      ...HOURLY, signal: AbortSignal.timeout(8000),
+    });
+    if (!response.ok) throw new Error("Source feed unavailable");
+    const data = await response.json();
+    if (data.version !== 1 || !Array.isArray(data.runs)) throw new Error("Invalid source feed");
+    const quotes: FlightOption[] = [];
+    for (const run of data.runs) {
+      if (run.source !== "I Want That Flight" || run.status !== "success" || !Array.isArray(run.quotes)) continue;
+      for (const quote of run.quotes) {
+        if (!quote || quote.date !== run.date || quote.from !== "SYD" || quote.stops !== null ||
+            ![quote.date, quote.airline, quote.depart, quote.return, quote.details, quote.link].every((s) => typeof s === "string") ||
+            typeof quote.price !== "number") continue;
+        try {
+          const link = new URL(quote.link);
+          if (link.protocol !== "https:" || link.hostname !== "fly.iwantthatflight.com.au") continue;
+        } catch { continue; }
+        quotes.push(quote);
+      }
+    }
+    const attempt = data.lastAttempt;
+    const age = Date.now() - Date.parse(attempt?.checkedAt ?? "");
+    const status = !Number.isFinite(age) || age > 36 * 3600_000 || age < -300_000
+      ? "I Want That Flight has no recent collection result."
+      : attempt.status === "success"
+        ? "I Want That Flight prices come from searches in the previous 24 hours; recheck before booking."
+        : "I Want That Flight returned no usable wedding-date listings on its latest check.";
+    return { quotes, status };
+  } catch {
+    return { quotes: [], status: "I Want That Flight is temporarily unavailable." };
+  }
 }
