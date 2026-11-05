@@ -118,11 +118,85 @@
           "link": "https://fly.iwantthatflight.com.au/flight.ashx?oc=SYD&dc=DPS&dd=18/May/2027&rd=23/May/2027&po=all"
         }
       ]
+    },
+    {
+      "date": "2026-11-05",
+      "checkedAt": "2026-11-05T00:54:22.853794+00:00",
+      "source": "I Want That Flight",
+      "status": "success",
+      "quotes": [
+        {
+          "date": "2026-11-05",
+          "airline": "Virgin Australia",
+          "from": "SYD",
+          "depart": "2027-05-18",
+          "return": "2027-05-23",
+          "price": 607.0,
+          "stops": null,
+          "details": "I Want That Flight \u00b7 Published searches from the last 24 hours; current price may differ. Stops and baggage unconfirmed.",
+          "link": "https://fly.iwantthatflight.com.au/flight.ashx?oc=SYD&dc=DPS&dd=18/May/2027&rd=23/May/2027&po=all"
+        },
+        {
+          "date": "2026-11-05",
+          "airline": "Jetstar + Scoot",
+          "from": "SYD",
+          "depart": "2027-05-18",
+          "return": "2027-05-23",
+          "price": 648.0,
+          "stops": null,
+          "details": "I Want That Flight \u00b7 Published searches from the last 24 hours; current price may differ. Stops and baggage unconfirmed.",
+          "link": "https://fly.iwantthatflight.com.au/flight.ashx?oc=SYD&dc=DPS&dd=18/May/2027&rd=23/May/2027&po=all"
+        },
+        {
+          "date": "2026-11-05",
+          "airline": "Jetstar + Virgin Australia",
+          "from": "SYD",
+          "depart": "2027-05-18",
+          "return": "2027-05-23",
+          "price": 674.0,
+          "stops": null,
+          "details": "I Want That Flight \u00b7 Published searches from the last 24 hours; current price may differ. Stops and baggage unconfirmed.",
+          "link": "https://fly.iwantthatflight.com.au/flight.ashx?oc=SYD&dc=DPS&dd=18/May/2027&rd=23/May/2027&po=all"
+        },
+        {
+          "date": "2026-11-05",
+          "airline": "Garuda Indonesia + Jetstar",
+          "from": "SYD",
+          "depart": "2027-05-18",
+          "return": "2027-05-23",
+          "price": 675.0,
+          "stops": null,
+          "details": "I Want That Flight \u00b7 Published searches from the last 24 hours; current price may differ. Stops and baggage unconfirmed.",
+          "link": "https://fly.iwantthatflight.com.au/flight.ashx?oc=SYD&dc=DPS&dd=18/May/2027&rd=23/May/2027&po=all"
+        },
+        {
+          "date": "2026-11-05",
+          "airline": "Batik Air + Jetstar",
+          "from": "SYD",
+          "depart": "2027-05-18",
+          "return": "2027-05-23",
+          "price": 684.0,
+          "stops": null,
+          "details": "I Want That Flight \u00b7 Published searches from the last 24 hours; current price may differ. Stops and baggage unconfirmed.",
+          "link": "https://fly.iwantthatflight.com.au/flight.ashx?oc=SYD&dc=DPS&dd=18/May/2027&rd=23/May/2027&po=all"
+        },
+        {
+          "date": "2026-11-05",
+          "airline": "Jetstar + Singapore Airlines",
+          "from": "SYD",
+          "depart": "2027-05-18",
+          "return": "2027-05-23",
+          "price": 849.0,
+          "stops": null,
+          "details": "I Want That Flight \u00b7 Published searches from the last 24 hours; current price may differ. Stops and baggage unconfirmed.",
+          "link": "https://fly.iwantthatflight.com.au/flight.ashx?oc=SYD&dc=DPS&dd=18/May/2027&rd=23/May/2027&po=all"
+        }
+      ]
     }
   ],
   "lastAttempt": {
-    "date": "2026-11-04",
-    "checkedAt": "2026-11-04T04:12:15.998223+00:00",
+    "date": "2026-11-05",
+    "checkedAt": "2026-11-05T00:54:22.853794+00:00",
     "source": "I Want That Flight",
     "status": "success"
   }
