@@ -213,11 +213,18 @@
       "source": "I Want That Flight",
       "status": "no-results",
       "quotes": []
+    },
+    {
+      "date": "2026-11-09",
+      "checkedAt": "2026-11-08T23:44:00.115674+00:00",
+      "source": "I Want That Flight",
+      "status": "no-results",
+      "quotes": []
     }
   ],
   "lastAttempt": {
-    "date": "2026-11-08",
-    "checkedAt": "2026-11-07T23:38:34.690927+00:00",
+    "date": "2026-11-09",
+    "checkedAt": "2026-11-08T23:44:00.115674+00:00",
     "source": "I Want That Flight",
     "status": "no-results"
   }
