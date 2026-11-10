@@ -66,9 +66,9 @@ const EVENTS: DressCodeEvent[] = [
       },
       {
         label: "Menswear inspiration",
-        src: "/photos/wedding-menswear-inspiration.webp",
-        alt: "Wedding menswear inspiration: relaxed suits, open-collar shirts and tailored trousers in olive, sage, sand and brown",
-        caption: "Relaxed tailoring, open collars and earthy greens, sand and warm browns.",
+        src: "/photos/wedding-menswear-suits.webp",
+        alt: "Wedding menswear inspiration: tailored suits in soft blue, sage green, sand, grey and rust, with open collars or optional ties",
+        caption: "Tailored suits in soft blues, sage, sand and rust. Open collars welcome; ties optional.",
         portrait: true,
       },
     ],
