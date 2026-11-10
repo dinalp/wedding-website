@@ -429,7 +429,7 @@ export default function Home() {
               {
                 href: "/stays",
                 title: "Stays",
-                body: "Villas and hotels near the venue, with photos and prices",
+                body: "Where to stay in Uluwatu, with an area guide, photos and prices",
                 photo: "/photos/bali-v2-2.jpg",
               },
               {

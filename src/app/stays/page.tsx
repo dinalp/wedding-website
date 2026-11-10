@@ -6,7 +6,7 @@ export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Stays | Dinal & Shayani",
-  description: "Places to stay near Stone Villas, Uluwatu, with prices tracked twice a week",
+  description: "Choose where to stay in Uluwatu, with a quick area guide and accommodation prices tracked twice a week",
 };
 
 // Grouped by how many the stay sleeps, not the routine's category, so group sizes are consistent.
@@ -44,14 +44,51 @@ export default async function StaysPage() {
     <main className="min-h-screen bg-background">
       <PageHeader active="/stays" />
       <div className="max-w-5xl mx-auto px-4 md:px-8 pb-16">
-        <p className="font-sans text-accent tracking-[0.3em] text-xs">ULUWATU, NEAR STONE VILLAS</p>
+        <p className="font-sans text-accent tracking-[0.3em] text-xs">ULUWATU, BALI</p>
         <h1 className="font-[family-name:var(--font-cormorant)] text-4xl md:text-6xl font-light text-charcoal mt-2">
           Stays
         </h1>
         <p className="font-sans text-charcoal/70 mt-4 max-w-2xl leading-relaxed">
-          Villas, boutique hotels and resorts within about 15 minutes of the venue, aiming for
-          about A$100 per person per night or less. We re-check prices every Monday and
-          Thursday for 17 to 23 May 2027.
+          We recommend staying in Uluwatu, and <strong className="font-medium text-charcoal">anywhere
+          in the area is absolutely fine!</strong> You don&rsquo;t need to stay near the venue.
+          Pick somewhere that suits your budget and the kind of holiday you&rsquo;d like.
+          Around 20 minutes by car is a rough guide for local trips, but your exact location
+          and traffic can make it longer, so check the route to Stone Villas before booking.
+        </p>
+
+        <section aria-labelledby="area-guide" className="mt-8 max-w-2xl">
+          <h2 id="area-guide" className="font-[family-name:var(--font-cormorant)] text-2xl text-charcoal">
+            A quick guide to the area
+          </h2>
+          {/* Area overview checked against https://almostlanding-bali.com/where-to-stay-in-uluwatu/ */}
+          <ul className="list-disc pl-5 space-y-3 mt-3 font-sans text-sm leading-relaxed text-charcoal/80">
+            <li>
+              <strong className="font-medium text-charcoal">Bingin &amp; Padang Padang (Pecatu):</strong>{" "}
+              Villas, guesthouses and boutique hotels around caf&eacute;s and restaurants,
+              with Padang Padang Beach and the west-coast surf spots nearby.
+            </li>
+            <li>
+              <strong className="font-medium text-charcoal">Suluban &amp; the Uluwatu Temple area:</strong>{" "}
+              Stays around the western cliffs, handy for Suluban Beach, sunset spots like
+              Single Fin, and the temple&rsquo;s Kecak dance.
+            </li>
+            <li>
+              <strong className="font-medium text-charcoal">Balangan &amp; Dreamland:</strong>{" "}
+              Beach stays and resorts a little further from the main caf&eacute; strip,
+              with sandy beaches and surf. Plan on driving for more dining options.
+            </li>
+            <li>
+              <strong className="font-medium text-charcoal">Ungasan &amp; Melasti:</strong>{" "}
+              Spacious villas and clifftop resorts along the southern coast, with Melasti
+              Beach and beach clubs such as Sundays nearby. A good fit for pool and beach days.
+            </li>
+          </ul>
+        </section>
+
+        <p className="font-sans text-sm text-charcoal/70 mt-8 max-w-2xl leading-relaxed">
+          The stays below are just a starting point &mdash; feel free to book anywhere in Uluwatu.
+          Our shortlist focuses on places near the venue, aiming for about A$100 per person
+          per night or less. We re-check prices every Monday and Thursday for 17 to 23 May 2027.
         </p>
 
         {!latest ? (
