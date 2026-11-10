@@ -14,6 +14,7 @@ interface Look {
   src?: string;
   alt?: string;
   caption?: string;
+  portrait?: boolean;
 }
 
 interface DressCodeEvent {
@@ -62,6 +63,13 @@ const EVENTS: DressCodeEvent[] = [
         src: "/photos/wedding-dress-inspiration.webp",
         alt: "Formal wedding guest dresses in fuchsia, orange, plum and soft blue, with flowing skirts and floral details",
         caption: "Flowing gowns, colourful prints and a little drama.",
+      },
+      {
+        label: "Menswear inspiration",
+        src: "/photos/wedding-menswear-inspiration.webp",
+        alt: "Wedding menswear inspiration: relaxed suits, open-collar shirts and tailored trousers in olive, sage, sand and brown",
+        caption: "Relaxed tailoring, open collars and earthy greens, sand and warm browns.",
+        portrait: true,
       },
     ],
     colours: {
@@ -129,9 +137,9 @@ export default function DressCodePage() {
                   &#9662;
                 </span>
               </summary>
-              <div className={`grid ${e.looks.length > 1 ? "md:grid-cols-2 " : ""}gap-6 mt-6`}>
+              <div className={`grid ${e.looks.some((look) => look.portrait) ? "md:grid-cols-[1.4fr_1fr] " : e.looks.length > 1 ? "md:grid-cols-2 " : ""}gap-6 mt-6`}>
                 {e.looks.map((look) => (
-                  <div key={look.label}>
+                  <div key={look.label} className={look.portrait ? "md:col-start-2 md:row-start-1 md:row-span-2" : undefined}>
                     <p className="font-[family-name:var(--font-cormorant)] text-xl italic text-charcoal/70 mb-2">
                       {look.label}
                     </p>
@@ -141,13 +149,13 @@ export default function DressCodePage() {
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={`View ${look.label.toLowerCase()} full size (opens in a new tab)`}
-                        className="relative block aspect-video rounded-2xl overflow-hidden focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+                        className={`relative block ${look.portrait ? "aspect-[9/16]" : "aspect-video"} rounded-2xl overflow-hidden focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent`}
                       >
                         <Image
                           src={look.src}
                           alt={look.alt ?? `${e.title} dress code, ${look.label.toLowerCase()}`}
                           fill
-                          sizes={e.looks.length === 1 ? "(min-width: 1024px) 960px, 100vw" : "(min-width: 768px) 480px, 100vw"}
+                          sizes={look.portrait ? "(min-width: 1024px) 390px, (min-width: 768px) 42vw, 100vw" : e.looks.length === 1 ? "(min-width: 1024px) 960px, 100vw" : "(min-width: 768px) 560px, 100vw"}
                           quality={85}
                           className="object-contain"
                         />
