@@ -13,9 +13,21 @@ interface Look {
   /** Drop the image in public/photos and set src here. No src shows a "coming soon" slot. */
   src?: string;
   alt?: string;
+  caption?: string;
 }
 
-const EVENTS: { id: string; day: string; title: string; venue: string; code?: string; description?: string; looks: Look[] }[] = [
+interface DressCodeEvent {
+  id: string;
+  day: string;
+  title: string;
+  venue: string;
+  code?: string;
+  description?: string;
+  looks: Look[];
+  colours?: { src: string; alt: string; description: string };
+}
+
+const EVENTS: DressCodeEvent[] = [
   {
     id: "welcome-dinner",
     day: "Wednesday 19 May",
@@ -37,7 +49,26 @@ const EVENTS: { id: string; day: string; title: string; venue: string; code?: st
     title: "Wedding Day",
     venue: "Stone Villas Uluwatu",
     code: "Island formal · Sarees welcome · Suits (open collar, ties optional) · We love to see some colour!",
-    looks: [{ label: "For her" }, { label: "For him" }],
+    description: "Dress up with us for an evening by the ocean. Think elegant sarees, flowing formal dresses and suits, with plenty of colour and room to dance.",
+    looks: [
+      {
+        label: "Saree inspiration",
+        src: "/photos/wedding-saree-inspiration.webp",
+        alt: "Wedding saree inspiration in pink, yellow, green, gold and ruby, with silk draping and embroidered details",
+        caption: "Silks, rich colours and beautiful embroidered details.",
+      },
+      {
+        label: "Dress inspiration",
+        src: "/photos/wedding-dress-inspiration.webp",
+        alt: "Formal wedding guest dresses in fuchsia, orange, plum and soft blue, with flowing skirts and floral details",
+        caption: "Flowing gowns, colourful prints and a little drama.",
+      },
+    ],
+    colours: {
+      src: "/photos/wedding-colour-inspiration.webp",
+      alt: "Wedding colour moodboard with ruby red, tangerine orange, peony pink, marigold yellow, citron green and hydrangea blue flowers and colour swatches",
+      description: "Think ruby red, tangerine orange, peony pink, marigold yellow, citron green and hydrangea blue. These are the kinds of tones we mean when we say bright colours. Take inspiration from the palette and choose a shade you love, whether in your outfit, a print or an accessory.",
+    },
   },
   {
     id: "recovery-day",
@@ -105,7 +136,13 @@ export default function DressCodePage() {
                       {look.label}
                     </p>
                     {look.src ? (
-                      <div className="relative aspect-video rounded-2xl overflow-hidden">
+                      <a
+                        href={look.src}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`View ${look.label.toLowerCase()} full size (opens in a new tab)`}
+                        className="relative block aspect-video rounded-2xl overflow-hidden focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+                      >
                         <Image
                           src={look.src}
                           alt={look.alt ?? `${e.title} dress code, ${look.label.toLowerCase()}`}
@@ -114,7 +151,7 @@ export default function DressCodePage() {
                           quality={85}
                           className="object-contain"
                         />
-                      </div>
+                      </a>
                     ) : (
                       <div className="aspect-[1308/736] rounded-2xl border border-dashed border-charcoal/20 bg-cream flex items-center justify-center">
                         <p className="font-sans text-xs tracking-wider text-charcoal/40">
@@ -122,9 +159,51 @@ export default function DressCodePage() {
                         </p>
                       </div>
                     )}
+                    {look.caption && (
+                      <p className="font-sans text-sm leading-relaxed text-charcoal/80 mt-3">
+                        {look.caption}
+                      </p>
+                    )}
                   </div>
                 ))}
               </div>
+              {e.colours && (
+                <div className="grid md:grid-cols-[1fr_240px] items-center gap-6 md:gap-12 mt-10 pt-8 border-t border-charcoal/15">
+                  <div>
+                    <h3 className="font-[family-name:var(--font-cormorant)] text-3xl text-charcoal">
+                      A little colour inspiration
+                    </h3>
+                    <p className="max-w-xl font-sans text-sm leading-relaxed text-charcoal/80 mt-3">
+                      {e.colours.description}
+                    </p>
+                    <a
+                      href={e.colours.src}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block font-sans text-sm text-accent underline underline-offset-4 mt-4"
+                    >
+                      View the colour moodboard full size <span className="sr-only">(opens in a new tab)</span>
+                    </a>
+                  </div>
+                  <a
+                    href={e.colours.src}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="View the colour moodboard full size (opens in a new tab)"
+                    className="block w-full max-w-[280px] mx-auto md:max-w-none rounded-2xl overflow-hidden focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+                  >
+                    <Image
+                      src={e.colours.src}
+                      alt={e.colours.alt}
+                      width={1080}
+                      height={1920}
+                      sizes="(min-width: 768px) 240px, 280px"
+                      quality={85}
+                      className="w-full h-auto"
+                    />
+                  </a>
+                </div>
+              )}
             </details>
           </section>
         ))}
