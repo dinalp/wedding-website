@@ -18,7 +18,7 @@ const DAYS = [
       ["When", "4:00 PM – 9:00 PM"],
       ["Where", "Stone Villas Uluwatu"],
     ],
-    wear: "Island semi-formal",
+    wear: "Tropical cocktail",
     dressCode: "welcome-dinner",
   },
   {

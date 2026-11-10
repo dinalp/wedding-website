@@ -15,23 +15,19 @@ interface Look {
   alt?: string;
 }
 
-const EVENTS: { id: string; day: string; title: string; venue: string; code?: string; looks: Look[] }[] = [
+const EVENTS: { id: string; day: string; title: string; venue: string; code?: string; description?: string; looks: Look[] }[] = [
   {
     id: "welcome-dinner",
     day: "Wednesday 19 May",
     title: "Welcome Dinner",
     venue: "Stone Villas Uluwatu",
-    code: "Island semi-formal · Bright colours preferred",
+    code: "Tropical cocktail · Bright colours encouraged",
+    description: "Think colourful dresses, playful prints, linen shirts and tailored trousers. Light fabrics and relaxed silhouettes, dressed up for an evening of dinner and drinks.",
     looks: [
       {
-        label: "For her",
-        src: "/photos/dress-code-2.jpg",
-        alt: "Dress code inspiration: flowing printed and pastel island dresses",
-      },
-      {
-        label: "For him",
-        src: "/photos/dress-code-v2.jpg",
-        alt: "Dress code inspiration: linen and patterned island shirts in earthy tones",
+        label: "Outfit inspiration",
+        src: "/photos/welcome-dinner-dress-code.webp",
+        alt: "Welcome dinner outfit inspiration: colourful cocktail dresses, floral prints, linen shirts and tailored trousers in earthy tones",
       },
     ],
   },
@@ -84,6 +80,11 @@ export default function DressCodePage() {
               {e.venue}
               {e.code && <> · {e.code}</>}
             </p>
+            {e.description && (
+              <p className="max-w-2xl font-sans text-sm leading-relaxed text-charcoal/80 mt-3">
+                {e.description}
+              </p>
+            )}
             {e.venue.includes("Stone Villas") && (
               <p className="font-sans text-sm mt-1">
                 <MapLinks />
@@ -97,21 +98,21 @@ export default function DressCodePage() {
                   &#9662;
                 </span>
               </summary>
-              <div className="grid md:grid-cols-2 gap-6 mt-6">
+              <div className={`grid ${e.looks.length > 1 ? "md:grid-cols-2 " : ""}gap-6 mt-6`}>
                 {e.looks.map((look) => (
                   <div key={look.label}>
                     <p className="font-[family-name:var(--font-cormorant)] text-xl italic text-charcoal/70 mb-2">
                       {look.label}
                     </p>
                     {look.src ? (
-                      <div className="relative aspect-[1308/736] rounded-2xl overflow-hidden">
+                      <div className="relative aspect-video rounded-2xl overflow-hidden">
                         <Image
                           src={look.src}
                           alt={look.alt ?? `${e.title} dress code, ${look.label.toLowerCase()}`}
                           fill
-                          sizes="(min-width: 768px) 480px, 100vw"
+                          sizes={e.looks.length === 1 ? "(min-width: 1024px) 960px, 100vw" : "(min-width: 768px) 480px, 100vw"}
                           quality={85}
-                          className="object-cover"
+                          className="object-contain"
                         />
                       </div>
                     ) : (
