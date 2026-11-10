@@ -1,3 +1,4 @@
+import { BaliTravelEssentials } from "@/components/bali-travel-essentials";
 import type { Metadata } from "next";
 import { UnsplashImage as Image } from "@/components/unsplash-image";
 import { PageHeader } from "@/components/travel";
@@ -5,7 +6,7 @@ import { PageHeader } from "@/components/travel";
 export const metadata: Metadata = {
   title: "Bali Guide | Dinal & Shayani",
   description:
-    "Make a week of it: things to do in Uluwatu, where to eat and swim, working remotely, money and getting around",
+    "Make a week of it: things to do in Uluwatu, food and water safety, visas, travel insurance, things to do, money and getting around",
 };
 
 // Free-to-use photos from Unsplash (Unsplash License), resized by Unsplash's CDN.
@@ -17,6 +18,9 @@ const HERO_BLUR =
 
 const SECTIONS = [
   ["week", "Make a week of it"],
+  ["food-safety", "Food & water safety"],
+  ["visas", "Visas & arrival"],
+  ["insurance", "Travel insurance"],
   ["do", "Things to do"],
   ["clubs", "Clubs and cliffside dining"],
   ["work", "Working remotely"],
@@ -180,6 +184,8 @@ export default function BaliPage() {
             We&rsquo;re planning a few group outings for the week. Details and sign-ups are coming soon.
           </p>
         </section>
+
+        <BaliTravelEssentials />
 
         <section id="do" className="mt-20 scroll-mt-8">
           <h2 className={h2}>Things to do</h2>

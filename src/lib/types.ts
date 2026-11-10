@@ -21,6 +21,9 @@ export interface Party {
   members: PartyMember[];
   email: string;
   phone: string;
+  /** Tentative local calendar dates, empty when unknown. */
+  baliArrival: string;
+  baliDeparture: string;
   songRequest: string;
   message: string;
   /** Opt-ins for the Bali Flight Watch / Uluwatu Stay Watch guest emails. */
@@ -34,6 +37,9 @@ export interface RSVPSubmission {
   partyId: string;
   email: string;
   phone: string;
+  /** Omitted by older clients; empty strings explicitly clear saved dates. */
+  baliArrival?: string;
+  baliDeparture?: string;
   songRequest: string;
   message: string;
   flightEmails: boolean;

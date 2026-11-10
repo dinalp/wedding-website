@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import Link from "next/link";
+import { rsvpDetailsError } from "@/lib/rsvp-validation";
+import { BaliDates } from "@/components/bali-dates";
 import { useParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -33,6 +36,12 @@ const EVENTS = [
   },
 ];
 
+function formatTripDate(value: string) {
+  return new Date(`${value}T12:00:00`).toLocaleDateString("en-AU", {
+    day: "numeric", month: "short", year: "numeric",
+  });
+}
+
 export default function RSVPPage() {
   // The URL segment is a party record id from name search, or a short Code
   // from a direct link. The API resolves either.
@@ -49,6 +58,8 @@ export default function RSVPPage() {
   const [members, setMembers] = useState<PartyMember[]>([]);
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [baliArrival, setBaliArrival] = useState("");
+  const [baliDeparture, setBaliDeparture] = useState("");
   const [songRequest, setSongRequest] = useState("");
   const [message, setMessage] = useState("");
   const [flightEmails, setFlightEmails] = useState(false);
@@ -68,6 +79,8 @@ export default function RSVPPage() {
     );
     setEmail(data.email);
     setPhone(data.phone);
+    setBaliArrival(data.baliArrival ?? "");
+    setBaliDeparture(data.baliDeparture ?? "");
     setSongRequest(data.songRequest);
     setMessage(data.message);
     setFlightEmails(data.flightEmails);
@@ -171,6 +184,12 @@ export default function RSVPPage() {
     e.preventDefault();
     if (!party) return;
 
+    const detailsError = rsvpDetailsError({ phone, baliArrival, baliDeparture });
+    if (detailsError) {
+      setError(detailsError);
+      return;
+    }
+
     setSubmitting(true);
     setError(null);
 
@@ -182,6 +201,8 @@ export default function RSVPPage() {
           partyId: party.id,
           email,
           phone,
+          baliArrival,
+          baliDeparture,
           songRequest,
           message,
           flightEmails,
@@ -249,12 +270,12 @@ export default function RSVPPage() {
           <p className="font-serif text-4xl text-white mb-4">D & S</p>
           <div className="divider mx-auto mb-8" />
           <p className="font-sans text-white/70 leading-relaxed">{error}</p>
-          <a
+          <Link
             href="/"
             className="inline-block mt-8 font-sans text-accent text-sm tracking-wider hover:text-accent-light transition-colors"
           >
             RETURN HOME
-          </a>
+          </Link>
         </motion.div>
       </div>
     );
@@ -326,14 +347,20 @@ export default function RSVPPage() {
             ))}
           </div>
 
+          <p className="font-sans text-white/70 text-sm leading-relaxed mb-4">
+            {baliArrival || baliDeparture
+              ? `Tentative Bali dates: ${baliArrival ? formatTripDate(baliArrival) : "Arrival undecided"} – ${baliDeparture ? formatTripDate(baliDeparture) : "Departure undecided"}.`
+              : "Bali dates still to be decided? You can add them here later."}
+          </p>
+
           <p className="font-sans text-white/50 text-sm leading-relaxed">
             {attendingCount > 0
               ? "We'll be in touch with more details, and we'll send you into the WDING guest app closer to the date."
               : "We're sorry to miss you, but thank you for letting us know."}
           </p>
           <p className="font-sans text-white/40 text-xs leading-relaxed mt-3">
-            You can come back to this page any time before January 20th, 2027 to
-            change your answers.
+            Please finalise your RSVP by January 20th, 2027. You can return to
+            this page to update your travel dates later as your plans take shape.
           </p>
           <button
             onClick={() => setSubmitted(false)}
@@ -342,12 +369,12 @@ export default function RSVPPage() {
             UPDATE RSVP
           </button>
           <div className="mt-4">
-            <a
+            <Link
               href="/"
               className="font-sans text-white/40 text-sm tracking-wider hover:text-white/60 transition-colors"
             >
               RETURN HOME
-            </a>
+            </Link>
           </div>
         </motion.div>
       </div>
@@ -364,9 +391,9 @@ export default function RSVPPage() {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <a href="/" className="font-serif text-xl tracking-widest text-white">
+          <Link href="/" className="font-serif text-xl tracking-widest text-white">
             D & S
-          </a>
+          </Link>
         </motion.div>
       </div>
 
@@ -399,16 +426,6 @@ export default function RSVPPage() {
             </p>
           )}
         </motion.div>
-
-        {error && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-sm text-center"
-          >
-            <p className="font-sans text-red-400 text-sm">{error}</p>
-          </motion.div>
-        )}
 
         <form onSubmit={handleSubmit}>
           {/* Party Members */}
@@ -650,9 +667,9 @@ export default function RSVPPage() {
                 <span>
                   Email me Sydney to Bali flight prices (weekly, plus alerts for
                   big drops).{" "}
-                  <a href="/flights" target="_blank" className="underline text-white/50">
+                  <Link href="/flights" target="_blank" className="underline text-white/50">
                     See flights
-                  </a>
+                  </Link>
                 </span>
               </label>
               <label className="flex items-start gap-3 font-sans text-white/70 text-sm cursor-pointer">
@@ -664,9 +681,9 @@ export default function RSVPPage() {
                 />
                 <span>
                   Email me places to stay near the venue (weekly).{" "}
-                  <a href="/stays" target="_blank" className="underline text-white/50">
+                  <Link href="/stays" target="_blank" className="underline text-white/50">
                     See stays
-                  </a>
+                  </Link>
                 </span>
               </label>
             </fieldset>
@@ -684,17 +701,28 @@ export default function RSVPPage() {
               className="font-sans text-white/80 text-xs tracking-wider block mb-2"
             >
               MOBILE NUMBER{" "}
-              <span className="text-white/30">(OPTIONAL)</span>
+              <span className="text-white/60">(REQUIRED)</span>
             </label>
             <input
               id="phone"
               type="tel"
+              required
+              autoComplete="tel"
+              inputMode="tel"
+              maxLength={40}
+              aria-describedby="phone-help"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               className="w-full bg-white/10 border border-white/20 rounded-sm px-4 py-3 text-white placeholder:text-white/30 font-sans text-sm focus:border-accent focus:outline-none"
               placeholder="+61 400 000 000"
             />
+            <p id="phone-help" className="font-sans text-white/60 text-xs leading-relaxed mt-2">
+              One contact number for your party. Include your country code if possible.
+            </p>
           </motion.div>
+
+          <BaliDates arrival={baliArrival} departure={baliDeparture}
+            onArrivalChange={setBaliArrival} onDepartureChange={setBaliDeparture} />
 
           {/* Song Request */}
           <motion.div
@@ -741,6 +769,12 @@ export default function RSVPPage() {
               placeholder="Share your love and wishes..."
             />
           </motion.div>
+
+          {error && (
+            <div role="alert" className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-sm">
+              <p className="font-sans text-red-300 text-sm">{error}</p>
+            </div>
+          )}
 
           {/* Submit */}
           <motion.div

@@ -81,6 +81,8 @@ interface PartyFields {
   "Invited To"?: string[];
   Email?: string;
   Phone?: string;
+  "Bali Arrival"?: string | null;
+  "Bali Departure"?: string | null;
   "Song Request"?: string;
   Message?: string;
   "Flight Price Emails"?: boolean;
@@ -137,6 +139,8 @@ function toParty(rec: Rec<PartyFields>, guests: Rec<GuestFields>[]): Party {
     members: guests.map(toMember),
     email: f.Email ?? "",
     phone: f.Phone ?? "",
+    baliArrival: f["Bali Arrival"] ?? "",
+    baliDeparture: f["Bali Departure"] ?? "",
     songRequest: f["Song Request"] ?? "",
     message: f.Message ?? "",
     flightEmails: !!f["Flight Price Emails"],
@@ -256,6 +260,10 @@ export async function saveRSVP(submission: RSVPSubmission): Promise<Party> {
     "Stay Price Emails": submission.stayEmails && !!submission.email,
     "Updated At": now,
   };
+  // Older clients omit dates; explicit empty values clear tentative plans.
+  if (submission.baliArrival !== undefined) partyFields["Bali Arrival"] = submission.baliArrival || null;
+  if (submission.baliDeparture !== undefined) partyFields["Bali Departure"] = submission.baliDeparture || null;
+
   // Submitted At records the first response and is never overwritten on edits.
   if (!party.submittedAt) partyFields["Submitted At"] = now;
 
