@@ -3,16 +3,18 @@ import Image from "next/image";
 const APPS = [
   {
     name: "Grab", logo: "grab-logo.png", logoWidth: 156, logoHeight: 60,
-    photo: "grab-bike.webp", position: "object-[65%_center]",
-    alt: "GrabBike driver and passenger wearing green Grab helmets on a scooter in Indonesia",
+    photo: "grab-car.webp", position: "object-center",
+    caption: "GrabCar at an airport pickup point.",
+    alt: "White GrabCar taxis with green Grab branding waiting at an airport pickup point",
     service: "Choose GrabBike for a scooter, GrabCar for a car, or GrabFood for delivery.",
-    source: "https://www.grab.com/id/en/transport/bike/",
+    source: "https://www.grab.com/id/en/pressdownload/",
     apple: "https://apps.apple.com/au/app/grab-food-delivery-taxi-ride/id647268330",
     google: "https://play.google.com/store/apps/details?id=com.grabtaxi.passenger",
   },
   {
     name: "Gojek", logo: "gojek-logo.svg", logoWidth: 112, logoHeight: 32,
     photo: "gojek-bike.webp", position: "object-center",
+    caption: "Scooter taxi in Indonesia.",
     alt: "Gojek GoRide driver and helmeted passenger seated on a white scooter at a pickup point",
     service: "Choose GoRide for a scooter, GoCar for a car, or GoFood for delivery.",
     source: "https://www.gojek.com/en-id/goride",
@@ -33,7 +35,7 @@ export function BaliRideApps() {
                 className={`object-cover ${app.position}`} />
             </div>
             <figcaption className="font-sans text-xs text-charcoal/65 mt-2">
-              Scooter taxi in Indonesia. Photo: <a href={app.source} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">{app.name}</a>.
+              {app.caption} Photo: <a href={app.source} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">{app.name}</a>.
             </figcaption>
           </figure>
           <div className="flex items-center gap-4 mt-5">
