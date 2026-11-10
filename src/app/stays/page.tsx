@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { getStays, stayTrend, type Stay } from "@/lib/travel";
 import { Stat, SubscribeNote, PageHeader, TrendChart, aud, shortDate } from "@/components/travel";
+import { StayPhoto } from "@/components/stay-photo";
+import { stayImage } from "@/lib/stay-images";
 
 export const revalidate = 3600;
 
@@ -134,22 +136,7 @@ export default async function StaysPage() {
                       rel="noopener noreferrer"
                       className="block bg-white rounded-sm overflow-hidden border border-transparent hover:border-accent-light transition-colors"
                     >
-                      <div className="aspect-[3/2] bg-cream flex items-center justify-center">
-                        {!s.image && (
-                          <p className="font-sans text-xs tracking-wider text-charcoal/40">PHOTO COMING SOON</p>
-                        )}
-                        {s.image && (
-                          // Photos are hotlinked from the listing sites; alt="" keeps a broken one invisible.
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={s.image}
-                            alt=""
-                            loading="lazy"
-                            referrerPolicy="no-referrer"
-                            className="w-full h-full object-cover"
-                          />
-                        )}
-                      </div>
+                      <StayPhoto src={stayImage(s.property, s.image)} property={s.property} />
                       <div className="p-5">
                         <div className="flex justify-between gap-4">
                           <h3 className="font-sans text-charcoal font-medium">{s.property}</h3>
