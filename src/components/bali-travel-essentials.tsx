@@ -10,133 +10,115 @@ function Source({ href, children }: { href: string; children: ReactNode }) {
 export function BaliTravelEssentials() {
   return (
     <>
-      <section id="food-safety" className="mt-20 scroll-mt-8">
+      <section id="food-safety">
         <h2 className={heading}>Eat well, stay well</h2>
-        <p className={`${body} mt-4 max-w-3xl`}>
-          There&rsquo;s so much good food in Bali. A little care helps keep Bali belly
-          from becoming part of the itinerary. Our advice: choose established,
-          busy venues that look clean, and use the same common sense you would anywhere.
-        </p>
-        <div className="grid md:grid-cols-2 gap-8 mt-8">
-          <div>
-            <h3 className={subheading}>Food, water &amp; a few easy habits</h3>
-            <ul className={`${body} text-sm list-disc pl-5 space-y-3 mt-4`}>
-              <li>Drink sealed bottled water, or properly treated/filtered drinking water the venue confirms is safe. Avoid tap water, including when brushing your teeth; check that ice is made with safe water.</li>
-              <li>Choose food cooked fresh and served hot. Be cautious with raw seafood, lukewarm buffets and salads washed in tap water. Fruit you peel yourself is a safer choice.</li>
-              <li>Wash your hands before eating, and carry hand sanitiser for when soap and water aren&rsquo;t available.</li>
-              <li>For alcohol, stick to reputable licensed venues and avoid homemade or unlabelled spirits. Methanol poisoning is a risk in Bali.</li>
+        <p className={`${body} mt-4`}>A few simple habits to help avoid Bali belly.</p>
+        <div className="grid md:grid-cols-2 gap-8 mt-7">
+          <ul className={`${body} text-sm space-y-4`}>
+            <li><strong className="text-charcoal">Water:</strong> sealed bottles or properly treated/filtered drinking water. Skip tap water, even for brushing teeth. Check ice is made with safe water.</li>
+            <li><strong className="text-charcoal">Food:</strong> choose established, busy venues and freshly cooked, hot meals. Be cautious with raw seafood, salads and lukewarm buffets.</li>
+            <li><strong className="text-charcoal">Hands:</strong> wash before eating. Carry sanitiser for when you can&rsquo;t.</li>
+            <li><strong className="text-charcoal">Alcohol:</strong> use reputable licensed venues. Avoid homemade or unlabelled spirits because of the methanol risk.</li>
+          </ul>
+          <div className="bg-cream p-6 rounded-sm">
+            <h3 className={subheading}>Should I pack Travelan?</h3>
+            <p className={`${body} text-sm mt-3`}>
+              Ask your pharmacist. It&rsquo;s an over-the-counter cow&rsquo;s colostrum
+              product that may help prevent diarrhoea caused by certain E. coli strains.
+              That&rsquo;s why we suggest it as an extra precaution.
+            </p>
+            <ul className={`${body} text-sm list-disc pl-5 space-y-2 mt-4`}>
+              <li>Take before meals, following the packet.</li>
+              <li>It won&rsquo;t prevent every cause of Bali belly.</li>
+              <li>Contains milk proteins and lactose. Don&rsquo;t use if allergic to bovine protein or lactose intolerant. Ask a pharmacist about children or pregnancy.</li>
             </ul>
-            <p className="font-sans text-xs leading-relaxed text-charcoal/65 mt-4">
-              Read <Source href="https://www.health.nsw.gov.au/travel/Pages/eat-drink.aspx">NSW Health&rsquo;s food and water advice</Source> and <Source href="https://www.smartraveller.gov.au/destinations/asia/indonesia">Smartraveller&rsquo;s Indonesia advice</Source>.
-            </p>
-          </div>
-          <div className="bg-white/60 border border-charcoal/10 rounded-sm p-6">
-            <h3 className={subheading}>What about Travelan?</h3>
-            <p className={`${body} text-sm mt-4`}>
-              We recommend asking your pharmacist about packing Travelan as an extra
-              precaution. It&rsquo;s an over-the-counter bovine colostrum product
-              containing antibodies against certain E. coli strains that cause
-              travellers&rsquo; diarrhoea. Taken before meals as directed, it may
-              reduce that risk — which is why we think it&rsquo;s worth considering.
-            </p>
-            <p className={`${body} text-sm mt-4`}>
-              It won&rsquo;t prevent every cause of Bali belly or replace careful
-              food and water choices. It contains cow&rsquo;s milk proteins and
-              lactose; the manufacturer says not to use it if you have a bovine
-              protein allergy or are lactose intolerant. Follow the packet and ask
-              a pharmacist about suitability, especially for children or during pregnancy.
-            </p>
-            <p className="font-sans text-xs leading-relaxed mt-4">
-              <Source href="https://www.travelan.com.au/faq/">Travelan ingredients, precautions &amp; FAQs</Source>
-            </p>
           </div>
         </div>
+        <p className="font-sans text-xs text-charcoal/65 mt-5">
+          More detail: <Source href="https://www.health.nsw.gov.au/travel/Pages/eat-drink.aspx">NSW Health</Source>
+          {" · "}<Source href="https://www.travelan.com.au/faq/">Travelan FAQs</Source>
+          {" · "}<Source href="https://www.smartraveller.gov.au/destinations/asia/indonesia">Smartraveller</Source>
+        </p>
       </section>
 
-      <section id="visas" className="mt-20 scroll-mt-8">
+      <section id="visas">
         <h2 className={heading}>Visas &amp; arriving in Bali</h2>
         <p className={`${body} mt-4 max-w-3xl`}>
-          For Australian ordinary-passport holders visiting as tourists, the usual
-          option is a 30-day e-Visa on Arrival (e-VOA). Other passports may have
-          different requirements: check eligibility before booking.
+          Australian ordinary-passport holders can usually get a 30-day tourist
+          e-Visa on Arrival (e-VOA). Travelling on another passport? Check your eligibility first.
         </p>
-        <div className="grid sm:grid-cols-2 gap-4 mt-6">
-          <div className="border-y border-charcoal/15 py-5">
-            <h3 className={subheading}>Tourist visa</h3>
-            <p className="font-sans text-xl text-charcoal mt-2">IDR 500,000 per person</p>
-            <p className={`${body} text-sm mt-1`}>Plus a small online processing fee for the e-VOA.</p>
+        <dl className="grid sm:grid-cols-2 gap-6 bg-cream p-6 md:p-8 rounded-sm mt-7">
+          <div>
+            <dt className="font-sans text-sm text-charcoal/75">Tourist visa · per person</dt>
+            <dd className="font-[family-name:var(--font-cormorant)] text-4xl mt-1">IDR 500,000</dd>
+            <dd className={`${body} text-xs mt-2`}>Plus a small online processing fee.</dd>
           </div>
-          <div className="border-y border-charcoal/15 py-5">
-            <h3 className={subheading}>Bali tourist levy</h3>
-            <p className="font-sans text-xl text-charcoal mt-2">IDR 150,000 per person</p>
-            <p className={`${body} text-sm mt-1`}>Separate from the visa. Pay through <Source href="https://lovebali.baliprov.go.id/">Love Bali</Source>; save the receipt.</p>
+          <div>
+            <dt className="font-sans text-sm text-charcoal/75">Bali tourist levy · per person</dt>
+            <dd className="font-[family-name:var(--font-cormorant)] text-4xl mt-1">IDR 150,000</dd>
+            <dd className={`${body} text-xs mt-2`}>Separate payment via <Source href="https://lovebali.baliprov.go.id/">Love Bali</Source>. Save the receipt.</dd>
           </div>
-        </div>
-        <ol className={`${body} list-decimal pl-5 space-y-5 mt-7 max-w-3xl`}>
-          <li><strong className="text-charcoal">Before flying.</strong> Check your passport has at least six months&rsquo; validity on entry (ideally on departure too), and keep your onward/return booking handy. Apply at least 48 hours before travel on the <Source href="https://evisa.imigrasi.go.id/">official Indonesian e-Visa site</Source>. Select your nationality and tourism purpose, follow the document-upload prompts, check your details, pay and save the issued visa.</li>
-          <li><strong className="text-charcoal">Within three days of travel.</strong> Complete the free <Source href="https://allindonesia.imigrasi.go.id/">All Indonesia arrival card</Source> and save its QR code. This is separate from your visa; avoid sites charging to submit it.</li>
-          <li><strong className="text-charcoal">At Denpasar airport.</strong> Follow signs to immigration, with your passport and visa ready. Eligible travellers without an e-VOA can buy a VOA at the counter before immigration. Then collect your bags, follow customs instructions with your arrival-card QR ready, and head to arrivals to meet your driver.</li>
+        </dl>
+        <ol className="mt-8 space-y-6">
+          {[
+            { title: "Before you fly", content: <>Apply on the <Source href="https://evisa.imigrasi.go.id/">official e-Visa site</Source> at least 48 hours before travel. Follow the upload and payment steps; save your visa. Have six months&rsquo; passport validity on entry and an onward/return ticket.</> },
+            { title: "Within three days of travel", content: <>Complete the free <Source href="https://allindonesia.imigrasi.go.id/">All Indonesia arrival card</Source>. Save its QR code. This is separate from the visa — don&rsquo;t pay a third-party site.</> },
+            { title: "When you land", content: <>Immigration → collect bags → customs → meet your driver. Keep your passport, visa and arrival QR handy. Eligible travellers without an e-VOA can buy a VOA before immigration.</> },
+          ].map((step, index) => (
+            <li key={step.title} className="grid grid-cols-[2rem_1fr] gap-4">
+              <span aria-hidden="true" className="font-[family-name:var(--font-cormorant)] text-3xl text-accent leading-none">{index + 1}</span>
+              <div><h3 className="font-sans font-medium text-charcoal">{step.title}</h3><p className={`${body} text-sm mt-2 max-w-3xl`}>{step.content}</p></div>
+            </li>
+          ))}
         </ol>
-        <p className="font-sans text-xs leading-relaxed text-charcoal/65 mt-5">
-          Entry rules and fees checked 10 November 2026; recheck before your May 2027 trip.
-          {" "}<Source href="https://www.smartraveller.gov.au/destinations/asia/indonesia">Current Australian travel advice</Source>
-          {" · "}<Source href="https://travel.state.gov/en/international-travel/travel-advisories/indonesia.html">Airport entry and customs guidance</Source>
+        <p className="font-sans text-xs text-charcoal/65 mt-6">
+          Checked 10 November 2026. Recheck before flying:
+          {" "}<Source href="https://www.smartraveller.gov.au/destinations/asia/indonesia">entry rules</Source>
+          {" · "}<Source href="https://travel.state.gov/en/international-travel/travel-advisories/indonesia.html">airport guidance</Source>.
         </p>
       </section>
 
-      <section id="insurance" className="mt-20 scroll-mt-8">
+      <section id="insurance">
         <h2 className={heading}>Travel insurance</h2>
         <p className={`${body} mt-4 max-w-3xl`}>
-          Please arrange cover when you book. Look for overseas medical care and
-          evacuation as well as cancellation and travel-delay benefits. Check the
-          excess, limits, pre-existing medical conditions and any activities you&rsquo;re
-          planning — especially scooters or surfing. <Source href="https://www.smartraveller.gov.au/insurance">Smartraveller&rsquo;s insurance guide</Source> is a useful starting point.
+          Arrange it when you book. Look for medical care, evacuation, cancellations
+          and delays. Check your excess, medical conditions and cover for activities like scooters or surfing.
         </p>
-        <div className="grid md:grid-cols-2 gap-8 mt-8">
+        <div className="grid md:grid-cols-2 gap-8 mt-7">
           <div>
-            <h3 className={subheading}>Already covered by your credit card?</h3>
+            <h3 className={subheading}>Using your credit card&rsquo;s cover?</h3>
+            <ul className={`${body} text-sm list-disc pl-5 space-y-2 mt-4`}>
+              <li>Check it still includes travel insurance.</li>
+              <li>Check activation and card-spend requirements.</li>
+              <li>Confirm who&rsquo;s covered and for how long.</li>
+            </ul>
             <p className={`${body} text-sm mt-4`}>
-              Possibly, but don&rsquo;t assume it&rsquo;s automatic. Confirm your card
-              still includes cover, whether you must activate it or pay qualifying
-              travel costs on the card, who is insured and how long the cover lasts.
-              Ask for confirmation for this trip and read the current Product
-              Disclosure Statement (PDS).
+              Some banks are reducing cover. Read the current policy and
+              {" "}<Source href="https://www.smartraveller.gov.au/news-and-updates/credit-card-travel-insurance-changing">latest update</Source>.
             </p>
             <p className={`${body} text-sm mt-4`}>
-              Some Australian banks are reducing or removing complimentary cover,
-              so check the rules that apply to your booking and travel dates.
-              {" "}<Source href="https://www.smartraveller.gov.au/news-and-updates/credit-card-travel-insurance-changing">Read the latest credit-card insurance update</Source>.
-            </p>
-            <p className={`${body} text-sm mt-4`}>
-              Buying a separate policy? Australian providers to compare include
-              {" "}<Source href="https://www.covermore.com.au/">Cover-More</Source>,
-              {" "}<Source href="https://www.allianz.com.au/travel-insurance.html">Allianz</Source> and
-              {" "}<Source href="https://scti.com.au/">Southern Cross Travel Insurance</Source>.
-              Compare the policy wording and your eligibility, not just the price.
+              Buying separately? Compare <Source href="https://www.covermore.com.au/">Cover-More</Source>,
+              {" "}<Source href="https://www.allianz.com.au/travel-insurance.html">Allianz</Source> or
+              {" "}<Source href="https://scti.com.au/">Southern Cross</Source>. Check the policy, not just the price.
             </p>
           </div>
-          <div className="border-l-2 border-accent/50 pl-6">
-            <h3 className={subheading}>If your flight is cancelled</h3>
-            <p className={`${body} text-sm mt-4`}>
-              Delays and cancellations can happen with any airline, including
-              budget carriers. We&rsquo;d leave a buffer before the celebrations
-              and avoid a tight connection on separate tickets.
+          <div className="bg-cream p-6 rounded-sm">
+            <h3 className={subheading}>Flight cancelled — am I covered?</h3>
+            <p className={`${body} text-sm mt-3`}>
+              <strong className="text-charcoal">Not always.</strong> Some policies exclude airline
+              rescheduling or mechanical faults. Check cancellation and delay benefits before buying.
             </p>
-            <p className={`${body} text-sm mt-4`}>
-              Insurance doesn&rsquo;t automatically pay for every cancelled flight.
-              The reason matters: some policies exclude airline rescheduling,
-              mechanical faults or other operational issues. Check both cancellation
-              and travel-delay benefits, including waiting periods and extra hotel
-              or replacement-flight costs. <Source href="https://www.medibank.com.au/travel-insurance/help/cancellations-amendments/">This insurer&rsquo;s exclusions</Source> show why it pays to read the detail.
-            </p>
-            <p className={`${body} text-sm mt-4`}>
-              Ask the airline about rebooking or a refund first. Keep its written
-              explanation and your receipts, and contact your insurer before making
-              expensive alternative arrangements. Ask specifically how your policy
-              handles airline failure and missed connections, too.
-            </p>
+            <ul className={`${body} text-sm list-disc pl-5 space-y-2 mt-4`}>
+              <li>Leave a buffer before the wedding, whichever airline you choose.</li>
+              <li>Ask the airline about rebooking or a refund first.</li>
+              <li>Keep receipts and contact your insurer before booking costly alternatives.</li>
+            </ul>
           </div>
         </div>
+        <p className="font-sans text-xs text-charcoal/65 mt-5">
+          Read more: <Source href="https://www.smartraveller.gov.au/insurance">choosing insurance</Source>
+          {" · "}<Source href="https://www.medibank.com.au/travel-insurance/help/cancellations-amendments/">examples of cancellation exclusions</Source>.
+        </p>
       </section>
     </>
   );

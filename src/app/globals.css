@@ -132,3 +132,36 @@ select:focus {
   background-size: 200% 200%;
   animation: shimmer 3s ease-in-out infinite;
 }
+
+/* Long-form Bali guide: steady reading rhythm and visible anchor destinations. */
+.bali-guide :is(a, summary):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+.bali-guide .guide-article > section {
+  margin-top: 5rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid rgb(42 51 24 / 16%);
+  scroll-margin-top: 5.5rem;
+}
+.bali-guide .guide-article > section:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+.bali-guide .guide-article h2 {
+  text-wrap: balance;
+}
+.bali-guide .guide-article .text-sm {
+  font-size: 0.9375rem;
+  line-height: 1.7;
+}
+.bali-guide .guide-article .text-xs {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .bali-guide * { transition-duration: 0s !important; }
+}

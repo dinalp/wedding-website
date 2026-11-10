@@ -1,12 +1,14 @@
+import { BaliContents } from "@/components/bali-contents";
+import { BaliRideApps } from "@/components/bali-ride-apps";
 import { BaliTravelEssentials } from "@/components/bali-travel-essentials";
 import type { Metadata } from "next";
 import { UnsplashImage as Image } from "@/components/unsplash-image";
 import { PageHeader } from "@/components/travel";
 
 export const metadata: Metadata = {
-  title: "Bali Guide | Dinal & Shayani",
+  title: "Everything You Need to Know About Bali | Dinal & Shayani",
   description:
-    "Make a week of it: things to do in Uluwatu, food and water safety, visas, travel insurance, things to do, money and getting around",
+    "Your guide to Uluwatu: things to do, beach clubs, Grab and Gojek, money, food safety, visas and travel insurance.",
 };
 
 // Free-to-use photos from Unsplash (Unsplash License), resized by Unsplash's CDN.
@@ -15,18 +17,6 @@ const photo = (id: string) => `https://images.unsplash.com/photo-${id}`;
 // A 24px copy of the hero, shown blurred while the full image loads.
 const HERO_BLUR =
   "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/4gKISUNDX1BST0ZJTEUAAQEAAAJ4AAAAAAQwAABtbnRyUkdCIFhZWiAH5gAHAAEAAAAAAABhY3NwU0VDAAAAAABTRUMAAAAAAAAAAAAAAAAAAAAAAAAA9tYAAQAAAADTLVNFQwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAApkZXNjAAAA/AAAAGRjcHJ0AAABYAAAAHx3dHB0AAAB3AAAABRjaGFkAAAB8AAAACxyWFlaAAACHAAAABRnWFlaAAACMAAAABRiWFlaAAACRAAAABRyVFJDAAACWAAAACBnVFJDAAACWAAAACBiVFJDAAACWAAAACBtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAEYAAAAcAEQAQwBJAC0AUAAzACAARAA2ADUAIABHAGEAbQB1AHQAIAB3AGkAdABoACAAcwBSAEcAQgAgAFQAcgBhAG4AcwBmAGUAcgAAbWx1YwAAAAAAAAABAAAADGVuVVMAAABgAAAAHABDAG8AcAB5AHIAaQBnAGgAdAAgACgAYwApACAAMgAwADIAMgAgAFMAYQBtAHMAdQBuAGcAIABFAGwAZQBjAHQAcgBvAG4AaQBjAHMAIABDAG8ALgAsACAATAB0AGQALlhZWiAAAAAAAAD21gABAAAAANMtc2YzMgAAAAAAAQw9AAAF3P//8ysAAAeQAAD9kP//+6P///2jAAAD2gAAwIxYWVogAAAAAAAAg9wAAD29////u1hZWiAAAAAAAABKvQAAsTYAAAq5WFlaIAAAAAAAACg9AAARDAAAyNhwYXJhAAAAAAADAAAAAmZmAADypwAADVkAABPQAAAKW//bAIQABgcHCQsJDA0NDBAREBEQGBYUFBYYIxkbGRsZIzUhJyEhJyE1LzkvKy85L1RCOztCVGFSTlJhdmlpdpSNlMHB/wEGBwcJCwkMDQ0MEBEQERAYFhQUFhgjGRsZGxkjNSEnISEnITUvOS8rLzkvVEI7O0JUYVJOUmF2aWl2lI2UwcH//8AAEQgADgAYAwEiAAIRAQMRAf/EAGUAAAMBAAAAAAAAAAAAAAAAAAAEBgUQAAIBBAAGAwAAAAAAAAAAAAECAwAEBREGEhRBUWEhNGMBAQEBAAAAAAAAAAAAAAAAAAQCAxEAAgIDAQAAAAAAAAAAAAAAAQIAAwQRIRL/2gAMAwEAAhEDEQA/AFLbJThtPGr+xta0Ic6Y3+pojsSRS046C4fkAYLAu9/pV/FFb5O3WC9hV3VNiQfDa9HsayxcuxlYNJuoUEak7DxeUct0g3556KheI8ZNi7tUE5eNwSnkAdjRTfQPYfo5P//Z";
-
-const SECTIONS = [
-  ["week", "Make a week of it"],
-  ["food-safety", "Food & water safety"],
-  ["visas", "Visas & arrival"],
-  ["insurance", "Travel insurance"],
-  ["do", "Things to do"],
-  ["clubs", "Clubs and cliffside dining"],
-  ["work", "Working remotely"],
-  ["money", "Money"],
-  ["getting-around", "Getting around"],
-] as const;
 
 const ACTIVITIES = [
   {
@@ -98,46 +88,34 @@ const link = "text-accent underline underline-offset-4 decoration-accent/40 hove
 
 export default function BaliPage() {
   return (
-    <main className="min-h-screen bg-background">
+    <main id="guide-top" className="bali-guide min-h-screen bg-background">
       <PageHeader active="/bali" />
 
-      <section className="relative h-[70vh] min-h-[420px] max-h-[720px] bg-[#2f4a4c]">
-        <Image
-          src={photo("1759657231646-32109da61330")}
-          alt="Waves rolling in beneath the green cliffs of Uluwatu"
-          fill
-          priority
-          sizes="100vw"
-          placeholder="blur"
-          blurDataURL={HERO_BLUR}
-          quality={85}
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 max-w-5xl mx-auto px-4 md:px-8 pb-10 md:pb-16 text-white">
-          <h1 className="font-[family-name:var(--font-cormorant)] text-5xl md:text-7xl font-light">
-            Your week in Uluwatu
+      <section className="max-w-7xl mx-auto px-5 md:px-8 pt-5 pb-12 md:pb-16 grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+        <div className="py-4 md:py-8">
+          <h1 className="font-[family-name:var(--font-cormorant)] text-5xl md:text-6xl lg:text-7xl font-light leading-[1.05] text-balance">
+            Everything You Need to Know About Bali
           </h1>
-          <p className="font-sans text-white/85 text-lg md:text-xl mt-4 max-w-2xl leading-relaxed">
-            Clifftop surf breaks, sunset beach clubs and some of the best food in Bali. Here&rsquo;s how to
-            make the most of it.
+          <p className="font-sans text-charcoal/75 text-base md:text-lg mt-6 max-w-xl leading-relaxed">
+            A little planning, a lot to look forward to. Our favourite ways to spend
+            a week in Uluwatu, with the practical details to help you feel at home.
           </p>
+          <a href="#guide-contents" className="inline-flex items-center gap-3 mt-7 py-2 font-sans text-sm text-accent underline underline-offset-4">
+            Explore the guide
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M12 4v16m-6-6 6 6 6-6" /></svg>
+          </a>
+        </div>
+        <div className="relative aspect-[4/3] md:aspect-[5/6] max-h-[560px] overflow-hidden rounded-sm bg-cream">
+          <Image src={photo("1759657231646-32109da61330")}
+            alt="Waves rolling in beneath the green cliffs of Uluwatu" fill priority
+            sizes="(min-width: 1280px) 580px, (min-width: 768px) 50vw, 100vw"
+            placeholder="blur" blurDataURL={HERO_BLUR} quality={85} className="object-cover" />
         </div>
       </section>
 
-      <div className="max-w-5xl mx-auto px-4 md:px-8 pb-16">
-        <nav className="flex flex-wrap gap-2 mt-8" aria-label="On this page">
-          {SECTIONS.map(([id, label]) => (
-            <a
-              key={id}
-              href={`#${id}`}
-              className="font-sans text-xs tracking-wider text-accent bg-accent/10 hover:bg-accent/20 transition-colors px-4 py-2 rounded-full"
-            >
-              {label.toUpperCase()}
-            </a>
-          ))}
-        </nav>
-
+      <div id="guide-contents" className="max-w-7xl mx-auto px-5 md:px-8 pb-16 grid xl:grid-cols-[210px_minmax(0,1fr)] gap-x-12 items-start scroll-mt-4">
+        <BaliContents />
+        <div className="guide-article min-w-0 pt-8 xl:pt-0">
         <section id="week" className="mt-16 scroll-mt-8">
           <h2 className={h2}>Make a week of it</h2>
           <p className={`${body} text-lg mt-4 max-w-3xl`}>
@@ -185,8 +163,6 @@ export default function BaliPage() {
           </p>
         </section>
 
-        <BaliTravelEssentials />
-
         <section id="do" className="mt-20 scroll-mt-8">
           <h2 className={h2}>Things to do</h2>
           <p className={`${body} mt-4 max-w-3xl`}>
@@ -213,7 +189,7 @@ export default function BaliPage() {
               </article>
             ))}
           </div>
-          <p className="font-sans text-xs text-charcoal/50 mt-6">
+          <p className="font-sans text-xs text-charcoal/65 mt-6">
             Prices are approximate, per person, converted at about A$1 = IDR 12,700.
           </p>
         </section>
@@ -273,6 +249,152 @@ export default function BaliPage() {
           </div>
         </section>
 
+        <section id="getting-around" className="mt-20 scroll-mt-8">
+          <h2 className={h2}>Getting around</h2>
+          <p className={`${body} mt-4 max-w-3xl`}>
+            For rides and food delivery, we recommend{" "}
+            <strong className="font-medium text-charcoal">Grab</strong> and{" "}
+            <strong className="font-medium text-charcoal">Gojek</strong>, two apps that offer scooter taxis, cars and food
+            delivery. Download both and set up your accounts before you fly, then
+            compare fares and availability when you need a ride.
+          </p>
+          <BaliRideApps />
+
+          <h3 className="font-[family-name:var(--font-cormorant)] text-3xl mt-12">Which ride should I book?</h3>
+          <div className="grid md:grid-cols-3 gap-6 mt-5">
+            {[
+              {
+                title: "Scooter taxi",
+                apps: "GrabBike · GoRide",
+                text: "You ride on the back of a scooter. Drivers wear the app's green jacket and hand you a helmet. The quickest way through traffic, best for one person with a small bag.",
+                price: "Short trips around Uluwatu: about IDR 15,000 to 40,000 (A$1 to A$3)",
+              },
+              {
+                title: "Car",
+                apps: "GrabCar · GoCar",
+                text: "A regular air-conditioned car, often a seven-seater like a Toyota Avanza. Best for groups, kids, luggage and dressed-up nights out.",
+                price:
+                  "Around Uluwatu: about IDR 50,000 to 150,000 (A$4 to A$12). Airport to Uluwatu: about IDR 200,000 to 350,000 (A$16 to A$28)",
+              },
+              {
+                title: "Food delivery",
+                apps: "GrabFood · GoFood",
+                text: "Order from local warungs, cafes and even supermarkets straight to your villa. Perfect for a slow recovery-day breakfast.",
+                price: "Delivery fees are usually under A$2",
+              },
+            ].map((c) => (
+              <div key={c.title} className="border-t border-charcoal/20 pt-5">
+                <h3 className="font-[family-name:var(--font-cormorant)] text-2xl text-charcoal">{c.title}</h3>
+                <p className="font-sans text-accent text-xs mt-1">{c.apps}</p>
+                <p className="font-sans text-charcoal/70 text-sm mt-4 leading-relaxed">{c.text}</p>
+                <p className="font-sans text-charcoal text-sm mt-4 leading-relaxed">{c.price}</p>
+              </div>
+            ))}
+          </div>
+          <div className="grid md:grid-cols-2 gap-8 md:gap-12 mt-10 font-sans text-sm text-charcoal/70 leading-relaxed">
+            <div>
+              <h3 className="font-[family-name:var(--font-cormorant)] text-2xl text-charcoal mb-3">
+                How to book a ride
+              </h3>
+              <ol className="list-decimal pl-5 space-y-2">
+                <li>
+                  Download Grab and Gojek and sign up with your Australian mobile number before you leave
+                  home.
+                </li>
+                <li>Add a card, or choose cash and carry small notes.</li>
+                <li>
+                  Enter where you are and where you&rsquo;re going, then pick bike or car. You&rsquo;ll see
+                  the price before you book.
+                </li>
+                <li>Check the number plate and driver photo in the app match before you hop in.</li>
+              </ol>
+            </div>
+            <div>
+              <h3 className="font-[family-name:var(--font-cormorant)] text-2xl text-charcoal mb-3">
+                Why we recommend them
+              </h3>
+              <ul className="list-disc pl-5 space-y-2">
+                <li>Check the fare shown in the app before confirming your booking.</li>
+                <li>Every trip is tracked and drivers are rated, so you know who&rsquo;s picking you up.</li>
+                <li>
+                  Prices jump around sunset (roughly 3 to 6 PM) when Uluwatu traffic peaks, so leave a little
+                  earlier.
+                </li>
+                <li>
+                  Pickup points vary by venue. At the airport, follow the app&rsquo;s instructions and
+                  signs to its designated pickup area.
+                </li>
+              </ul>
+            </div>
+          </div>
+          <p className="font-sans text-xs text-charcoal/65 mt-8">
+            Prices are approximate and change with demand. The app always shows the exact fare before you
+            book.
+          </p>
+        </section>
+
+        <section id="money" className="mt-20 scroll-mt-8">
+          <h2 className={h2}>Money</h2>
+          <p className={`${body} mt-4 max-w-3xl`}>
+            Bali runs on Indonesian rupiah (IDR). Most Australian bank cards charge about 3% on every overseas
+            purchase and ATM withdrawal, so set up a travel-friendly account before you fly.
+          </p>
+          <div className="grid sm:grid-cols-2 gap-x-8 gap-y-5 mt-8">
+            {[
+              [
+                "Up",
+                "https://up.com.au",
+                "Our pick for everyday spending and ATMs: no Up fees on international purchases or withdrawals.",
+              ],
+              [
+                "ubank",
+                "https://www.ubank.com.au",
+                "Another fee-free everyday account: no international transaction fees and no ubank fee at overseas ATMs.",
+              ],
+              [
+                "Wise",
+                "https://wise.com/au",
+                "Great exchange rates and a multi-currency wallet. A good backup card.",
+              ],
+              [
+                "Revolut",
+                "https://www.revolut.com/en-AU/",
+                "Similar to Wise, with a monthly allowance of free ATM withdrawals.",
+              ],
+              [
+                "YouTrip",
+                "https://www.you.co/au/",
+                "A travel card with a generous free overseas ATM allowance each month.",
+              ],
+            ].map(([name, url, text]) => (
+              <a
+                key={name}
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block border-t border-charcoal/15 pt-4 hover:border-accent transition-colors"
+              >
+                <h3 className="font-[family-name:var(--font-cormorant)] text-3xl text-charcoal">{name}</h3>
+                <p className="font-sans text-sm text-charcoal/70 leading-relaxed mt-2">{text}</p>
+              </a>
+            ))}
+          </div>
+          <ul className="font-sans text-sm text-charcoal/70 leading-relaxed mt-6 space-y-2 list-disc pl-5 max-w-3xl">
+            <li>Bring two cards from different providers in case one gets blocked or eaten by an ATM.</li>
+            <li>
+              When a card machine or ATM offers to charge you in AUD, always choose IDR. The AUD option comes
+              with a poor exchange rate.
+            </li>
+            <li>
+              Use ATMs inside banks or minimarts (BCA and Mandiri are reliable). Carry some cash for warungs,
+              tips and markets.
+            </li>
+            <li>
+              Fees and free allowances change, so check each provider&rsquo;s current terms before you go.
+            </li>
+          </ul>
+        </section>
+
         <section id="work" className="mt-20 scroll-mt-8 grid md:grid-cols-2 gap-8 items-center">
           <div className="md:order-2 relative aspect-[4/3] rounded-sm overflow-hidden">
             <Image
@@ -307,156 +429,16 @@ export default function BaliPage() {
           </div>
         </section>
 
-        <section id="money" className="mt-20 scroll-mt-8">
-          <h2 className={h2}>Money</h2>
-          <p className={`${body} mt-4 max-w-3xl`}>
-            Bali runs on Indonesian rupiah (IDR). Most Australian bank cards charge about 3% on every overseas
-            purchase and ATM withdrawal, so set up a travel-friendly account before you fly.
-          </p>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 mt-8">
-            {[
-              [
-                "Up",
-                "https://up.com.au",
-                "Our pick for everyday spending and ATMs: no Up fees on international purchases or withdrawals.",
-              ],
-              [
-                "ubank",
-                "https://www.ubank.com.au",
-                "Another fee-free everyday account: no international transaction fees and no ubank fee at overseas ATMs.",
-              ],
-              [
-                "Wise",
-                "https://wise.com/au",
-                "Great exchange rates and a multi-currency wallet. A good backup card.",
-              ],
-              [
-                "Revolut",
-                "https://www.revolut.com/en-AU/",
-                "Similar to Wise, with a monthly allowance of free ATM withdrawals.",
-              ],
-              [
-                "YouTrip",
-                "https://www.you.co/au/",
-                "A travel card with a generous free overseas ATM allowance each month.",
-              ],
-            ].map(([name, url, text]) => (
-              <a
-                key={name}
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block bg-cream rounded-sm p-5 border border-transparent hover:border-accent-light transition-colors"
-              >
-                <h3 className="font-[family-name:var(--font-cormorant)] text-3xl text-charcoal">{name}</h3>
-                <p className="font-sans text-sm text-charcoal/70 leading-relaxed mt-2">{text}</p>
-              </a>
-            ))}
-          </div>
-          <ul className="font-sans text-sm text-charcoal/70 leading-relaxed mt-6 space-y-2 list-disc pl-5 max-w-3xl">
-            <li>Bring two cards from different providers in case one gets blocked or eaten by an ATM.</li>
-            <li>
-              When a card machine or ATM offers to charge you in AUD, always choose IDR. The AUD option comes
-              with a poor exchange rate.
-            </li>
-            <li>
-              Use ATMs inside banks or minimarts (BCA and Mandiri are reliable). Carry some cash for warungs,
-              tips and markets.
-            </li>
-            <li>
-              Fees and free allowances change, so check each provider&rsquo;s current terms before you go.
-            </li>
-          </ul>
-        </section>
+        <BaliTravelEssentials />
 
-        <section id="getting-around" className="mt-20 scroll-mt-8">
-          <h2 className={h2}>Getting around</h2>
-          <p className={`${body} mt-4 max-w-3xl`}>
-            There&rsquo;s no Uber in Bali. Everyone uses{" "}
-            <strong className="font-medium text-charcoal">Grab</strong> and{" "}
-            <strong className="font-medium text-charcoal">Gojek</strong>, two apps that do rides and food
-            delivery. We highly recommend downloading both before you fly: they&rsquo;re the easiest and
-            cheapest way to get around, and to eat in.
-          </p>
-          <div className="grid md:grid-cols-3 gap-4 md:gap-6 mt-8">
-            {[
-              {
-                title: "Scooter taxi",
-                apps: "GrabBike · GoRide",
-                text: "You ride on the back of a scooter. Drivers wear the app's green jacket and hand you a helmet. The quickest way through traffic, best for one person with a small bag.",
-                price: "Short trips around Uluwatu: about IDR 15,000 to 40,000 (A$1 to A$3)",
-              },
-              {
-                title: "Car",
-                apps: "GrabCar · GoCar",
-                text: "A regular air-conditioned car, often a seven-seater like a Toyota Avanza. Best for groups, kids, luggage and dressed-up nights out.",
-                price:
-                  "Around Uluwatu: about IDR 50,000 to 150,000 (A$4 to A$12). Airport to Uluwatu: about IDR 200,000 to 350,000 (A$16 to A$28)",
-              },
-              {
-                title: "Food delivery",
-                apps: "GrabFood · GoFood",
-                text: "Order from local warungs, cafes and even supermarkets straight to your villa. Perfect for a slow recovery-day breakfast.",
-                price: "Delivery fees are usually under A$2",
-              },
-            ].map((c) => (
-              <div key={c.title} className="bg-cream rounded-sm p-6 md:p-8">
-                <h3 className="font-[family-name:var(--font-cormorant)] text-2xl text-charcoal">{c.title}</h3>
-                <p className="font-sans text-accent text-xs mt-1">{c.apps}</p>
-                <p className="font-sans text-charcoal/70 text-sm mt-4 leading-relaxed">{c.text}</p>
-                <p className="font-sans text-charcoal text-sm mt-4 leading-relaxed">{c.price}</p>
-              </div>
-            ))}
-          </div>
-          <div className="grid md:grid-cols-2 gap-8 md:gap-12 mt-10 font-sans text-sm text-charcoal/70 leading-relaxed">
-            <div>
-              <h3 className="font-[family-name:var(--font-cormorant)] text-2xl text-charcoal mb-3">
-                How to book a ride
-              </h3>
-              <ol className="list-decimal pl-5 space-y-2">
-                <li>
-                  Download Grab and Gojek and sign up with your Australian mobile number before you leave
-                  home.
-                </li>
-                <li>Add a card, or choose cash and carry small notes.</li>
-                <li>
-                  Enter where you are and where you&rsquo;re going, then pick bike or car. You&rsquo;ll see
-                  the price before you book.
-                </li>
-                <li>Check the number plate and driver photo in the app match before you hop in.</li>
-              </ol>
-            </div>
-            <div>
-              <h3 className="font-[family-name:var(--font-cormorant)] text-2xl text-charcoal mb-3">
-                Why we recommend them
-              </h3>
-              <ul className="list-disc pl-5 space-y-2">
-                <li>The price is fixed upfront, so there&rsquo;s no haggling and no surprises.</li>
-                <li>Every trip is tracked and drivers are rated, so you know who&rsquo;s picking you up.</li>
-                <li>
-                  Prices jump around sunset (roughly 3 to 6 PM) when Uluwatu traffic peaks, so leave a little
-                  earlier.
-                </li>
-                <li>
-                  A few spots, including the airport, have local taxi zones where app drivers can&rsquo;t pick
-                  up. Follow the signs to the app pickup point or walk a short way out.
-                </li>
-              </ul>
-            </div>
-          </div>
-          <p className="font-sans text-xs text-charcoal/50 mt-8">
-            Prices are approximate and change with demand. The app always shows the exact fare before you
-            book.
-          </p>
-        </section>
-
-        <p className="font-sans text-xs text-charcoal/40 mt-16">
-          Photos from{" "}
+        <p className="font-sans text-xs text-charcoal/65 mt-16 border-t border-charcoal/15 pt-6">
+          Destination photos from{" "}
           <a href="https://unsplash.com" target="_blank" rel="noopener noreferrer" className={link}>
             Unsplash
           </a>
           .
         </p>
+        </div>
       </div>
     </main>
   );

@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import Schedule from "@/components/schedule";
 
 export default function Home() {
@@ -200,12 +201,12 @@ export default function Home() {
                 ULUWATU, BALI
               </p>
             </div>
-            <a
+            <Link
               href="/rsvp"
               className="inline-block mt-8 md:mt-10 bg-accent hover:bg-accent-dark text-white font-[family-name:var(--font-montserrat)] tracking-[0.2em] text-xs px-12 py-4 rounded-sm transition-colors"
             >
               RSVP NOW
-            </a>
+            </Link>
           </motion.div>
 
           {/* Initial overlay text - positioned over the photos */}
@@ -434,8 +435,8 @@ export default function Home() {
               },
               {
                 href: "/bali",
-                title: "Bali guide",
-                body: "Things to do, beach clubs, money and getting around",
+                title: "Everything You Need to Know About Bali",
+                body: "From beach clubs to visas: plan your time in Bali",
                 photo: "/photos/bali-v2-1.jpg",
               },
             ].map((card) => (
@@ -454,7 +455,7 @@ export default function Home() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 p-6 text-white">
-                  <h3 className="font-[family-name:var(--font-cormorant)] text-4xl">{card.title}</h3>
+                  <h3 className={`font-[family-name:var(--font-cormorant)] ${card.href === "/bali" ? "text-3xl md:text-2xl lg:text-3xl" : "text-4xl"}`}>{card.title}</h3>
                   <p className="font-[family-name:var(--font-montserrat)] text-white/80 text-sm mt-2 leading-relaxed">
                     {card.body}
                   </p>
@@ -550,12 +551,12 @@ export default function Home() {
               invitation at once. Please respond by January 20th, 2027.
             </p>
 
-            <a
+            <Link
               href="/rsvp"
               className="inline-block mt-10 bg-accent hover:bg-accent-dark text-white font-[family-name:var(--font-montserrat)] tracking-[0.2em] text-xs px-12 py-4 rounded-sm transition-colors"
             >
               RSVP NOW
-            </a>
+            </Link>
 
             <p className="font-[family-name:var(--font-montserrat)] text-white/40 mt-6 text-sm leading-relaxed">
               You can change your answers any time before the deadline.

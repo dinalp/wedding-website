@@ -8,26 +8,26 @@ export const shortDate = (iso: string) =>
 const TABS = [
   { href: "/flights", label: "Flights" },
   { href: "/stays", label: "Stays" },
-  { href: "/bali", label: "Bali Guide" },
+  { href: "/bali", label: "Everything You Need to Know About Bali" },
   { href: "/dress-code", label: "Dress Code" },
 ] as const;
 
 export function PageHeader({ active }: { active: (typeof TABS)[number]["href"] }) {
   return (
-    <header className="px-4 md:px-8 py-6 max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-y-3">
+    <header className="px-4 md:px-8 py-6 max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-y-3">
       <Link
         href="/"
         className="font-[family-name:var(--font-cormorant)] text-xl tracking-widest text-charcoal"
       >
         D &amp; S
       </Link>
-      <nav className="flex gap-1 bg-cream rounded-sm p-1 font-sans text-[11px] md:text-xs tracking-wider max-w-full overflow-x-auto">
+      <nav aria-label="Wedding travel pages" className="grid grid-cols-2 sm:flex gap-1 bg-cream rounded-sm p-1 font-sans text-[11px] md:text-xs tracking-wider max-w-full w-full sm:w-auto">
         {TABS.map((t) => (
           <Link
             key={t.href}
             href={t.href}
             aria-current={t.href === active ? "page" : undefined}
-            className={`px-3 md:px-4 py-2 rounded-sm whitespace-nowrap transition-colors ${
+            className={`px-3 md:px-4 py-2 rounded-sm sm:max-w-[17rem] text-center self-center transition-colors ${
               t.href === active ? "bg-accent text-white" : "text-charcoal/70 hover:text-charcoal"
             }`}
           >
