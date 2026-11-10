@@ -12,6 +12,8 @@ const TRIPS = [
   ["2027-05-19", "2027-05-22"],
 ] as const;
 const PER_TRIP = 4;
+// Deep searches are slower; give the three parallel lookups room to finish.
+export const maxDuration = 60;
 
 interface Segment {
   airline: string;
@@ -51,7 +53,8 @@ export async function GET(req: Request) {
   const records: { fields: Record<string, string | number> }[] = [];
   const errors: string[] = [];
 
-  for (const [out, back] of TRIPS) {
+  // Fetch all trips at once: deep search can take ~20s each.
+  const results = await Promise.all(TRIPS.map(async ([out, back]) => {
     const url = new URL("https://serpapi.com/search.json");
     Object.entries({
       engine: "google_flights",
@@ -62,10 +65,16 @@ export async function GET(req: Request) {
       currency: "AUD",
       gl: "au",
       hl: "en",
+      // Without this, SerpApi returns a cached/lighter Google result that missed fares the browser shows
+      // (e.g. Virgin stuck at A$628 for weeks while Google Flights showed A$547).
+      deep_search: "true",
       api_key: key,
     }).forEach(([k, v]) => url.searchParams.set(k, v));
-
     const data: SerpResult = await fetch(url, { cache: "no-store" }).then((r) => r.json());
+    return [out, back, data] as const;
+  }));
+
+  for (const [out, back, data] of results) {
     if (data.error) {
       errors.push(`${out}: ${data.error}`);
       continue;
