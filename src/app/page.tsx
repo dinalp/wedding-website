@@ -395,83 +395,12 @@ export default function Home() {
 
       <Schedule />
 
-      {/* Travel Section */}
-      <section id="travel" className="py-16 md:py-32 px-4 md:px-8 bg-background">
+      {/* How long to stay */}
+      <section id="how-long-to-stay" className="pt-16 md:pt-32 pb-16 md:pb-24 px-4 md:px-8 bg-background">
         <div className="max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center"
-          >
-            <p className="font-[family-name:var(--font-montserrat)] text-accent tracking-[0.2em] md:tracking-[0.3em] text-xs mb-4">
-              GETTING THERE
-            </p>
-            <h2 className="font-[family-name:var(--font-cormorant)] text-4xl md:text-6xl font-light text-charcoal">
-              Travel
-            </h2>
-            <div className="divider mx-auto mt-6" />
-            <p className="font-[family-name:var(--font-montserrat)] text-charcoal/70 mt-8 leading-relaxed max-w-2xl mx-auto">
-              We&rsquo;re keeping an eye on flight and accommodation prices so you
-              don&rsquo;t have to, and we&rsquo;ve put together a guide to making the most
-              of Uluwatu once you land.
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-4 md:gap-6 mt-12">
-            {[
-              {
-                href: "/flights",
-                title: "Flights",
-                body: "Sydney to Bali fares, checked every morning",
-                photo: "/photos/bali-v2-3.jpg",
-              },
-              {
-                href: "/stays",
-                title: "Stays",
-                body: "Where to stay in Uluwatu, with an area guide, photos and prices",
-                photo: "/photos/bali-v2-2.jpg",
-              },
-              {
-                href: "/bali",
-                title: "Everything You Need to Know About Bali",
-                body: "From beach clubs to visas: plan your time in Bali",
-                photo: "/photos/bali-v2-1.jpg",
-              },
-            ].map((card) => (
-              <a
-                key={card.href}
-                href={card.href}
-                className="group relative block aspect-[4/5] md:aspect-[3/4] rounded-sm overflow-hidden"
-              >
-                <Image
-                  src={card.photo}
-                  alt=""
-                  fill
-                  sizes="(min-width: 768px) 300px, 100vw"
-                  quality={85}
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 p-6 text-white">
-                  <h3 className={`font-[family-name:var(--font-cormorant)] ${card.href === "/bali" ? "text-3xl md:text-2xl lg:text-3xl" : "text-4xl"}`}>{card.title}</h3>
-                  <p className="font-[family-name:var(--font-montserrat)] text-white/80 text-sm mt-2 leading-relaxed">
-                    {card.body}
-                  </p>
-                  <span className="inline-block mt-4 font-[family-name:var(--font-montserrat)] tracking-[0.2em] text-xs border-b border-white/50 pb-1 group-hover:border-white">
-                    OPEN &rarr;
-                  </span>
-                </div>
-              </a>
-            ))}
-          </div>
-
-          {/* How long to stay */}
-          <div className="mt-16 md:mt-24">
-            <h3 className="font-[family-name:var(--font-cormorant)] text-3xl md:text-4xl font-light text-charcoal text-center">
+            <h2 className="font-[family-name:var(--font-cormorant)] text-4xl md:text-6xl font-light text-charcoal text-center">
               How long to stay
-            </h3>
+            </h2>
             <div className="grid md:grid-cols-3 gap-4 md:gap-6 mt-8">
               {[
                 {
@@ -499,7 +428,7 @@ export default function Home() {
                   className={`flex flex-col rounded-sm p-6 md:p-8 ${plan.note ? "bg-accent text-white" : "bg-cream text-charcoal"}`}
                 >
                   <div className="flex items-baseline justify-between gap-3">
-                    <h4 className="font-[family-name:var(--font-cormorant)] text-2xl">{plan.title}</h4>
+                    <h3 className="font-[family-name:var(--font-cormorant)] text-2xl">{plan.title}</h3>
                     {plan.note && (
                       <span className="font-[family-name:var(--font-montserrat)] text-[11px] bg-white/15 rounded-full px-3 py-1">
                         {plan.note}
@@ -524,8 +453,83 @@ export default function Home() {
               The full week costs just five days off work, and it&rsquo;s the way we&rsquo;d love to spend it with you.
             </p>
           </div>
+      </section>
 
+      {/* Travel Section */}
+      <section id="travel" className="pb-16 md:pb-32 px-4 md:px-8 bg-background">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center"
+          >
+            <p className="font-[family-name:var(--font-montserrat)] text-accent tracking-[0.2em] md:tracking-[0.3em] text-xs mb-4">
+              GETTING THERE
+            </p>
+            <h2 className="font-[family-name:var(--font-cormorant)] text-4xl md:text-6xl font-light text-charcoal">
+              Travel
+            </h2>
+            <div className="divider mx-auto mt-6" />
+            <p className="font-[family-name:var(--font-montserrat)] text-charcoal/70 mt-8 leading-relaxed max-w-2xl mx-auto">
+              We&rsquo;re keeping an eye on flight and accommodation prices so you
+              don&rsquo;t have to, and we&rsquo;ve put together a guide to making the most
+              of Uluwatu once you land.
+            </p>
+          </motion.div>
 
+          <div className="grid grid-cols-2 gap-4 md:gap-6 mt-12">
+            {[
+              {
+                href: "/bali",
+                title: "Everything you need to know about your trip to Bali",
+                body: "From beach clubs to visas: plan your time in Bali",
+                photo: "/photos/bali-v2-1.jpg",
+                featured: true,
+              },
+              {
+                href: "/flights",
+                title: "Flights",
+                body: "Sydney to Bali fares, checked every morning",
+                photo: "/photos/bali-v2-3.jpg",
+                featured: false,
+              },
+              {
+                href: "/stays",
+                title: "Stays",
+                body: "Where to stay in Uluwatu, with an area guide, photos and prices",
+                photo: "/photos/bali-v2-2.jpg",
+                featured: false,
+              },
+            ].map((card) => (
+              <Link
+                key={card.href}
+                href={card.href}
+                className={`group relative flex flex-col justify-end rounded-sm overflow-hidden focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent ${card.featured ? "col-span-2 min-h-[320px] md:min-h-[400px]" : "min-h-[260px] md:min-h-[340px]"}`}
+              >
+                <Image
+                  src={card.photo}
+                  alt=""
+                  fill
+                  sizes={card.featured ? "(min-width: 960px) 896px, 100vw" : "(min-width: 960px) 436px, 50vw"}
+                  quality={85}
+                  className="object-cover transition-transform duration-700 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/10" />
+                <div className={`relative text-white pt-20 ${card.featured ? "p-6 md:p-10" : "p-4 md:p-7"}`}>
+                  <h3 className={`font-[family-name:var(--font-cormorant)] text-balance ${card.featured ? "text-4xl md:text-5xl max-w-2xl" : "text-3xl md:text-4xl"}`}>{card.title}</h3>
+                  <p className={`font-[family-name:var(--font-montserrat)] text-white/90 mt-3 leading-relaxed ${card.featured ? "text-sm md:text-base max-w-xl" : "text-sm"}`}>
+                    {card.body}
+                  </p>
+                  <span className="inline-flex items-center gap-2 mt-5 font-[family-name:var(--font-montserrat)] tracking-[0.15em] text-xs border-b border-white/60 pb-1 group-hover:border-white">
+                    {card.featured ? "EXPLORE THE GUIDE" : "OPEN"}
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6" /></svg>
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
