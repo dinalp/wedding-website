@@ -22,10 +22,14 @@ export function BaliTravelEssentials() {
           </ul>
           <div className="bg-cream p-6 rounded-sm">
             <h3 className={subheading}>Should I pack Travelan?</h3>
+            <p className="font-sans text-sm font-semibold text-accent mt-3">
+              We highly recommend packing Travelan as an extra precaution.
+              Better safe than sorry!
+            </p>
             <p className={`${body} text-sm mt-3`}>
-              Ask your pharmacist. It&rsquo;s an over-the-counter cow&rsquo;s colostrum
+              Check with your pharmacist that it&rsquo;s suitable for you.
+              It&rsquo;s an over-the-counter cow&rsquo;s colostrum
               product that may help prevent diarrhoea caused by certain E. coli strains.
-              That&rsquo;s why we suggest it as an extra precaution.
             </p>
             <ul className={`${body} text-sm list-disc pl-5 space-y-2 mt-4`}>
               <li>Take before meals, following the packet.</li>
