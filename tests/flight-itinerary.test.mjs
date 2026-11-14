@@ -55,6 +55,14 @@ test('legacy or malformed data remains readable without leaking JSON into the ca
   assert.deepEqual(decodeFlightDetails('Quote\n\n[flight-details:v1]\n{broken', '', ''), { details: 'Quote' });
   assert.deepEqual(decodeFlightDetails('Quote\n\n[flight-details:v1]\n{"version":2}', '', ''), { details: 'Quote' });
 });
+test('decodes Airtable single-line normalization as well as the original multiline encoding', () => {
+  const json = JSON.stringify(detail());
+  for (const separator of [' [flight-details:v1] ', '\n\n[flight-details:v1]\n']) {
+    const decoded = decodeFlightDetails('Google Flights' + separator + json, '2027-05-18', '2027-05-23');
+    assert.equal(decoded.details, 'Google Flights');
+    assert.deepEqual(decoded.itinerary, detail());
+  }
+});
 test('keeps different schedules at the same airline and price', () => {
   const q = { date: '2026-11-14', airline: 'Test Air', from: 'SYD', depart: '2027-05-18', return: '2027-05-23', price: 600, stops: 0, details: 'Google Flights', link: 'https://www.google.com/travel/flights', itinerary: detail() };
   const other = structuredClone(q); other.itinerary.outbound.departure = '2027-05-18T11:00';

@@ -35,9 +35,9 @@ export interface FlightItinerary {
   baggage?: string[];
   seller?: string;
 }
-const ITINERARY_MARKER = "\n\n[flight-details:v1]\n";
+const ITINERARY_MARKER = "[flight-details:v1]";
 export function encodeFlightDetails(summary: string, itinerary: FlightItinerary): string {
-  return summary + ITINERARY_MARKER + JSON.stringify(itinerary);
+  return summary + " " + ITINERARY_MARKER + " " + JSON.stringify(itinerary);
 }
 
 /** Airport-local wall time. Never convert it through the server's timezone. */
@@ -54,7 +54,9 @@ function validLeg(value: unknown): value is FlightLeg {
     Array.isArray(leg.flights) && leg.flights.length === leg.stops + 1 && leg.flights.every((f) => typeof f === "string" && f.length < 100);
 }
 export function decodeFlightDetails(value: string, depart: string, back: string): { details: string; itinerary?: FlightItinerary } {
-  const [details, json] = value.split(ITINERARY_MARKER);
+  // Airtable single-line text fields normalize newlines to spaces on write.
+  const [summary, json] = value.split(ITINERARY_MARKER);
+  const details = summary.trim();
   if (!json) return { details };
   try {
     const data = JSON.parse(json) as FlightItinerary;
