@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node --test tests/stay-images.test.mjs tests/rsvp.test.mjs",
+    "prebuild": "node --test tests/stay-images.test.mjs tests/rsvp.test.mjs tests/flight-data.test.mjs tests/flight-itinerary.test.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"

@@ -1,6 +1,8 @@
+import { FlightCard } from "@/components/flight-card";
+import { FlightBaggageGuide } from "@/components/flight-baggage-guide";
 import type { Metadata } from "next";
 import { getFlightData, type FlightOption } from "@/lib/travel";
-import { quoteSource, type FlightDay, type FlightTrendPoint } from "@/lib/flight-data";
+import { type FlightDay, type FlightTrendPoint } from "@/lib/flight-data";
 import { FlightSearch } from "@/components/flight-search";
 import { Stat, SubscribeNote, PageHeader, TrendChart, aud, shortDate } from "@/components/travel";
 
@@ -165,40 +167,15 @@ export default async function FlightsPage() {
               Latest fares
             </h2>
             <p className="font-sans text-sm text-charcoal/60 mt-1">
-              {options.length} fares we found on {shortDate(options[0].date)}, cheapest first. Tap one to
-              see it.
+              {options.length} fares we found on {shortDate(options[0].date)}, cheapest first. Times are local to each airport; check the fare and schedule before booking.
             </p>
             <div className="grid md:grid-cols-2 gap-4 mt-6">
-              {options.map((o, i) => (
-                <a
-                  key={i}
-                  href={o.link || undefined}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block bg-white rounded-sm p-5 border border-transparent hover:border-accent-light transition-colors"
-                >
-                  <div className="flex justify-between gap-4">
-                    <h3 className="font-sans text-charcoal font-medium">{o.airline}</h3>
-                    {o.price != null && <p className="font-sans text-charcoal whitespace-nowrap">{aud(o.price)}</p>}
-                  </div>
-                  <p className="font-sans text-sm text-charcoal/70 mt-2">
-                    {o.from} to Bali · {o.depart && dayDate(o.depart)}
-                    {o.return && <> to {dayDate(o.return)}</>}
-                  </p>
-                  <p className="font-sans text-xs text-charcoal/60 mt-1">
-                    {[o.stops === 0 ? "Outbound direct" : o.stops != null && `Outbound: ${o.stops} stop${o.stops > 1 ? "s" : ""}`, o.details]
-                      .filter(Boolean)
-                      .join(" · ")}
-                  </p>
-                  <p className="font-sans text-xs text-charcoal/70 mt-2">Source: {quoteSource(o)}</p>
-                  {o.link && (
-                    <p className="font-sans text-xs tracking-wider text-accent mt-3">SEARCH THESE DATES &rarr;</p>
-                  )}
-                </a>
-              ))}
+              {options.map((o, i) => <FlightCard key={i} option={o} />)}
             </div>
           </section>
         )}
+
+        <FlightBaggageGuide />
 
         <section className="mt-14">
           <h2 className="font-[family-name:var(--font-cormorant)] text-3xl md:text-4xl text-charcoal">

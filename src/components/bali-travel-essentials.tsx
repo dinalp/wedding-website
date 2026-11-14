@@ -51,18 +51,26 @@ export function BaliTravelEssentials() {
           Australian ordinary-passport holders can usually get a 30-day tourist
           e-Visa on Arrival (e-VOA). Travelling on another passport? Check your eligibility first.
         </p>
-        <dl className="grid sm:grid-cols-2 gap-6 bg-cream p-6 md:p-8 rounded-sm mt-7">
-          <div>
-            <dt className="font-sans text-sm text-charcoal/75">Tourist visa · per person</dt>
-            <dd className="font-[family-name:var(--font-cormorant)] text-4xl mt-1">IDR 500,000</dd>
-            <dd className={`${body} text-xs mt-2`}>Plus a small online processing fee.</dd>
-          </div>
-          <div>
-            <dt className="font-sans text-sm text-charcoal/75">Bali tourist levy · per person</dt>
-            <dd className="font-[family-name:var(--font-cormorant)] text-4xl mt-1">IDR 150,000</dd>
-            <dd className={`${body} text-xs mt-2`}>Separate payment via <Source href="https://lovebali.baliprov.go.id/">Love Bali</Source>. Save the receipt.</dd>
-          </div>
-        </dl>
+        <h3 className={`${subheading} mt-7`}>Two payments. Two official sites.</h3>
+        <p className={`${body} text-sm mt-2`}>Your tourist visa and Bali tourist levy are separate. Use the official links below.</p>
+        <div className="grid sm:grid-cols-2 gap-5 mt-5">
+          {[
+            { title: "Tourist visa", detail: "30-day e-VOA · eligible passports", fee: "IDR 500,000", note: "Plus an online processing fee", label: "Apply for your tourist visa", href: "https://evisa.imigrasi.go.id/", domain: "evisa.imigrasi.go.id", owner: "Indonesian Immigration" },
+            { title: "Bali tourist levy", detail: "Separate from your visa", fee: "IDR 150,000", note: "Save your payment receipt", label: "Pay the Bali tourist levy", href: "https://lovebali.baliprov.go.id/", domain: "lovebali.baliprov.go.id", owner: "Bali Government" },
+          ].map((payment) => (
+            <div key={payment.title} className="bg-cream border border-charcoal/15 p-5 md:p-6 flex flex-col rounded-sm">
+              <h4 className="font-[family-name:var(--font-cormorant)] text-3xl text-charcoal">{payment.title}</h4>
+              <p className={`${body} text-sm mt-2`}>{payment.detail}</p>
+              <p className="font-[family-name:var(--font-cormorant)] text-4xl mt-5">{payment.fee}</p>
+              <p className={`${body} text-xs mt-1 mb-6`}>{payment.note}</p>
+              <a href={payment.href} target="_blank" rel="noopener noreferrer" className="mt-auto flex items-center justify-center gap-2 bg-accent text-white hover:bg-accent-dark transition-colors rounded-sm px-4 py-4 font-sans text-sm font-medium text-center min-h-12">
+                {payment.label}<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M6 18 18 6M6 6h12v12" /></svg>
+              </a>
+              <p className="font-sans text-xs font-medium text-charcoal text-center mt-3 break-all">{payment.domain}</p>
+              <p className={`${body} text-xs text-center mt-1`}>Official {payment.owner} website</p>
+            </div>
+          ))}
+        </div>
         <ol className="mt-8 space-y-6">
           {[
             { title: "Before you fly", content: <>Apply on the <Source href="https://evisa.imigrasi.go.id/">official e-Visa site</Source> at least 48 hours before travel. Follow the upload and payment steps; save your visa. Have six months&rsquo; passport validity on entry and an onward/return ticket.</> },

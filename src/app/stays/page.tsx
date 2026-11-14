@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getStays, stayTrend, type Stay } from "@/lib/travel";
 import { Stat, SubscribeNote, PageHeader, TrendChart, aud, shortDate } from "@/components/travel";
+import { UluwatuMap } from "@/components/uluwatu-map";
 import { StayPhoto } from "@/components/stay-photo";
 import { stayImage } from "@/lib/stay-images";
 
@@ -58,34 +59,7 @@ export default async function StaysPage() {
           and traffic can make it longer, so check the route to Stone Villas before booking.
         </p>
 
-        <section aria-labelledby="area-guide" className="mt-8 max-w-2xl">
-          <h2 id="area-guide" className="font-[family-name:var(--font-cormorant)] text-2xl text-charcoal">
-            A quick guide to the area
-          </h2>
-          {/* Area overview checked against https://almostlanding-bali.com/where-to-stay-in-uluwatu/ */}
-          <ul className="list-disc pl-5 space-y-3 mt-3 font-sans text-sm leading-relaxed text-charcoal/80">
-            <li>
-              <strong className="font-medium text-charcoal">Bingin &amp; Padang Padang (Pecatu):</strong>{" "}
-              Villas, guesthouses and boutique hotels around caf&eacute;s and restaurants,
-              with Padang Padang Beach and the west-coast surf spots nearby.
-            </li>
-            <li>
-              <strong className="font-medium text-charcoal">Suluban &amp; the Uluwatu Temple area:</strong>{" "}
-              Stays around the western cliffs, handy for Suluban Beach, sunset spots like
-              Single Fin, and the temple&rsquo;s Kecak dance.
-            </li>
-            <li>
-              <strong className="font-medium text-charcoal">Balangan &amp; Dreamland:</strong>{" "}
-              Beach stays and resorts a little further from the main caf&eacute; strip,
-              with sandy beaches and surf. Plan on driving for more dining options.
-            </li>
-            <li>
-              <strong className="font-medium text-charcoal">Ungasan &amp; Melasti:</strong>{" "}
-              Spacious villas and clifftop resorts along the southern coast, with Melasti
-              Beach and beach clubs such as Sundays nearby. A good fit for pool and beach days.
-            </li>
-          </ul>
-        </section>
+        <UluwatuMap />
 
         <p className="font-sans text-sm text-charcoal/70 mt-8 max-w-2xl leading-relaxed">
           The stays below are just a starting point &mdash; feel free to book anywhere in Uluwatu.

@@ -1,5 +1,5 @@
 import { at } from "./airtable";
-import { buildFlightData, withHistoricalTrend, type FlightOption } from "./flight-data";
+import { buildFlightData, decodeFlightDetails, withHistoricalTrend, type FlightOption } from "./flight-data";
 export type { FlightOption } from "./flight-data";
 
 // Written by the "Bali Flight Watch" and "Uluwatu Stay Watch" Claude routines.
@@ -145,7 +145,7 @@ export async function getFlightData() {
     return: f.Return ?? "",
     price: f["Price (A$)"] ?? null,
     stops: f.Stops ?? null,
-    details: f.Details ?? "",
+    ...decodeFlightDetails(f.Details ?? "", f.Depart ?? "", f.Return ?? ""),
     link: f.Link ?? "",
   }));
   const data = buildFlightData([...raw, ...published.quotes], new Date().toLocaleDateString("en-CA", { timeZone: "Australia/Sydney" }));
