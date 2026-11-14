@@ -4,7 +4,7 @@ Implemented from the approved 14 November 2026 previews. Uses the existing Cormo
 
 ## Stays map
 
-`UluwatuMap` replaces the old area bullet list at the top of Stays. It is an authored, explicitly approximate area diagram, not a navigation map. North is up; the western beaches run from Balangan down to Suluban and the temple, with Stone Villas on the southern cliffs. Hover, focus, Enter/Space and tap select an area and its description. On small screens the diagram scrolls horizontally; selecting an area also pans to it. All area controls remain available below the map. Named-place links open Google Maps.
+`UluwatuMap` replaces the old area bullet list at the top of Stays. It is an authored, explicitly approximate area diagram, not a navigation map. North is up; the western beaches run from Balangan down to Suluban and the temple, with Stone Villas on the southern cliffs. Hover, focus, Enter/Space and tap select an area and its description. On small screens the diagram scrolls horizontally; selecting an area also pans to it. All area controls remain available alongside the map on desktop and below it on mobile. Named-place links open Google Maps.
 
 The Stone Villas destination uses CID `17866104928983940569`, from the venue's official embedded map: https://stonevillasuluwatu.com/. Do not substitute its iframe viewport centre as exact venue coordinates. The map deliberately avoids precise distance/drive-time claims. Existing text qualifies the roughly 20-minute local driving guide with route and traffic.
 
@@ -16,7 +16,7 @@ The collector retains outbound schedules from Google Flights. A `departure_token
 
 Structured data uses a versioned JSON suffix in the existing Airtable `Details` field, separated by `\n\n[flight-details:v1]\n`. `decodeFlightDetails` strips this before display and validates dates, airports and fields. No Airtable schema migration or guest-table access is needed. Existing date-only observations remain compatible.
 
-The daily cron remains at its existing schedule. It checks SerpApi allowance before optional return/baggage lookups and reserves three daily base searches until reset (conservative 31 days if the reset date is unavailable). Authenticated manual refreshes retain the same full until-reset baseline reserve. Optional detail requests are capped at 24 per run. No plan purchase or overage is enabled. If the account check fails, only the existing base searches run. All requests have bounded timeouts. A same-day retry updates matching records and does not downgrade a previously confirmed return to missing data.
+The daily cron remains at its existing schedule. It checks SerpApi allowance before optional return/baggage lookups and reserves three daily base searches until reset (conservative 31 days if the reset date is unavailable). Authenticated manual refreshes retain the same full until-reset baseline reserve. Optional detail requests are capped at 24 per run. No plan purchase or overage is enabled. If the account check fails, only the existing base searches run. SerpApi account and search requests have bounded timeouts. A same-day retry updates matching records and does not downgrade a previously confirmed return to missing data.
 
 GET `/api/cron/flights` retains `CRON_SECRET` authorization. POST uses the separate `FLIGHT_REFRESH_SECRET` bearer credential, configured in Vercel Production, for an immediate manual refresh. Never expose either key in a URL, browser bundle, screenshot or logs. Responses report only counts, quota and non-sensitive errors. Unauthorized requests return 401.
 
