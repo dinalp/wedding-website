@@ -1,7 +1,6 @@
 import type {
   EventKey,
   Party,
-  PartyMatch,
   PartyMember,
   RSVPSubmission,
 } from "./types";
@@ -40,6 +39,7 @@ export async function at<T>(
 
   const res = await fetch(url, {
     cache: "no-store",
+    signal: AbortSignal.timeout(8000),
     ...init,
     headers: {
       Authorization: `Bearer ${pat}`,
@@ -49,7 +49,7 @@ export async function at<T>(
   });
 
   if (!res.ok) {
-    throw new Error(`Airtable ${res.status} on ${path}: ${await res.text()}`);
+    throw new Error(`Airtable request failed (${res.status})`);
   }
   return res.json() as Promise<T>;
 }
@@ -72,6 +72,8 @@ interface GuestFields {
   "Dietary Notes"?: string;
   "Nickname / Also Known As"?: string;
   Parties?: string[];
+  Email?: string;
+  Phone?: string;
 }
 
 interface PartyFields {
@@ -110,6 +112,8 @@ function toMember(rec: Rec<GuestFields>): PartyMember {
     },
     dietary: f.Dietary ?? [],
     dietaryNotes: f["Dietary Notes"] ?? "",
+    email: f.Email ?? "",
+    phone: f.Phone ?? "",
   };
 }
 
@@ -176,46 +180,46 @@ export async function getParty(handle: string): Promise<Party | null> {
   return toParty(rec, await fetchGuests(rec.fields.Guests ?? []));
 }
 
-/**
- * Find parties by guest name. Public endpoint, so this returns only what the
- * "is this you?" step needs and caps how much of the guest list one query can reveal.
- */
-export async function searchParties(query: string): Promise<PartyMatch[]> {
-  const q = query.trim();
-  if (q.length < 3) return [];
-
-  const needle = esc(q.toLowerCase());
-  const { records } = await at<List<GuestFields>>(GUESTS, {
-    query: {
-      filterByFormula: `OR(FIND('${needle}',LOWER({Full Name})),FIND('${needle}',LOWER({Nickname / Also Known As})))`,
-      pageSize: "25",
-    },
-  });
-
-  const partyIds = [...new Set(records.flatMap((r) => r.fields.Parties ?? []))].slice(0, 5);
-  if (partyIds.length === 0) return [];
-
-  const formula = `OR(${partyIds.map((id) => `RECORD_ID()='${esc(id)}'`).join(",")})`;
-  const { records: parties } = await at<List<PartyFields>>(PARTIES, {
-    query: { filterByFormula: formula, pageSize: "25" },
-  });
-
-  const guestIds = [...new Set(parties.flatMap((p) => p.fields.Guests ?? []))];
-  const guests = await fetchGuests(guestIds);
-  const guestById = new Map(guests.map((g) => [g.id, g]));
-
-  return parties.map((p) => ({
-    id: p.id,
-    name: p.fields["Party Name"] ?? "",
-    memberNames: (p.fields.Guests ?? [])
-      .map((id) => guestById.get(id)?.fields["Full Name"] ?? "")
-      .filter(Boolean),
-    alreadySubmitted: !!p.fields["Submitted At"],
-  }));
+/** Exact name only. Ambiguous names take the same help path as missing names. */
+export function normalizeName(value: string): string {
+  return value.trim().replace(/\s+/g, " ").toLowerCase();
 }
 
-export async function saveRSVP(submission: RSVPSubmission): Promise<Party> {
-  const party = await getParty(submission.partyId);
+export async function findExactGuest(query: string): Promise<{ partyId: string; guestId: string } | null> {
+  const q = normalizeName(query);
+  if (!q || q.length > 100) return null;
+  // RE2's \s excludes Unicode separators and vertical tabs; cover the same
+  // whitespace as JS, collapse it first, then trim the resulting ASCII spaces.
+  const normalized = (field: string) => `LOWER(TRIM(REGEX_REPLACE({${field}},'[\\\\s\\\\p{Z}\\\\x{000b}\\\\x{feff}]+',' ')))`;
+  const { records } = await at<List<GuestFields>>(GUESTS, {
+    query: {
+      filterByFormula: `OR(${normalized("Full Name")}='${esc(q)}',${normalized("Nickname / Also Known As")}='${esc(q)}')`,
+      maxRecords: "2",
+      "fields[]": ["Full Name", "Nickname / Also Known As", "Parties"],
+    },
+  });
+  if (records.length !== 1) return null;
+  const guest = records[0];
+  if (![guest.fields["Full Name"], guest.fields["Nickname / Also Known As"]]
+    .some((name) => name && normalizeName(name) === q) || guest.fields.Parties?.length !== 1) return null;
+  return { partyId: guest.fields.Parties[0], guestId: guest.id };
+}
+
+export async function getOTPState(partyId: string) {
+  const record = await at<Rec<{ "OTP Hash"?: string; "OTP Expires"?: string; "OTP Attempts"?: number }>>(`${PARTIES}/${partyId}`);
+  return { hash: record.fields["OTP Hash"] ?? "", expires: Date.parse(record.fields["OTP Expires"] ?? ""), attempts: record.fields["OTP Attempts"] ?? 0 };
+}
+
+/** Required security fields: missing schema must fail closed, never skip persistence. */
+export async function saveOTPState(partyId: string, hash: string, expires: number, attempts: number) {
+  await at(PARTIES, { method: "PATCH", body: JSON.stringify({ records: [{ id: partyId, fields: {
+    "OTP Hash": hash, "OTP Expires": new Date(expires).toISOString(), "OTP Attempts": attempts,
+  } }] }) });
+}
+
+export async function saveRSVP(submission: RSVPSubmission, authorizedPartyId: string): Promise<Party> {
+  if (submission.partyId !== authorizedPartyId) throw new Error("Unauthorized party");
+  const party = await getParty(authorizedPartyId);
   if (!party) throw new Error("Party not found");
 
   // Only accept answers for guests actually on this invitation, and only for
@@ -223,11 +227,13 @@ export async function saveRSVP(submission: RSVPSubmission): Promise<Party> {
   // is whatever the browser sent.
   const allowedMembers = new Set(party.members.map((m) => m.id));
   const invited = new Set(party.invitedTo);
+  if (submission.members.some((m) => !allowedMembers.has(m.id))) throw new Error("Unauthorized guest");
 
   const guestUpdates = submission.members
-    .filter((m) => allowedMembers.has(m.id))
     .map((m) => {
       const fields: GuestFields = {
+        ...(m.email !== undefined ? { Email: m.email } : {}),
+        ...(m.phone !== undefined ? { Phone: m.phone } : {}),
         "RSVP Status": m.attending ? "Attending" : "Not Attending",
         Dietary: m.attending ? m.dietary : [],
         "Dietary Notes": m.attending ? m.dietaryNotes.slice(0, 2000) : "",

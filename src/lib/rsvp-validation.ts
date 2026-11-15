@@ -1,5 +1,15 @@
 import type { RSVPSubmission } from "./types";
 
+export function validEmail(value: unknown): value is string {
+  return typeof value === "string" && value.length <= 320 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+export function validOptionalContact(value: unknown, kind: "email" | "phone"): boolean {
+  if (value === undefined || value === "") return true;
+  if (typeof value !== "string") return false;
+  return kind === "email" ? validEmail(value.trim()) : !rsvpDetailsError({ phone: value });
+}
+
 /** Shared browser/server checks; accepts local and international phone formats. */
 export function rsvpDetailsError(body: Record<string, unknown>): string | null {
   const phone = typeof body.phone === "string" ? body.phone.trim() : "";
@@ -37,7 +47,7 @@ export function parseSubmission(body: unknown): RSVPSubmission | null {
 
   const partyId = str(b.partyId, 100);
   if (!partyId) return null;
-  if (!Array.isArray(b.members) || b.members.length === 0) return null;
+  if (!Array.isArray(b.members) || b.members.length === 0 || b.members.length > 100) return null;
 
   const members: RSVPSubmission["members"] = [];
   for (const raw of b.members) {
@@ -53,7 +63,11 @@ export function parseSubmission(body: unknown): RSVPSubmission | null {
       recoveryDay: rawEvents.recoveryDay === true,
     };
 
+    if (!validOptionalContact(m.email, "email") || !validOptionalContact(m.phone, "phone")) return null;
+    if (members.some((member) => member.id === id)) return null;
     members.push({
+      ...(typeof m.email === "string" ? { email: m.email.trim() } : {}),
+      ...(typeof m.phone === "string" ? { phone: m.phone.trim() } : {}),
       id,
       attending: m.attending === true,
       events,
@@ -66,9 +80,8 @@ export function parseSubmission(body: unknown): RSVPSubmission | null {
 
   if (rsvpDetailsError(b)) return null;
 
-  const email = str(b.email, 320);
-  // Preserve the existing email format check; the browser requires this field.
-  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return null;
+  if (typeof b.email !== "string" || !validEmail(b.email.trim())) return null;
+  const email = b.email.trim();
 
   return {
     partyId,
