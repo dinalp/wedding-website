@@ -1,0 +1,43 @@
+Built-in imagegen prompts
+
+MAP
+Use case: ui-mockup. Create a polished high-resolution landscape website UI concept screenshot, about 1800x1350, for Dinal & Shayani's Bali wedding website. This is a PHOTO PREVIEW OF PROPOSED UI, not a photograph of a device. Fill frame with sharp readable design. Existing identity: ivory #FAF8F0, cream #F0EBDB, olive #5B6F35, deep olive charcoal #2A3318, Cormorant Garamond editorial serif headings and Montserrat sans small text, subtle fine rules, restrained square corners, no glass/shadows/gradients.
+Top slim masthead "Dinal & Shayani", small navigation "Flights   Stays   Guide to Bali". Large heading "Find your corner of Uluwatu". Below concise line "Stay anywhere in Uluwatu. Choose the area that feels like your holiday." Then an elegant large map occupying left 73% and right 27% narrow editorial area guide. Map background muted pale blue sea #dce9e8, warm cream land, thin ivory simplified road paths. Map is a labelled SCHEMATIC OVERVIEW of southwestern Bukit Peninsula, north up, ocean to WEST and SOUTH, land continues north and east. NO fictional island surrounded by ocean. Show the west coast as diagonal from northeast (top centre) to southwest (bottom left), then southern coast running east across bottom; do not wrap coastline on east. General geography, in normalized map-space coordinates (0=left/top,100=right/bottom): Balangan at (48,16), Dreamland at (39,27), Bingin at (32,38), Padang Padang at (23,49), Suluban / Single Fin at (11,61), Uluwatu Temple at (8,75), Stone Villas at (24,87), Savaya at (57,92), Sundays Beach Club at (82,94), Melasti Beach at (91,92), inland Pecatu around (49,56), Ungasan around (83,60). Keep all pins ON land/coast, not ocean; ocean below and left. North arrow top left in ocean. Spatial ordering is critical. Stone Villas marker dominant terracotta #B76D4D star with cream label "Stone Villas" and small subtitle "OUR WEDDING VENUE"; place label clear with leader if needed. All other pins small olive circles or distinct icons. Avoid text collisions; each location labelled once, except Stone Villas can repeat in sidebar. Area names as subtle spaced uppercase text and lightly shaded territories: "BALANGAN & DREAMLAND", "BINGIN & PADANG PADANG", "SULUBAN", "UNGASAN & MELASTI". Map UI top-left small filter tabs "All places" (selected olive), "Beaches", "Food & drinks". Key bottom-left "★ Wedding venue   ● Beaches & places". Bottom-right small caption "Illustrative area map · not for navigation".
+Right sidebar: small label "CHOOSE YOUR BASE", then four compact editorial entries divided by rules:
+"Bingin & Padang Padang" / "Cafés, boutique stays & surf"
+"Suluban" / "Sunset drinks & western cliffs"
+"Balangan & Dreamland" / "Beach stays & resorts"
+"Ungasan & Melasti" / "Villas, beach clubs & pool days"
+Bottom sidebar off-white selected venue panel "Stone Villas" / "Our wedding venue" and solid olive button "Directions to the venue ↗".
+Below map full width thin note "Around 20 minutes is a rough guide for local drives. Your route and traffic can make it longer."
+Footer small tasteful "DESIGN PREVIEW · locations are schematic". Intentionally readable, airy hospitality editorial UI. No aerial photos, no made-up drive-time radii, no superfluous icons, no branded maps attribution since custom concept.
+
+FLIGHTS AND VISA INITIAL
+Use case: ui-mockup. Generate a sharp polished high-resolution portrait website design preview, approximately 1600x2000. Two distinct proposed website sections separated by generous whitespace and a fine line: FLIGHT DETAILS in upper half and VISA LINKS in lower half. Match Dinal & Shayani wedding website with flat ivory #FAF8F0, cream #F0EBDB, olive #5B6F35, dark olive #2A3318, elegant Cormorant Garamond serif headings and Montserrat readable sans text. No gradients, shadows or devices. Clear hierarchy, restrained square corners, airy spacing, crisp legible typography. This is a mockup, not live functionality.
+Top small masthead "Dinal & Shayani", upper right "DESIGN PREVIEW".
+Heading "Flights, with the details." Short subtitle "See when you land and what your fare includes."
+One wide white flight option panel:
+Header left "Virgin Australia" with smaller "Lite fare · example"; right "A$567" and smaller "return fare · example".
+Cream narrow notice inside card near header "Sample times and fare for layout only".
+First flight row: "OUTBOUND · TUE 18 MAY", beneath large "10:00" left, thin arrow across centre with "6h 45m · direct", large "14:45" right. Under times respectively "Sydney · SYD" and "Bali · DPS".
+Second row: "RETURN · SUN 23 MAY", large "23:00" left, thin arrow with "6h · direct", large "07:00 +1" right. Under times "Bali · DPS" and "Sydney · MON 24 MAY". Very clear +1 next-day label.
+Small below "All times local to each airport."
+Fine rule.
+Two columns with simple carry-on and suitcase outline icons:
+"Carry-on" / "7kg included"
+"Checked bag" / "Not included with Lite"
+Then pale olive tinted strip full width with text "Add 23kg: A$87 outbound at booking" and smaller "Return baggage price to confirm · no assumed return total".
+Bottom left understated link "Fare inclusions & baggage rules"; bottom right solid olive button "Check this flight ↗".
+Below card a small horizontal two-line editorial annotation "The final site will show confirmed inclusions for each fare." / "If a source does not supply a time or bag price, we will say so."
+
+Lower half heading "Two payments. Two official sites."
+Short intro "For eligible travellers: apply for your visa and pay the Bali levy separately."
+Two equal width cream panels side by side, each clearly distinct and labelled:
+Left small number "01" and passport line icon. Serif heading "Tourist visa". Small type "30-day e-VOA", large fee "IDR 500,000", small "+ online processing fee". Then wide olive filled button with white text "Apply for your tourist visa ↗". Under button legible "evisa.imigrasi.go.id". Small "Official Indonesian Immigration website".
+Right small number "02" and simple island/leaf line icon. Serif heading "Bali tourist levy". Small type "Separate from your visa", large fee "IDR 150,000". Spacer matching left card. Wide olive filled button with white text "Pay the Bali tourist levy ↗". Under button "lovebali.baliprov.go.id". Small "Official Bali Government website".
+Below cards slim horizontal separate row on ivory: "Before arrival" in serif, followed "Complete the free All Indonesia arrival card within 3 days of arrival." Underlined link "Open arrival card ↗". This is visually subordinate to the two primary buttons, no third big card.
+Bottom tiny "DESIGN PREVIEW · flight times and fare are illustrative". Do not include extra navigation, charts, photos, airline logos, small unreadable disclaimers, fabricated trust badges, or anything outside these specified elements.
+
+FINAL CORRECTION
+Change only Carry-on '7kg included' to '8kg + personal item'. Preserve all other text, layout, spacing, colours, typography, icons, fees, buttons, flight times and illustration labels exactly.
+
