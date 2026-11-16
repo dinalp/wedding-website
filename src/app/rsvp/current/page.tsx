@@ -1,0 +1,849 @@
+"use client";
+
+import { useEffect, useState, useCallback } from "react";
+import Link from "next/link";
+import { rsvpDetailsError } from "@/lib/rsvp-validation";
+import { PartyContacts, type ContactDrafts } from "@/components/party-contacts";
+import { BaliDates } from "@/components/bali-dates";
+import { useRouter } from "next/navigation";
+import { getPendingVisit, setPendingVisit } from "@/lib/rsvp-visit";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  DIETARY_OPTIONS,
+  type EventKey,
+  type Party,
+  type PartyMember,
+} from "@/lib/types";
+
+const EVENTS = [
+  {
+    key: "welcomeDinner" as const,
+    label: "Welcome Dinner",
+    detail: "May 19 · 4:00 PM",
+    description: "Intimate dinner to kick off the celebrations",
+  },
+  {
+    key: "wedding" as const,
+    label: "Wedding Ceremony & Reception",
+    detail: "May 20 · 4:00 PM onwards",
+    description:
+      "The main event — ceremony, cocktail hour, then dinner and dancing",
+    highlight: true,
+  },
+  {
+    key: "recoveryDay" as const,
+    label: "Recovery Day",
+    detail: "May 21 · All day",
+    description: "A relaxed final day together — plans to be confirmed",
+  },
+];
+
+function formatTripDate(value: string) {
+  return new Date(`${value}T12:00:00`).toLocaleDateString("en-AU", {
+    day: "numeric", month: "short", year: "numeric",
+  });
+}
+
+export default function RSVPPage() {
+  const router = useRouter();
+  const [visit] = useState(getPendingVisit);
+  const [respondingGuestId, setRespondingGuestId] = useState("");
+  const [contactsOpen, setContactsOpen] = useState(false);
+  const [contacts, setContacts] = useState<ContactDrafts>({});
+  const [canChangeEmail, setCanChangeEmail] = useState(false);
+
+  const [party, setParty] = useState<Party | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  // Form state
+  const [members, setMembers] = useState<PartyMember[]>([]);
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [baliArrival, setBaliArrival] = useState("");
+  const [baliDeparture, setBaliDeparture] = useState("");
+  const [songRequest, setSongRequest] = useState("");
+  const [message, setMessage] = useState("");
+  const [flightEmails, setFlightEmails] = useState(false);
+  const [stayEmails, setStayEmails] = useState(false);
+  const [expandedDietary, setExpandedDietary] = useState<Set<string>>(
+    new Set()
+  );
+
+  const applyParty = useCallback((data: Party & { respondingGuestId?: string; canChangeEmail?: boolean }) => {
+    setRespondingGuestId(data.respondingGuestId ?? "");
+    setContacts({});
+    setCanChangeEmail(data.canChangeEmail === true);
+    setParty(data);
+    setMembers(
+      data.members.map((m) => ({
+        ...m,
+        events: { ...m.events },
+        dietary: [...m.dietary],
+      }))
+    );
+    setEmail(data.email);
+    setPhone(data.phone);
+    setBaliArrival(data.baliArrival ?? "");
+    setBaliDeparture(data.baliDeparture ?? "");
+    setSongRequest(data.songRequest);
+    setMessage(data.message);
+    setFlightEmails(data.flightEmails);
+    setStayEmails(data.stayEmails);
+
+    // Open the dietary panel for anyone who already told us something.
+    setExpandedDietary(
+      new Set(
+        data.members
+          .filter((m) => m.dietary.length > 0 || m.dietaryNotes)
+          .map((m) => m.id)
+      )
+    );
+  }, []);
+
+  useEffect(() => {
+    setPendingVisit(null);
+    if (!visit) { router.replace("/rsvp"); return; }
+    let cancelled = false;
+    const controller = new AbortController();
+    fetch("/api/rsvp", { cache: "no-store", signal: controller.signal, headers: { "X-RSVP-Visit": visit } })
+      .then(async (response) => {
+        if (response.status === 401 || response.status === 403) {
+          router.replace("/rsvp");
+          return null;
+        }
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Unable to load your invitation. Please try again.");
+        return data;
+      })
+      .then((data) => { if (!cancelled && data) applyParty(data); })
+      .catch((error) => { if (!cancelled) setError(error instanceof Error ? error.message : "Unable to connect. Please try again."); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    // A restored browser back/forward cache must not retain private party state.
+    const restore = (event: PageTransitionEvent) => { if (event.persisted) window.location.replace("/rsvp"); };
+    window.addEventListener("pageshow", restore);
+    return () => { cancelled = true; controller.abort(); window.removeEventListener("pageshow", restore); };
+  }, [visit, router, applyParty]);
+
+  function toggleAttending(memberId: string) {
+    setMembers((prev) =>
+      prev.map((m) => {
+        if (m.id !== memberId) return m;
+        const attending = !m.attending;
+        return {
+          ...m,
+          attending,
+          events: attending
+            ? m.events
+            : { welcomeDinner: false, recoveryDay: false, wedding: false },
+        };
+      })
+    );
+  }
+
+  function toggleEvent(memberId: string, event: EventKey) {
+    setMembers((prev) =>
+      prev.map((m) => {
+        if (m.id !== memberId) return m;
+        return {
+          ...m,
+          events: { ...m.events, [event]: !m.events[event] },
+        };
+      })
+    );
+  }
+
+  function toggleDietary(memberId: string, option: string) {
+    setMembers((prev) =>
+      prev.map((m) => {
+        if (m.id !== memberId) return m;
+        const dietary = m.dietary.includes(option)
+          ? m.dietary.filter((d) => d !== option)
+          : [...m.dietary, option];
+        return { ...m, dietary };
+      })
+    );
+  }
+
+  function setDietaryNotes(memberId: string, value: string) {
+    setMembers((prev) =>
+      prev.map((m) => (m.id === memberId ? { ...m, dietaryNotes: value } : m))
+    );
+  }
+
+  function toggleDietaryExpanded(memberId: string) {
+    setExpandedDietary((prev) => {
+      const next = new Set(prev);
+      if (next.has(memberId)) {
+        next.delete(memberId);
+        // Closing the section preserves dietary selections and notes.
+      } else {
+        next.add(memberId);
+      }
+      return next;
+    });
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!party) return;
+
+    const detailsError = rsvpDetailsError({ phone, baliArrival, baliDeparture });
+    if (detailsError) {
+      setError(detailsError);
+      return;
+    }
+
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      const res = await fetch("/api/rsvp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-RSVP-Visit": visit ?? "" },
+        body: JSON.stringify({
+          partyId: party.id,
+          email,
+          phone,
+          baliArrival,
+          baliDeparture,
+          songRequest,
+          message,
+          flightEmails,
+          stayEmails,
+          members: members.map((m) => ({
+            id: m.id,
+            attending: m.attending,
+            events: m.events,
+            dietary: m.dietary,
+            dietaryNotes: m.dietaryNotes,
+            ...(m.id !== respondingGuestId && contacts[m.id]?.selected
+              ? { email: contacts[m.id].email, phone: contacts[m.id].phone } : {}),
+          })),
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Failed to submit");
+
+      // Re-seed from what was actually stored, so the confirmation reflects
+      // the saved record rather than local state.
+      applyParty(data as Party);
+      setSubmitted(true);
+    } catch (err) {
+      setError(
+        err instanceof Error && err.message
+          ? err.message
+          : "Failed to submit your RSVP. Please try again."
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  /** Only ask about events this party was actually invited to. */
+  const visibleEvents = EVENTS.filter(
+    (e) => party?.invitedTo.includes(e.key) ?? true
+  );
+  const attendingCount = members.filter((m) => m.attending).length;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-charcoal flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center"
+        >
+          <p className="font-serif text-4xl text-white">D & S</p>
+          <div className="divider mx-auto mt-4" />
+          <p className="font-sans text-white/50 text-sm tracking-widest mt-4">
+            LOADING...
+          </p>
+        </motion.div>
+      </div>
+    );
+  }
+
+  if (error && !party) {
+    return (
+      <div className="min-h-screen bg-charcoal flex items-center justify-center px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center max-w-md"
+        >
+          <p className="font-serif text-4xl text-white mb-4">D & S</p>
+          <div className="divider mx-auto mb-8" />
+          <p className="font-sans text-white/70 leading-relaxed">{error}</p>
+          <Link
+            href="/"
+            className="inline-block mt-8 font-sans text-accent text-sm tracking-wider hover:text-accent-light transition-colors"
+          >
+            RETURN HOME
+          </Link>
+        </motion.div>
+      </div>
+    );
+  }
+
+  if (submitted) {
+    return (
+      <div className="min-h-screen bg-charcoal flex items-center justify-center px-8">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6 }}
+          className="text-center max-w-lg"
+        >
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+            className="w-20 h-20 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-8"
+          >
+            <svg
+              className="w-10 h-10 text-accent"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          </motion.div>
+          <h2 className="font-serif text-5xl text-white mb-4">Thank You</h2>
+          <div className="divider mx-auto mb-6" />
+          <p className="font-sans text-white/70 leading-relaxed mb-8">
+            Your RSVP has been received, {party?.name}.
+          </p>
+
+          {/* Echo back what was stored, so guests can see it landed correctly. */}
+          <div className="text-left bg-white/5 border border-white/10 rounded-sm p-5 mb-8">
+            {members.map((m) => (
+              <div
+                key={m.id}
+                className="py-2 border-b border-white/5 last:border-0"
+              >
+                <div className="flex items-baseline justify-between gap-3">
+                  <span className="font-serif text-lg text-white">
+                    {m.name}
+                  </span>
+                  <span
+                    className={`font-sans text-xs tracking-wider ${
+                      m.attending ? "text-accent-light" : "text-white/40"
+                    }`}
+                  >
+                    {m.attending ? "ATTENDING" : "CAN'T MAKE IT"}
+                  </span>
+                </div>
+                {m.attending && (
+                  <p className="font-sans text-xs text-white/40 mt-1">
+                    {visibleEvents
+                      .filter((e) => m.events[e.key])
+                      .map((e) => e.label)
+                      .join(" · ") || "No events selected"}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <p className="font-sans text-white/70 text-sm leading-relaxed mb-4">
+            {baliArrival || baliDeparture
+              ? `Tentative Bali dates: ${baliArrival ? formatTripDate(baliArrival) : "Arrival undecided"} – ${baliDeparture ? formatTripDate(baliDeparture) : "Departure undecided"}.`
+              : "Bali dates still to be decided? You can add them here later."}
+          </p>
+
+          <p className="font-sans text-white/50 text-sm leading-relaxed">
+            {attendingCount > 0
+              ? "We'll be in touch with more details, and we'll send you into the WDING guest app closer to the date."
+              : "We're sorry to miss you, but thank you for letting us know."}
+          </p>
+          <p className="font-sans text-white/40 text-xs leading-relaxed mt-3">
+            Please finalise your RSVP by January 20th, 2027. You can return to
+            this page to update your travel dates later as your plans take shape.
+          </p>
+          <button
+            onClick={() => setSubmitted(false)}
+            className="mt-8 font-sans text-accent text-sm tracking-wider hover:text-accent-light transition-colors"
+          >
+            UPDATE RSVP
+          </button>
+          <div className="mt-4">
+            <Link
+              href="/"
+              className="font-sans text-white/40 text-sm tracking-wider hover:text-white/60 transition-colors"
+            >
+              RETURN HOME
+            </Link>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
+  const isUpdate = !!party?.submittedAt;
+
+  return (
+    <div className="min-h-screen bg-charcoal">
+      {/* Header */}
+      <div className="py-12 px-8 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <Link href="/" className="font-serif text-xl tracking-widest text-white">
+            D & S
+          </Link>
+        </motion.div>
+      </div>
+
+      <div className="max-w-2xl mx-auto px-8 pb-24">
+        {/* Title */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
+        >
+          <p className="font-sans text-accent-light tracking-[0.3em] text-xs mb-4">
+            {isUpdate ? "UPDATE YOUR RESPONSE" : "WE HOPE YOU CAN JOIN US"}
+          </p>
+          <h1 className="font-serif text-5xl md:text-6xl font-light text-white">
+            RSVP
+          </h1>
+          <div className="divider mx-auto mt-6" />
+          <p className="font-sans text-white/50 mt-6 text-sm">
+            Welcome, {party?.name}
+          </p>
+          {isUpdate && (
+            <p className="font-sans text-accent/70 text-xs mt-2 tracking-wider">
+              LAST SUBMITTED{" "}
+              {new Date(party!.submittedAt!).toLocaleDateString("en-AU", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
+            </p>
+          )}
+        </motion.div>
+
+        <form onSubmit={handleSubmit}>
+          {/* Party Members */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="space-y-6 mb-12"
+          >
+            <p className="font-sans text-white/80 text-xs tracking-wider">
+              WHO&apos;S ATTENDING?
+            </p>
+
+            {members.map((member, i) => (
+              <motion.div
+                key={member.id}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 + i * 0.1 }}
+                className={`border rounded-sm transition-colors ${
+                  member.attending
+                    ? "bg-white/5 border-accent/30"
+                    : "bg-white/[0.02] border-white/10"
+                }`}
+              >
+                {/* Member toggle */}
+                <button
+                  type="button"
+                  onClick={() => toggleAttending(member.id)}
+                  aria-pressed={member.attending}
+                  className="w-full flex items-center gap-4 p-5 text-left"
+                >
+                  <div
+                    className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                      member.attending
+                        ? "border-accent bg-accent"
+                        : "border-white/30"
+                    }`}
+                  >
+                    {member.attending && (
+                      <svg
+                        className="w-3.5 h-3.5 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={3}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    )}
+                  </div>
+                  <span
+                    className={`font-serif text-xl transition-colors ${
+                      member.attending ? "text-white" : "text-white/50"
+                    }`}
+                  >
+                    {member.name}
+                  </span>
+                </button>
+
+                {/* Events + dietary (shown when attending) */}
+                <AnimatePresence>
+                  {member.attending && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-5 pb-5 space-y-3">
+                        <p className="font-sans text-white/40 text-xs tracking-wider pt-2">
+                          EVENTS
+                        </p>
+
+                        {visibleEvents.map((event) => (
+                          <label
+                            key={event.key}
+                            className={`flex items-start gap-3 p-3 rounded-sm cursor-pointer transition-colors ${
+                              event.highlight
+                                ? "bg-accent/10 hover:bg-accent/15"
+                                : "bg-white/[0.03] hover:bg-white/[0.06]"
+                            }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={member.events[event.key]}
+                              onChange={() => toggleEvent(member.id, event.key)}
+                              className="mt-0.5 w-4 h-4 rounded border-white/30 bg-white/10 text-accent focus:ring-accent focus:ring-offset-0"
+                            />
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-baseline gap-2 flex-wrap">
+                                <span className="font-serif text-white text-base">
+                                  {event.label}
+                                </span>
+                                <span
+                                  className={`font-sans text-xs ${
+                                    event.highlight
+                                      ? "text-accent-light"
+                                      : "text-white/40"
+                                  }`}
+                                >
+                                  {event.detail}
+                                </span>
+                              </div>
+                            </div>
+                          </label>
+                        ))}
+
+                        {/* Dietary toggle */}
+                        <div className="pt-2">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              toggleDietaryExpanded(member.id)
+                            }
+                            aria-expanded={expandedDietary.has(member.id)}
+                            className="font-sans text-xs text-white/40 hover:text-white/60 tracking-wider transition-colors flex items-center gap-2"
+                          >
+                            <svg
+                              className={`w-3 h-3 transition-transform ${
+                                expandedDietary.has(member.id)
+                                  ? "rotate-90"
+                                  : ""
+                              }`}
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M9 5l7 7-7 7"
+                              />
+                            </svg>
+                            {expandedDietary.has(member.id)
+                              ? "DIETARY REQUIREMENTS"
+                              : "ADD DIETARY REQUIREMENTS"}
+                          </button>
+                          <AnimatePresence>
+                            {expandedDietary.has(member.id) && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.2 }}
+                                className="overflow-hidden"
+                              >
+                                <p className="font-sans text-white/30 text-[11px] mt-3 mb-2">
+                                  Applies to all events
+                                  {member.name.split(" ")[0]
+                                    ? ` ${member.name.split(" ")[0]} attends`
+                                    : ""}
+                                  .
+                                </p>
+                                <div className="flex flex-wrap gap-2">
+                                  {DIETARY_OPTIONS.map((option) => {
+                                    const on = member.dietary.includes(option);
+                                    return (
+                                      <button
+                                        key={option}
+                                        type="button"
+                                        aria-pressed={on}
+                                        onClick={() =>
+                                          toggleDietary(member.id, option)
+                                        }
+                                        className={`font-sans text-xs px-3 py-1.5 rounded-full border transition-colors ${
+                                          on
+                                            ? "bg-accent text-white border-accent"
+                                            : "bg-white/[0.03] text-white/60 border-white/15 hover:border-white/30"
+                                        }`}
+                                      >
+                                        {option}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                                <textarea
+                                  rows={2}
+                                  aria-label={`Dietary notes for ${member.name}`}
+                                value={member.dietaryNotes}
+                                  onChange={(e) =>
+                                    setDietaryNotes(member.id, e.target.value)
+                                  }
+                                  className="mt-3 w-full bg-white/5 border border-white/10 rounded-sm px-3 py-2 text-white placeholder:text-white/20 font-sans text-sm resize-none focus:border-accent focus:outline-none"
+                                  placeholder="Anything else the kitchen should know? Severity of an allergy, etc."
+                                />
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* Email */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="mb-8"
+          >
+            <label
+              htmlFor="email"
+              className="font-sans text-white/80 text-xs tracking-wider block mb-2"
+            >
+              EMAIL ADDRESS
+            </label>
+            <input
+              id="email"
+              type="email"
+              required
+              readOnly={!!party?.email && !canChangeEmail}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full bg-white/10 border border-white/20 rounded-sm px-4 py-3 text-white placeholder:text-white/30 font-sans text-sm focus:border-accent focus:outline-none"
+              placeholder="your@email.com"
+            />
+            <p className="font-sans text-white/30 text-xs mt-2">
+              {party?.email && !canChangeEmail ? "Your party’s sign-in email. Sign in with an emailed code to change it." : "Your party’s sign-in email, where we’ll send codes and wedding updates."}
+            </p>
+
+            <fieldset className="mt-5 space-y-3">
+              <legend className="font-sans text-white/80 text-xs tracking-wider mb-3">
+                PRICE UPDATES <span className="text-white/30">(OPTIONAL)</span>
+              </legend>
+              <label className="flex items-start gap-3 font-sans text-white/70 text-sm cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={flightEmails}
+                  onChange={(e) => setFlightEmails(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--accent)]"
+                />
+                <span>
+                  Email me Sydney to Bali flight prices (weekly, plus alerts for
+                  big drops).{" "}
+                  <Link href="/flights" target="_blank" className="underline text-white/50">
+                    See flights
+                  </Link>
+                </span>
+              </label>
+              <label className="flex items-start gap-3 font-sans text-white/70 text-sm cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={stayEmails}
+                  onChange={(e) => setStayEmails(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--accent)]"
+                />
+                <span>
+                  Email me places to stay near the venue (weekly).{" "}
+                  <Link href="/stays" target="_blank" className="underline text-white/50">
+                    See stays
+                  </Link>
+                </span>
+              </label>
+            </fieldset>
+          </motion.div>
+
+          {/* Phone */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.45 }}
+            className="mb-8"
+          >
+            <label
+              htmlFor="phone"
+              className="font-sans text-white/80 text-xs tracking-wider block mb-2"
+            >
+              MOBILE NUMBER{" "}
+              <span className="text-white/60">(REQUIRED)</span>
+            </label>
+            <input
+              id="phone"
+              type="tel"
+              required
+              autoComplete="tel"
+              inputMode="tel"
+              maxLength={40}
+              aria-describedby="phone-help"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="w-full bg-white/10 border border-white/20 rounded-sm px-4 py-3 text-white placeholder:text-white/30 font-sans text-sm focus:border-accent focus:outline-none"
+              placeholder="+61 400 000 000"
+            />
+            <p id="phone-help" className="font-sans text-white/60 text-xs leading-relaxed mt-2">
+              One contact number for your party. Include your country code if possible.
+            </p>
+          </motion.div>
+
+          {members.length > 1 && (
+            <section className="mb-10 rounded-md border border-white/30 bg-white/5">
+              <button type="button" aria-expanded={contactsOpen} aria-controls="party-contacts"
+                onClick={() => setContactsOpen(!contactsOpen)}
+                className="group flex w-full items-center gap-4 text-left px-5 py-5 rounded-md hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent transition-colors">
+                <span className="flex-1">
+                  <span className="block font-sans text-white/60 text-xs tracking-wider mb-1">OPTIONAL</span>
+                  <span className="block font-serif text-2xl text-white">Keep the rest of your party in the loop</span>
+                  <span className="block font-sans text-sm text-white/70 mt-1">
+                    {contactsOpen ? "Tap to close" : "Tap to add emails and mobiles for the others in your party"}
+                  </span>
+                </span>
+                <span aria-hidden="true"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/40 text-white text-xl group-hover:border-accent group-hover:text-accent transition-colors">
+                  {contactsOpen ? "−" : "+"}
+                </span>
+              </button>
+              {contactsOpen && (
+                <div id="party-contacts" className="px-5 pb-5 pt-1">
+                  <p className="font-sans text-sm text-white/80 leading-relaxed mb-6">Would you like the rest of your party to get wedding updates? Add their email and mobile and we&apos;ll send event updates to them personally.</p>
+                  <p className="font-sans text-sm text-white/70 mb-6">Please check they’re happy to receive updates. Both fields are optional.</p>
+                  <PartyContacts members={members.filter((member) => member.id !== respondingGuestId)}
+                    contacts={contacts} onChange={setContacts} />
+                  <button type="button" onClick={() => { setContacts({}); setContactsOpen(false); }} className="text-white/80 font-sans text-sm underline py-3">Skip for now</button>
+                </div>
+              )}
+            </section>
+          )}
+
+          <BaliDates arrival={baliArrival} departure={baliDeparture}
+            onArrivalChange={setBaliArrival} onDepartureChange={setBaliDeparture} />
+
+          {/* Song Request */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="mb-8"
+          >
+            <label
+              htmlFor="songRequest"
+              className="font-sans text-white/80 text-xs tracking-wider block mb-2"
+            >
+              SONG REQUEST
+            </label>
+            <input
+              id="songRequest"
+              type="text"
+              value={songRequest}
+              onChange={(e) => setSongRequest(e.target.value)}
+              className="w-full bg-white/10 border border-white/20 rounded-sm px-4 py-3 text-white placeholder:text-white/30 font-sans text-sm focus:border-accent focus:outline-none"
+              placeholder="What song will get you on the dance floor?"
+            />
+          </motion.div>
+
+          {/* Message */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="mb-12"
+          >
+            <label
+              htmlFor="message"
+              className="font-sans text-white/80 text-xs tracking-wider block mb-2"
+            >
+              MESSAGE FOR THE COUPLE
+            </label>
+            <textarea
+              id="message"
+              rows={4}
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              className="w-full bg-white/10 border border-white/20 rounded-sm px-4 py-3 text-white placeholder:text-white/30 font-sans text-sm resize-none focus:border-accent focus:outline-none"
+              placeholder="Share your love and wishes..."
+            />
+          </motion.div>
+
+          {error && (
+            <div role="alert" className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-sm">
+              <p className="font-sans text-red-300 text-sm">{error}</p>
+            </div>
+          )}
+
+          {/* Submit */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+          >
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="submit"
+              disabled={submitting}
+              className="w-full bg-accent hover:bg-accent-dark disabled:opacity-50 text-white font-sans tracking-[0.2em] text-sm py-4 rounded-sm transition-colors"
+            >
+              {submitting
+                ? "SENDING..."
+                : isUpdate
+                ? "UPDATE RSVP"
+                : "SEND RSVP"}
+            </motion.button>
+          </motion.div>
+
+          {/* RSVP deadline */}
+          <p className="font-sans text-white/30 text-xs text-center mt-6 tracking-wider">
+            PLEASE RESPOND BY JANUARY 20TH, 2027
+          </p>
+        </form>
+      </div>
+    </div>
+  );
+}

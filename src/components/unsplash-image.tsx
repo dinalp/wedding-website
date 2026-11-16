@@ -10,5 +10,5 @@ const loader: ImageProps["loader"] = ({ src, width, quality }) =>
   `${src}?auto=format&fit=crop&w=${Math.min(width, 2048)}&q=${quality ?? 75}`;
 
 export function UnsplashImage(props: Omit<ImageProps, "loader">) {
-  return <Image {...props} loader={loader} />;
+  return <Image {...props} alt={props.alt} loader={loader} />;
 }

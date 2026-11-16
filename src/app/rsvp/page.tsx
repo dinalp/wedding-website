@@ -3,178 +3,100 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import type { PartyMatch } from "@/lib/types";
+import { motion } from "framer-motion";
+import { setPendingVisit } from "@/lib/rsvp-visit";
+
+const inputStyle = "w-full bg-white border border-charcoal/30 rounded-sm px-4 py-4 text-charcoal text-base focus:outline-2 focus:outline-accent";
+const buttonStyle = "w-full mt-4 bg-charcoal text-white font-sans text-xs tracking-[0.2em] py-4 rounded-sm transition-opacity hover:opacity-90 disabled:opacity-50";
 
 export default function FindInvitationPage() {
   const router = useRouter();
-  const [query, setQuery] = useState("");
-  const [matches, setMatches] = useState<PartyMatch[] | null>(null);
-  const [searching, setSearching] = useState(false);
+  const [name, setName] = useState("");
+  const [found, setFound] = useState(false);
+  const [code, setCode] = useState("");
+  const [sent, setSent] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
+  const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-
+  const [message, setMessage] = useState<string | null>(null);
+  const codeRef = useRef<HTMLInputElement>(null);
+  useEffect(() => { setPendingVisit(null); }, []);
+  useEffect(() => { if (sent) codeRef.current?.focus(); }, [sent]);
   useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+    if (!cooldown) return;
+    const timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [cooldown]);
 
-  async function handleSearch(e: React.FormEvent) {
-    e.preventDefault();
-    const q = query.trim();
-    if (q.length < 3) {
-      setError("Please enter at least three letters of your name.");
-      return;
-    }
-
-    setSearching(true);
-    setError(null);
-    setMatches(null);
+  async function action(path: string, body: object) {
+    setBusy(true); setError(null); setMessage(null);
     try {
-      const res = await fetch(`/api/rsvp/search?q=${encodeURIComponent(q)}`);
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Search failed");
-      setMatches(data.matches as PartyMatch[]);
-    } catch {
-      setError("Something went wrong on our end. Please try again in a moment.");
-    } finally {
-      setSearching(false);
-    }
+      const response = await fetch(path, { method: "POST", cache: "no-store",
+        headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Please try again shortly.");
+      if (data.next === "form") {
+        setPendingVisit(data.visit);
+        router.push("/rsvp/current");
+      } else if (data.next === "continue") {
+        setFound(true); setSent(false); setCode(""); setCooldown(0);
+      } else if (data.message) {
+        setMessage(data.message);
+        if (path.endsWith("/send")) { setSent(true); setCode(""); setCooldown(60); }
+      }
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Unable to connect. Please try again.");
+    } finally { setBusy(false); }
   }
 
   return (
     <main className="min-h-screen bg-background flex flex-col">
       <header className="px-4 md:px-8 py-6">
-        <Link
-          href="/"
-          className="font-[family-name:var(--font-cormorant)] text-xl tracking-widest text-charcoal"
-        >
-          D &amp; S
-        </Link>
+        <Link href="/" className="font-serif text-xl tracking-widest text-charcoal">D &amp; S</Link>
       </header>
-
       <div className="flex-1 flex items-start justify-center px-4 pb-16 pt-6 md:pt-16">
-        <div className="w-full max-w-lg">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center"
-          >
-            <p className="font-[family-name:var(--font-montserrat)] text-accent tracking-[0.2em] text-xs mb-4">
-              MAY 19&ndash;21, 2027 &middot; ULUWATU, BALI
-            </p>
-            <h1 className="font-[family-name:var(--font-cormorant)] text-4xl md:text-5xl font-light text-charcoal">
-              Find your invitation
-            </h1>
-            <div className="divider mx-auto mt-6" />
-            <p className="font-[family-name:var(--font-montserrat)] text-charcoal/60 text-sm mt-6 leading-relaxed">
-              Enter your name as it appears on your invitation. You&apos;ll be
-              able to RSVP for everyone in your party.
-            </p>
-          </motion.div>
-
-          <motion.form
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            onSubmit={handleSearch}
-            className="mt-10"
-          >
-            <label
-              htmlFor="guest-name"
-              className="block font-[family-name:var(--font-montserrat)] text-xs tracking-[0.15em] text-charcoal/50 mb-3"
-            >
-              YOUR FULL NAME
-            </label>
-            <input
-              ref={inputRef}
-              id="guest-name"
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              autoComplete="name"
-              enterKeyHint="search"
-              placeholder="e.g. Sarah Jones"
-              className="w-full bg-white border border-charcoal/15 rounded-sm px-4 py-4 text-charcoal text-base placeholder:text-charcoal/30 focus:border-accent"
-            />
-
-            <button
-              type="submit"
-              disabled={searching}
-              className="w-full mt-4 bg-charcoal text-white font-[family-name:var(--font-montserrat)] text-xs tracking-[0.2em] py-4 rounded-sm transition-opacity hover:opacity-90 disabled:opacity-50"
-            >
-              {searching ? "SEARCHING…" : "CONTINUE"}
-            </button>
-          </motion.form>
-
-          <div aria-live="polite">
-            {error && (
-              <p className="mt-6 text-center font-[family-name:var(--font-montserrat)] text-sm text-red-700">
-                {error}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-lg">
+          <h1 className="font-serif text-4xl md:text-5xl font-light text-charcoal text-center">
+            {sent ? "Check your email" : found ? "Open your invitation" : "Find your invitation"}
+          </h1>
+          <div className="divider mx-auto mt-6" />
+          {!found ? (
+            <form onSubmit={(event) => { event.preventDefault(); void action("/api/rsvp/search", { name }); }} className="mt-8">
+              <p className="font-sans text-charcoal/70 text-sm leading-relaxed mb-8 text-center">
+                Enter your full name as it appears on your invitation. You can RSVP for everyone in your party.
               </p>
-            )}
-
-            <AnimatePresence>
-              {matches !== null && matches.length === 0 && !error && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-8 bg-cream/60 rounded-sm p-6 text-center"
-                >
-                  <p className="font-[family-name:var(--font-cormorant)] text-2xl text-charcoal">
-                    We couldn&apos;t find that name
-                  </p>
-                  <p className="font-[family-name:var(--font-montserrat)] text-sm text-charcoal/60 mt-3 leading-relaxed">
-                    Try the name exactly as it appears on your invitation, or
-                    just your first name. If it still doesn&apos;t work, message
-                    Dinal or Shayani and we&apos;ll sort it out.
-                  </p>
-                </motion.div>
+              <label htmlFor="guest-name" className="block font-sans text-xs tracking-wider text-charcoal mb-3">YOUR FULL NAME</label>
+              <input id="guest-name" autoComplete="name" required maxLength={100}
+                value={name} onChange={(event) => setName(event.target.value)} className={inputStyle} />
+              <button disabled={busy} className={buttonStyle}>{busy ? "CHECKING…" : "CONTINUE"}</button>
+            </form>
+          ) : (
+            <div className="mt-8 font-sans text-sm text-charcoal/80">
+              <p className="leading-relaxed">{sent ? "Enter the code sent to your party’s email. Use the same browser where you requested it." : "Continue to your RSVP. If there’s an email on file, we’ll send a one-time code to that address."}</p>
+              <button type="button" disabled={busy || cooldown > 0} onClick={() => void action("/api/rsvp/otp/send", {})} className={buttonStyle}>
+                {cooldown > 0 ? `RESEND IN ${cooldown}s` : sent ? "SEND A NEW CODE" : "CONTINUE"}
+              </button>
+              {sent && (
+                <form className="mt-8" onSubmit={(event) => { event.preventDefault(); void action("/api/rsvp/otp/verify", { code }); }}>
+                  <label htmlFor="rsvp-code" className="block mb-3">Six-digit code</label>
+                  <input ref={codeRef} id="rsvp-code" type="text" inputMode="numeric" autoComplete="one-time-code"
+                    pattern="[0-9]{6}" minLength={6} maxLength={6} required aria-describedby="code-help"
+                    value={code} onChange={(event) => setCode(event.target.value.replace(/\D/g, "").slice(0, 6))} className={inputStyle} />
+                  <p id="code-help" className="mt-2">You can paste the code. It expires after 10 minutes.</p>
+                  <button disabled={busy} className={buttonStyle}>{busy ? "CHECKING…" : "OPEN MY RSVP"}</button>
+                </form>
               )}
-
-              {matches !== null && matches.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-10"
-                >
-                  <p className="font-[family-name:var(--font-montserrat)] text-xs tracking-[0.15em] text-charcoal/50 text-center mb-4">
-                    {matches.length === 1
-                      ? "IS THIS YOU?"
-                      : "WHICH ONE IS YOU?"}
-                  </p>
-
-                  <ul className="space-y-3">
-                    {matches.map((match) => (
-                      <li key={match.id}>
-                        <button
-                          onClick={() => router.push(`/rsvp/${match.id}`)}
-                          className="w-full text-left bg-white border border-charcoal/15 rounded-sm p-5 transition-colors hover:border-accent"
-                        >
-                          <span className="block font-[family-name:var(--font-cormorant)] text-2xl text-charcoal">
-                            {match.name}
-                          </span>
-                          <span className="block font-[family-name:var(--font-montserrat)] text-sm text-charcoal/60 mt-1">
-                            {match.memberNames.join(" · ")}
-                          </span>
-                          {match.alreadySubmitted && (
-                            <span className="inline-block mt-3 font-[family-name:var(--font-montserrat)] text-[11px] tracking-wider text-accent bg-accent/10 px-3 py-1 rounded-full">
-                              ALREADY RESPONDED — YOU CAN STILL MAKE CHANGES
-                            </span>
-                          )}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <p className="font-[family-name:var(--font-montserrat)] text-xs text-charcoal/40 text-center mt-6">
-                    Not seeing your party? Try searching a different name.
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
+              <button type="button" disabled={busy} onClick={() => { setFound(false); setSent(false); setCooldown(0); setError(null); setMessage(null); }} className="mt-6 underline py-2">Use a different name</button>
+            </div>
+          )}
+          <div aria-live="polite" className="mt-6 font-sans text-sm leading-relaxed text-center">
+            {message && <p>{message}</p>}
+            {error && <p role="alert" className="text-red-800">{error}</p>}
           </div>
-        </div>
+          <p className="mt-8 font-sans text-sm text-charcoal/70 leading-relaxed text-center">
+            Need help or can’t access that email? Contact Dinal &amp; Shayani through your usual message thread and we’ll help you with your invitation.
+          </p>
+        </motion.div>
       </div>
     </main>
   );

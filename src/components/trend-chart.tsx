@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { chartScale } from "../lib/chart-scale";
 
 const aud = (n: number) => `A$${n.toLocaleString("en-AU")}`;
 const shortDate = (iso: string) =>
@@ -26,19 +27,19 @@ export function TrendChart({
 }) {
   const [hover, setHover] = useState<number | null>(null);
   const W = 640, H = 260, L = 52, R = 16, T = 16, B = 32;
+  // Invalid imported numbers are gaps, never SVG coordinates.
+  series = series.map((s) => ({ ...s, values: s.values.map((v) => v != null && Number.isFinite(v) ? v : null) }));
+  if (cap != null && !Number.isFinite(cap)) cap = undefined;
   const all = series.flatMap((s) => s.values).filter((v): v is number => v != null);
   if (cap != null) all.push(cap);
-  if (all.length === 0) return null;
-  const pad = Math.max((Math.max(...all) - Math.min(...all)) * 0.1, 5);
-  const lo = Math.min(...all) - pad, hi = Math.max(...all) + pad;
+  const axis = chartScale(all);
+  if (!axis || !dates.length) return null;
   const times = dates.map((date) => Date.parse(`${date}T00:00:00Z`));
   const span = times.at(-1)! - times[0];
   const x = (i: number) => L + (span === 0 ? 0 : ((times[i] - times[0]) * (W - L - R)) / span);
-  const y = (v: number) => T + ((hi - v) * (H - T - B)) / (hi - lo);
+  const y = (v: number) => T + axis.fraction(v) * (H - T - B);
+  const ticks = axis.ticks;
 
-  const step = [5, 10, 20, 25, 50, 100, 200].find((s) => (hi - lo) / s <= 5) ?? 500;
-  const ticks: number[] = [];
-  for (let t = Math.ceil(lo / step) * step; t <= hi; t += step) ticks.push(t);
   const labelIdx = [...new Set([0, Math.round((dates.length - 1) / 3), Math.round((2 * (dates.length - 1)) / 3), dates.length - 1])];
 
   const pick = (e: React.PointerEvent<SVGSVGElement>) => {
@@ -81,7 +82,7 @@ export function TrendChart({
           <g key={t}>
             <line x1={L} x2={W - R} y1={y(t)} y2={y(t)} stroke="var(--cream)" strokeWidth={1} />
             <text x={L - 8} y={y(t) + 4} textAnchor="end" fontSize={11} fill="#8a8a7a" opacity={hover == null ? 1 : 0.35}>
-              ${t}
+              ${t.toLocaleString("en-AU", { notation: "compact", maximumFractionDigits: 1 })}
             </text>
           </g>
         ))}

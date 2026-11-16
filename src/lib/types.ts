@@ -9,10 +9,12 @@ export interface PartyMember {
   events: Record<EventKey, boolean>;
   dietary: string[];
   dietaryNotes: string;
+  email?: string;
+  phone?: string;
 }
 
 export interface Party {
-  /** Airtable record id of the party. Doubles as the URL handle. */
+  /** Airtable record id; never an authentication credential. */
   id: string;
   code: string;
   name: string;
@@ -50,15 +52,9 @@ export interface RSVPSubmission {
     events: Record<EventKey, boolean>;
     dietary: string[];
     dietaryNotes: string;
+    email?: string;
+    phone?: string;
   }[];
-}
-
-/** Search hit — deliberately thin, this endpoint is public. */
-export interface PartyMatch {
-  id: string;
-  name: string;
-  memberNames: string[];
-  alreadySubmitted: boolean;
 }
 
 export const DIETARY_OPTIONS = [
