@@ -12,7 +12,7 @@ const buttonStyle = "w-full mt-4 bg-charcoal text-white font-sans text-xs tracki
 export default function FindInvitationPage() {
   const router = useRouter();
   const [name, setName] = useState("");
-  const [emailHint, setEmailHint] = useState<string | null>(null);
+  const [found, setFound] = useState(false);
   const [code, setCode] = useState("");
   const [sent, setSent] = useState(false);
   const [cooldown, setCooldown] = useState(0);
@@ -38,8 +38,8 @@ export default function FindInvitationPage() {
       if (data.next === "form") {
         setPendingVisit(data.visit);
         router.push("/rsvp/current");
-      } else if (data.next === "verify") {
-        setEmailHint(data.emailHint); setSent(false); setCode("");
+      } else if (data.next === "continue") {
+        setFound(true); setSent(false); setCode(""); setCooldown(0);
       } else if (data.message) {
         setMessage(data.message);
         if (path.endsWith("/send")) { setSent(true); setCode(""); setCooldown(60); }
@@ -57,10 +57,10 @@ export default function FindInvitationPage() {
       <div className="flex-1 flex items-start justify-center px-4 pb-16 pt-6 md:pt-16">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-lg">
           <h1 className="font-serif text-4xl md:text-5xl font-light text-charcoal text-center">
-            {emailHint ? "Check your email" : "Find your invitation"}
+            {sent ? "Check your email" : found ? "Open your invitation" : "Find your invitation"}
           </h1>
           <div className="divider mx-auto mt-6" />
-          {!emailHint ? (
+          {!found ? (
             <form onSubmit={(event) => { event.preventDefault(); void action("/api/rsvp/search", { name }); }} className="mt-8">
               <p className="font-sans text-charcoal/70 text-sm leading-relaxed mb-8 text-center">
                 Enter your full name as it appears on your invitation. You can RSVP for everyone in your party.
@@ -72,9 +72,9 @@ export default function FindInvitationPage() {
             </form>
           ) : (
             <div className="mt-8 font-sans text-sm text-charcoal/80">
-              <p className="leading-relaxed">To open your RSVP, we’ll send a one-time code to <strong className="break-all">{emailHint}</strong>.</p>
+              <p className="leading-relaxed">{sent ? "Enter the code sent to your party’s email. Use the same browser where you requested it." : "Continue to your RSVP. If there’s an email on file, we’ll send a one-time code to that address."}</p>
               <button type="button" disabled={busy || cooldown > 0} onClick={() => void action("/api/rsvp/otp/send", {})} className={buttonStyle}>
-                {cooldown > 0 ? `RESEND IN ${cooldown}s` : sent ? "SEND A NEW CODE" : "SEND CODE"}
+                {cooldown > 0 ? `RESEND IN ${cooldown}s` : sent ? "SEND A NEW CODE" : "CONTINUE"}
               </button>
               {sent && (
                 <form className="mt-8" onSubmit={(event) => { event.preventDefault(); void action("/api/rsvp/otp/verify", { code }); }}>
@@ -86,7 +86,7 @@ export default function FindInvitationPage() {
                   <button disabled={busy} className={buttonStyle}>{busy ? "CHECKING…" : "OPEN MY RSVP"}</button>
                 </form>
               )}
-              <button type="button" disabled={busy} onClick={() => { setEmailHint(null); setError(null); setMessage(null); }} className="mt-6 underline py-2">Use a different name</button>
+              <button type="button" disabled={busy} onClick={() => { setFound(false); setSent(false); setCooldown(0); setError(null); setMessage(null); }} className="mt-6 underline py-2">Use a different name</button>
             </div>
           )}
           <div aria-live="polite" className="mt-6 font-sans text-sm leading-relaxed text-center">

@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { rsvpDetailsError } from "@/lib/rsvp-validation";
+import { PartyContacts, type ContactDrafts } from "@/components/party-contacts";
 import { BaliDates } from "@/components/bali-dates";
 import { useRouter } from "next/navigation";
 import { getPendingVisit, setPendingVisit } from "@/lib/rsvp-visit";
@@ -48,7 +49,8 @@ export default function RSVPPage() {
   const [visit] = useState(getPendingVisit);
   const [respondingGuestId, setRespondingGuestId] = useState("");
   const [contactsOpen, setContactsOpen] = useState(false);
-  const [contacts, setContacts] = useState<Record<string, { email?: string; phone?: string }>>({});
+  const [contacts, setContacts] = useState<ContactDrafts>({});
+  const [canChangeEmail, setCanChangeEmail] = useState(false);
 
   const [party, setParty] = useState<Party | null>(null);
   const [loading, setLoading] = useState(true);
@@ -70,9 +72,10 @@ export default function RSVPPage() {
     new Set()
   );
 
-  const applyParty = useCallback((data: Party & { respondingGuestId?: string }) => {
+  const applyParty = useCallback((data: Party & { respondingGuestId?: string; canChangeEmail?: boolean }) => {
     setRespondingGuestId(data.respondingGuestId ?? "");
     setContacts({});
+    setCanChangeEmail(data.canChangeEmail === true);
     setParty(data);
     setMembers(
       data.members.map((m) => ({
@@ -651,14 +654,14 @@ export default function RSVPPage() {
               id="email"
               type="email"
               required
-              readOnly={!!party?.submittedAt}
+              readOnly={!!party?.email && !canChangeEmail}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-white/10 border border-white/20 rounded-sm px-4 py-3 text-white placeholder:text-white/30 font-sans text-sm focus:border-accent focus:outline-none"
               placeholder="your@email.com"
             />
             <p className="font-sans text-white/30 text-xs mt-2">
-              {party?.submittedAt ? "Your party’s sign-in email. Contact Dinal & Shayani if it needs changing." : "So we can send you updates and your invite to the WDING guest app"}
+              {party?.email && !canChangeEmail ? "Your party’s sign-in email. Sign in with an emailed code to change it." : "Your party’s sign-in email, where we’ll send codes and wedding updates."}
             </p>
 
             <fieldset className="mt-5 space-y-3">
@@ -739,21 +742,8 @@ export default function RSVPPage() {
                 <div id="party-contacts" className="mt-4">
                   <p className="font-sans text-sm text-white/80 leading-relaxed mb-6">Would you like the rest of your party to get wedding updates? Add their email and mobile and we&apos;ll send event updates to them personally.</p>
                   <p className="font-sans text-sm text-white/70 mb-6">Please check they’re happy to receive updates. Both fields are optional.</p>
-                  {members.filter((member) => member.id !== respondingGuestId).map((member) => (
-                    <fieldset key={member.id} className="mb-6 space-y-3 min-w-0">
-                      <legend className="font-serif text-xl text-white mb-2 break-words">{member.name}</legend>
-                      <label htmlFor={`email-${member.id}`} className="block font-sans text-sm text-white/80">Email (optional)</label>
-                      <input id={`email-${member.id}`} type="email" maxLength={320} autoComplete="off"
-                        value={contacts[member.id]?.email ?? member.email ?? ""}
-                        onChange={(event) => setContacts((previous) => ({ ...previous, [member.id]: { ...previous[member.id], email: event.target.value } }))}
-                        className="w-full bg-white/10 border border-white/30 rounded-sm px-4 py-3 text-white text-base focus:outline-2 focus:outline-accent" />
-                      <label htmlFor={`phone-${member.id}`} className="block font-sans text-sm text-white/80">Mobile (optional)</label>
-                      <input id={`phone-${member.id}`} type="tel" maxLength={40} autoComplete="off"
-                        value={contacts[member.id]?.phone ?? member.phone ?? ""}
-                        onChange={(event) => setContacts((previous) => ({ ...previous, [member.id]: { ...previous[member.id], phone: event.target.value } }))}
-                        className="w-full bg-white/10 border border-white/30 rounded-sm px-4 py-3 text-white text-base focus:outline-2 focus:outline-accent" />
-                    </fieldset>
-                  ))}
+                  <PartyContacts members={members.filter((member) => member.id !== respondingGuestId)}
+                    contacts={contacts} onChange={setContacts} />
                   <button type="button" onClick={() => { setContacts({}); setContactsOpen(false); }} className="text-white/80 font-sans text-sm underline py-3">Skip for now</button>
                 </div>
               )}

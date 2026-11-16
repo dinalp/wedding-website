@@ -217,7 +217,7 @@ export async function saveOTPState(partyId: string, hash: string, expires: numbe
   } }] }) });
 }
 
-export async function saveRSVP(submission: RSVPSubmission, authorizedPartyId: string): Promise<Party> {
+export async function saveRSVP(submission: RSVPSubmission, authorizedPartyId: string, emailVerified = false): Promise<Party> {
   if (submission.partyId !== authorizedPartyId) throw new Error("Unauthorized party");
   const party = await getParty(authorizedPartyId);
   if (!party) throw new Error("Party not found");
@@ -257,7 +257,9 @@ export async function saveRSVP(submission: RSVPSubmission, authorizedPartyId: st
 
   const now = new Date().toISOString();
   const partyFields: PartyFields = {
-    Email: submission.email.slice(0, 320),
+    // Re-check the freshly loaded record at the write boundary. Never overwrite
+    // an existing login destination from a name-only session (including retries).
+    ...((party.submittedAt ? emailVerified : !party.email.trim()) ? { Email: submission.email.slice(0, 320) } : {}),
     Phone: submission.phone.slice(0, 40),
     "Song Request": submission.songRequest.slice(0, 2000),
     Message: submission.message.slice(0, 5000),

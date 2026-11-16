@@ -30,6 +30,7 @@ export interface Session {
   visitHash: string;
   submittedAt: string | null;
   expires: number;
+  emailVerified?: boolean;
 }
 
 export function signSession(session: Session): string {

@@ -20,7 +20,9 @@ test("built Next app: first response, return visit, OTP and secondary contacts",
   const legacy = await fetch(origin + "/rsvp/test-code", { redirect: "manual" });
   assert.equal(legacy.status, 307); assert.equal(legacy.headers.get("location"), "/rsvp");
   const lookup = await call("/api/rsvp/search", { name: "Test Guest" });
-  assert.equal(lookup.body.next, "form"); visit = lookup.body.visit;
+  assert.equal(lookup.body.next, "continue");
+  const first = await call("/api/rsvp/otp/send", {});
+  assert.equal(first.body.next, "form"); visit = first.body.visit;
   const initial = await call("/api/rsvp");
   assert.equal(initial.status, 200); assert.equal(initial.body.name, "Test Party");
   assert.equal(initial.body.respondingGuestId, "rec00000000000002");
@@ -34,7 +36,7 @@ test("built Next app: first response, return visit, OTP and secondary contacts",
   visit = "";
   assert.equal((await call("/api/rsvp")).status, 401, "later visit cannot reuse cookie alone");
   const returning = await call("/api/rsvp/search", { name: "Test Guest" });
-  assert.deepEqual(returning.body, { next: "verify", emailHint: "p***@example.test" });
+  assert.deepEqual(returning.body, { next: "continue" });
   assert.equal((await call("/api/rsvp/otp/send", {})).status, 200);
   const code = await readFile("output/rsvp-preview-code.txt", "utf8");
   const verification = await call("/api/rsvp/otp/verify", { code });

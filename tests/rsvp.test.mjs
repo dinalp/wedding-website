@@ -1,3 +1,4 @@
+import "./rsvp-ui.test.mjs";
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { parseSubmission, rsvpDetailsError } from '../src/lib/rsvp-validation.ts';
@@ -100,6 +101,18 @@ test('Airtable round trip saves, edits, preserves omitted dates and clears expli
   const blank = await saveRSVP({ ...payload, members: [{ ...contact, email: '', phone: '' }] }, payload.partyId);
   assert.equal(blank.members[0].email, '');
   assert.equal(blank.members[0].phone, '');
+  party.fields.Email = 'host-provided@example.test';
+  delete party.fields['Submitted At'];
+  const protectedFirst = await saveRSVP({ ...payload, email: 'claimant@example.test' }, payload.partyId, true);
+  assert.equal(protectedFirst.email, 'host-provided@example.test');
+  assert.ok(!Object.hasOwn(writes.filter((w) => w.table === 'Parties').at(-1).records[0].fields, 'Email'));
+  const protectedEdit = await saveRSVP({ ...payload, email: 'claimant@example.test' }, payload.partyId);
+  assert.equal(protectedEdit.email, 'host-provided@example.test');
+  const verifiedEdit = await saveRSVP({ ...payload, email: 'verified@example.test' }, payload.partyId, true);
+  assert.equal(verifiedEdit.email, 'verified@example.test');
+  party.fields.Email = '';
+  const clearedByHost = await saveRSVP(payload, payload.partyId);
+  assert.equal(clearedByHost.email, '', 'only first enrollment or OTP proof may set Email');
   const writeCount = writes.length;
   await assert.rejects(saveRSVP({ ...payload, members: [{ ...contact, id: 'recUNRELATED00000' }] }, payload.partyId), /Unauthorized guest/);
   await assert.rejects(saveRSVP(payload, 'rec00000000000099'), /Unauthorized party/);
@@ -108,8 +121,8 @@ test('Airtable round trip saves, edits, preserves omitted dates and clears expli
 });
 
 import { createRSVPAPI } from "../src/lib/rsvp-api.ts";
-import { SESSION_COOKIE, digest, signSession, readSession, RSVPError, HELP } from "../src/lib/rsvp-security.ts";
-import { START_SCRIPT, ACTIVATE_SCRIPT, VERIFY_SCRIPT, LIMIT_SCRIPT, limitRequest, redis as realRedis } from "../src/lib/rsvp-store.ts";
+import { SESSION_COOKIE, CHALLENGE_COOKIE, cookieValue, digest, signSession, readSession, HELP } from "../src/lib/rsvp-security.ts";
+import { createRSVPStore, otpKey, REDIS_PREFIX, PARTY_SEND_LIMIT, limitRequest, redis as realRedis } from "../src/lib/rsvp-store.ts";
 import { fakeRedis } from "./helpers/redis.mjs";
 import { readFile } from "node:fs/promises";
 
@@ -129,52 +142,38 @@ function responseCookies(response) { return response.headers.getSetCookie().map(
 function makeHarness(submitted = false, options = {}) {
   let now = Date.now();
   let state;
-  const party = { id: payload.partyId, code: "old-link", name: "Private party", email: "guest@example.test", phone: "+61400000000",
+  const party = { id: payload.partyId, code: "old-link", name: "Private party", email: submitted ? "guest@example.test" : "", phone: "+61400000000",
     submittedAt: submitted ? "2026-10-01T00:00:00.000Z" : null, members: [{ ...payload.members[0], name: "Test Guest" }], ...options };
   const redis = fakeRedis(() => now);
-  const challenges = new Map();
+  const securityStore = createRSVPStore(redis);
   const deliveries = [];
   const writes = [];
   const deps = {
-    now: () => now, code: () => "123456", redis,
+    ...securityStore, now: () => now, code: () => "123456",
     findExactGuest: async (name) => normalizeName(name) === "test guest" ? { partyId: party.id, guestId } : null,
     getParty: async (id) => { assert.equal(id, party.id); return structuredClone(party); },
-    createChallenge: async (id, challenge) => challenges.set(id, { ...challenge, expires: now + 600000 }),
-    getChallenge: async (id) => { const c = challenges.get(id); return c && c.expires > now ? c : null; },
-    getOTPState: async () => state ?? { hash: "", expires: 0, attempts: 0 },
     saveOTPState: async (id, hash, expires, attempts) => { assert.equal(id, party.id); state = { hash, expires, attempts }; },
     sendCode: async (email, code) => deliveries.push({ email, code }),
-    limit: async (key, count, seconds) => {
-      if (await redis("EVAL", LIMIT_SCRIPT, 1, key, seconds) > count) throw new RSVPError("Please wait.", 429);
-    },
-    limitRequest: async (_request, action) => deps.limit(`ip:${action}`, 10, 600),
-    startOTP: async (id, value) => {
-      if (!await redis("EVAL", START_SCRIPT, 2, id, `${id}:cooldown`, value.hash, value.expires, value.emailHash, 600)) throw new RSVPError("Wait one minute.", 429);
-    },
-    activateOTP: async (id, hash) => { if (!await redis("EVAL", ACTIVATE_SCRIPT, 1, id, hash)) throw new Error("Superseded"); },
-    consumeOTP: async (id, hash, emailHash, time) => {
-      const [ok, savedHash, expires, attempts] = await redis("EVAL", VERIFY_SCRIPT, 1, id, hash, time, emailHash, 5);
-      return { ok: ok === 1, hash: savedHash, expires, attempts };
-    },
-    saveRSVP: async (submission, id) => {
+    saveRSVP: async (submission, id, emailVerified) => {
       assert.equal(id, party.id); writes.push(submission);
+      if (!party.email || emailVerified) party.email = submission.email;
       party.submittedAt ||= new Date(now).toISOString();
       return structuredClone(party);
     },
   };
-  return { api: createRSVPAPI(deps), deps, party, deliveries, writes,
+  return { api: createRSVPAPI(deps), deps, party, deliveries, writes, redis,
     advance: (ms) => { now += ms; }, get state() { return state; } };
 }
 async function lookup(h, name = "Test Guest") { return h.api.lookup(request("/api/rsvp/search", { name })); }
 async function firstSession(h) {
-  const response = await lookup(h);
+  const response = await send(h, await challengeHeaders(h));
   const data = await response.json();
   assert.equal(data.next, "form");
   return { cookie: responseCookies(response), "x-rsvp-visit": data.visit };
 }
 async function challengeHeaders(h) {
   const response = await lookup(h);
-  assert.deepEqual(await response.json(), { next: "verify", emailHint: "g***@example.test" });
+  assert.deepEqual(await response.json(), { next: "continue" });
   return { cookie: responseCookies(response) };
 }
 async function send(h, headers) { return h.api.send(request("/api/rsvp/otp/send", {}, headers)); }
@@ -237,12 +236,12 @@ test("unsubmitted match gets a scoped session; unauthenticated and cross-party r
   // Pre-submit tokens and later visits lacking the memory-only visit token cannot reopen it.
   assert.equal((await h.api.get(request("/api/rsvp", undefined, headers))).status, 401);
   assert.equal((await h.api.get(request("/api/rsvp", undefined, { cookie: continued.cookie }))).status, 401);
-  assert.equal((await (await lookup(h)).json()).next, "verify");
+  assert.equal((await (await lookup(h)).json()).next, "continue");
 });
 
 test("session signing rejects tampering, expiry, wrong visit and wrong cookie flags", async () => {
   const h = makeHarness();
-  const response = await lookup(h);
+  const response = await send(h, await challengeHeaders(h));
   const data = await response.json();
   const setCookie = response.headers.getSetCookie().find((v) => v.startsWith(`${SESSION_COOKIE}=`));
   for (const flag of ["HttpOnly", "Secure", "SameSite=Lax", "Path=/", "Max-Age=1800"]) assert.ok(setCookie.includes(flag));
@@ -269,7 +268,7 @@ test("submitted party requires emailed OTP; destination is Parties.Email and cod
   const success = results.find((r) => r.status === 200);
   const session = { cookie: responseCookies(success), "x-rsvp-visit": (await success.json()).visit };
   assert.equal((await h.api.get(request("/api/rsvp", undefined, session))).status, 200);
-  assert.equal((await h.api.post(request("/api/rsvp", { ...payload, email: "replacement@example.test" }, session))).status, 400);
+  assert.equal((await h.api.post(request("/api/rsvp", { ...payload, email: "replacement@example.test" }, session))).status, 200);
 });
 
 test("OTP expires, counts malformed/wrong attempts, locks at five, and enforces resend cooldown", async () => {
@@ -284,7 +283,7 @@ test("OTP expires, counts malformed/wrong attempts, locks at five, and enforces 
   h.advance(600001);
   assert.equal((await verify(h, headers)).status, 401);
   // Direct atomic-store expiry check, independent of challenge-cookie expiry.
-  const expired = await h.deps.consumeOTP(payload.partyId, digest(`otp:${payload.partyId}:123456`), digest("email:guest@example.test"), h.deps.now());
+  const expired = await h.deps.consumeOTP(payload.partyId, cookieValue(request("/", undefined, headers), CHALLENGE_COOKIE), digest(`otp:${payload.partyId}:123456`), digest("email:guest@example.test"), h.deps.now());
   assert.equal(expired.ok, false);
 });
 
@@ -310,7 +309,8 @@ test("sending late in a lookup renews the challenge for the full code lifetime",
 
 test("missing email uses friendly generic help; missing security fields/store fail closed", async () => {
   const missing = makeHarness(true, { email: "" });
-  assert.deepEqual(await (await lookup(missing)).json(), { next: "help", message: HELP });
+  const missingHeaders = await challengeHeaders(missing);
+  assert.deepEqual(await (await send(missing, missingHeaders)).json(), { error: HELP });
   const h = makeHarness(true); const headers = await challengeHeaders(h);
   const api = createRSVPAPI({ ...h.deps, saveOTPState: async () => { throw new Error("missing schema"); } });
   assert.equal((await api.send(request("/api/rsvp/otp/send", {}, headers))).status, 503);
@@ -331,10 +331,10 @@ test("CSRF, lookup/send/verify limits, private caching and malformed body protec
   for (let n = 0; n < 10; n++) await lookup(h, "Missing Guest");
   assert.equal((await lookup(h)).status, 429);
   const sent = makeHarness(true); const headers = await challengeHeaders(sent);
-  for (let n = 0; n < 3; n++) { assert.equal((await send(sent, headers)).status, 200); sent.advance(61000); }
+  for (let n = 0; n < PARTY_SEND_LIMIT; n++) { assert.equal((await send(sent, headers)).status, 200); sent.advance(61000); }
   assert.equal((await send(sent, headers)).status, 429);
   const verifyH = makeHarness(true); const verifyHeaders = await challengeHeaders(verifyH);
-  for (let n = 0; n < 10; n++) await verify(verifyH, verifyHeaders);
+  for (let n = 0; n < 15; n++) await verify(verifyH, verifyHeaders);
   assert.equal((await verify(verifyH, verifyHeaders)).status, 429);
   const bad = makeHarness();
   assert.equal((await bad.api.lookup(new Request(origin + "/api/rsvp/search", { method: "POST", headers: { origin, "content-type": "application/json" }, body: "not json" }))).status, 400);
@@ -346,7 +346,7 @@ test("legacy route always redirects to exact-name flow, including submitted-part
   assert.match(source, /redirect\("\/rsvp"\)/); assert.ok(!source.includes("getParty"));
   const h = makeHarness(true);
   assert.equal((await h.api.get(request("/api/rsvp?code=old-link"))).status, 401);
-  assert.equal((await (await lookup(h)).json()).next, "verify");
+  assert.equal((await (await lookup(h)).json()).next, "continue");
 });
 
 test("secondary contact validation preserves omitted fields and permits explicit clearing", () => {
@@ -374,7 +374,141 @@ test("production shared-store adapter uses atomic Lua and trusted Vercel IP, nev
   });
   await limitRequest(request("/api/rsvp", undefined, { "x-vercel-forwarded-for": "1.2.3.4", "x-forwarded-for": "evil" }), "lookup");
   assert.equal(commands[0][0], "EVAL");
-  assert.equal(commands[0][3], `rsvp:limit:${digest("lookup:ip:1.2.3.4")}`);
+  assert.equal(commands[0][3], `${REDIS_PREFIX}rsvp:limit:${digest("lookup:ip:1.2.3.4")}`);
   delete process.env.UPSTASH_REDIS_REST_TOKEN;
-  await assert.rejects(realRedis("GET", "anything"), /unavailable/);
+  await assert.rejects(realRedis("GET", `${REDIS_PREFIX}anything`), /unavailable/);
+});
+
+
+test("lookup has identical bodies and cookie types regardless of submission state or email", async () => {
+  const responses = [];
+  for (const submitted of [false, true]) {
+    for (const email of ["", "guest@example.test", "invalid"]) {
+      const h = makeHarness(submitted, { email });
+      const response = await lookup(h);
+      assert.equal(response.status, 200);
+      responses.push(await response.json());
+      const cookies = response.headers.getSetCookie();
+      assert.ok(cookies.some((c) => c.startsWith(`${SESSION_COOKIE}=;`)));
+      assert.ok(cookies.some((c) => c.startsWith(`${CHALLENGE_COOKIE}=`) && c.includes("Max-Age=600")));
+    }
+  }
+  for (const response of responses) assert.deepEqual(response, { next: "continue" });
+});
+
+test("email on file requires proof even before first submission, and never leaks a hint", async () => {
+  const h = makeHarness(false, { email: "host-provided@example.test" });
+  const headers = await challengeHeaders(h);
+  const sent = await send(h, headers);
+  assert.deepEqual(await sent.json(), { message: "Your code has been sent. It is valid for 10 minutes." });
+  assert.equal((await h.api.get(request("/api/rsvp", undefined, headers))).status, 401);
+  assert.equal(h.deliveries[0].email, "host-provided@example.test");
+  const verified = await verify(h, headers);
+  const session = { cookie: responseCookies(verified), "x-rsvp-visit": (await verified.json()).visit };
+  assert.equal((await h.api.post(request("/api/rsvp", payload, session))).status, 200);
+  assert.equal(h.writes[0].email, "host-provided@example.test");
+});
+
+test("name-only first sessions save answers while preserving a newly populated email", async () => {
+  const h = makeHarness();
+  const headers = await firstSession(h);
+  h.party.email = "host-provided@example.test";
+  // An older first-visit tab must also be safe if the host populated Email meanwhile.
+  const saved = await h.api.post(request("/api/rsvp", { ...payload, email: "attacker@example.test" }, headers));
+  assert.equal(saved.status, 200);
+  assert.equal(h.writes[0].email, "host-provided@example.test");
+  assert.equal(h.party.email, "host-provided@example.test");
+  const continued = { ...headers, cookie: responseCookies(saved) };
+  assert.equal((await h.api.post(request("/api/rsvp", payload, continued))).status, 200);
+  assert.equal(h.party.email, "host-provided@example.test");
+  const other = await challengeHeaders(h);
+  await send(h, other);
+  assert.equal(h.deliveries[0].email, "host-provided@example.test");
+});
+
+test("empty Email can be enrolled once; same first-visit session cannot later change it", async () => {
+  const h = makeHarness();
+  const headers = await firstSession(h);
+  const saved = await h.api.post(request("/api/rsvp", payload, headers));
+  assert.equal(h.party.email, payload.email);
+  const continued = { ...headers, cookie: responseCookies(saved) };
+  const edited = await h.api.post(request("/api/rsvp", { ...payload, email: "replacement@example.test" }, continued));
+  assert.equal(edited.status, 200);
+  assert.equal((await edited.json()).canChangeEmail, false);
+  assert.equal(h.party.email, payload.email);
+  h.party.email = "";
+  assert.equal((await h.api.post(request("/api/rsvp", payload, continued))).status, 400,
+    "a continued name-only session cannot re-enroll a host-cleared submitted email");
+});
+
+test("another browser cannot spend a delivered code's attempts, even after its own send", async () => {
+  const h = makeHarness(true);
+  const real = await challengeHeaders(h);
+  const attacker = await challengeHeaders(h);
+  await send(h, real);
+  for (let i = 0; i < 5; i++) assert.equal((await verify(h, attacker, "bad")).status, 400);
+  assert.equal(h.state.attempts, 0);
+  await send(h, attacker);
+  for (let i = 0; i < 5; i++) assert.equal((await verify(h, attacker, "bad")).status, 400);
+  assert.equal(h.state.attempts, 5, "party mirror can reflect the other challenge without affecting authorization");
+  assert.equal((await verify(h, real)).status, 200);
+});
+
+test("codes from independent deliveries coexist; resend only replaces its own challenge", async () => {
+  const h = makeHarness(true);
+  const first = await challengeHeaders(h), second = await challengeHeaders(h);
+  await send(h, first);
+  const other = createRSVPAPI({ ...h.deps, code: () => "654321" });
+  await other.send(request("/api/rsvp/otp/send", {}, second));
+  assert.equal((await verify(h, second, "123456")).status, 400);
+  assert.equal((await verify(h, first, "654321")).status, 400);
+  assert.equal((await verify(h, first, "123456")).status, 200);
+  assert.equal((await verify(h, second, "654321")).status, 200);
+});
+
+test("atomic send admission ignores cooldown rejections and caps parallel browsers at five/hour", async () => {
+  const h = makeHarness(true);
+  const headers = await challengeHeaders(h);
+  assert.equal((await send(h, headers)).status, 200);
+  for (let i = 0; i < 3; i++) assert.equal((await send(h, headers)).status, 429);
+  const browsers = await Promise.all(Array.from({ length: 5 }, () => challengeHeaders(h)));
+  const sent = await Promise.all(browsers.map((browser) => send(h, browser)));
+  assert.equal(sent.filter((r) => r.status === 200).length, 4);
+  assert.equal(h.deliveries.length, 5);
+  // Rejected traffic does not renew the party window or invalidate existing codes.
+  h.advance(10 * 60 * 1000);
+  const fresh = await challengeHeaders(h);
+  assert.equal((await send(h, fresh)).status, 429);
+  h.advance(50 * 60 * 1000 + 1);
+  assert.equal((await send(h, await challengeHeaders(h))).status, 200);
+});
+
+test("every production key is namespaced; broad, unknown-script and raw-key commands fail locally", async (t) => {
+  process.env.UPSTASH_REDIS_REST_URL = "https://redis.example.test";
+  process.env.UPSTASH_REDIS_REST_TOKEN = "test-token";
+  t.after(() => { delete process.env.UPSTASH_REDIS_REST_URL; delete process.env.UPSTASH_REDIS_REST_TOKEN; });
+  const commands = [], backend = fakeRedis(() => Date.now());
+  t.mock.method(globalThis, "fetch", async (_url, init) => {
+    const command = JSON.parse(init.body); commands.push(command);
+    const keys = command[0] === "EVAL" ? command.slice(3, 3 + command[2]) : command.slice(1, 2);
+    for (const key of keys) assert.ok(key.startsWith("wedding:"), key);
+    return Response.json({ result: await backend(...command) });
+  });
+  const store = createRSVPStore();
+  const challenge = "a".repeat(43);
+  await store.limit("test", 10, 600);
+  await store.createChallenge(challenge, { partyId: payload.partyId, guestId });
+  assert.ok(await store.getChallenge(challenge));
+  await store.reserveFirstSubmit(payload.partyId, "visit");
+  await assert.rejects(store.reserveFirstSubmit(payload.partyId, "other-visit"), /find your invitation/);
+  const state = { hash: "test-hash", emailHash: "test-email", expires: Date.now() + 600000, attempts: 0 };
+  await store.startOTP(payload.partyId, challenge, state);
+  await store.activateOTP(payload.partyId, challenge, state.hash);
+  assert.equal((await store.consumeOTP(payload.partyId, challenge, state.hash, state.emailHash, Date.now())).ok, true);
+  assert.ok(commands.some((c) => c.includes(otpKey(payload.partyId, challenge))));
+  const before = commands.length;
+  for (const command of [["KEYS", "*"], ["SCAN", 0], ["FLUSHDB"], ["FLUSHALL"], ["GET", "rsvp:raw"], ["SET", "other-app:key", "bad"], ["EVAL", "return 1", 1, "wedding:test"]]) {
+    await assert.rejects(realRedis(...command), /Unsafe/);
+  }
+  assert.equal(commands.length, before);
 });
