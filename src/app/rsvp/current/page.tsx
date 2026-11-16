@@ -734,13 +734,24 @@ export default function RSVPPage() {
           </motion.div>
 
           {members.length > 1 && (
-            <section className="mb-10 border-y border-white/20 py-6">
+            <section className="mb-10 rounded-md border border-white/30 bg-white/5">
               <button type="button" aria-expanded={contactsOpen} aria-controls="party-contacts"
-                onClick={() => setContactsOpen(!contactsOpen)} className="font-serif text-2xl text-white text-left w-full py-2">
-                Keep the rest of your party in the loop <span aria-hidden="true">{contactsOpen ? "−" : "+"}</span>
+                onClick={() => setContactsOpen(!contactsOpen)}
+                className="group flex w-full items-center gap-4 text-left px-5 py-5 rounded-md hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent transition-colors">
+                <span className="flex-1">
+                  <span className="block font-sans text-white/60 text-xs tracking-wider mb-1">OPTIONAL</span>
+                  <span className="block font-serif text-2xl text-white">Keep the rest of your party in the loop</span>
+                  <span className="block font-sans text-sm text-white/70 mt-1">
+                    {contactsOpen ? "Tap to close" : "Tap to add emails and mobiles for the others in your party"}
+                  </span>
+                </span>
+                <span aria-hidden="true"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/40 text-white text-xl group-hover:border-accent group-hover:text-accent transition-colors">
+                  {contactsOpen ? "−" : "+"}
+                </span>
               </button>
               {contactsOpen && (
-                <div id="party-contacts" className="mt-4">
+                <div id="party-contacts" className="px-5 pb-5 pt-1">
                   <p className="font-sans text-sm text-white/80 leading-relaxed mb-6">Would you like the rest of your party to get wedding updates? Add their email and mobile and we&apos;ll send event updates to them personally.</p>
                   <p className="font-sans text-sm text-white/70 mb-6">Please check they’re happy to receive updates. Both fields are optional.</p>
                   <PartyContacts members={members.filter((member) => member.id !== respondingGuestId)}
