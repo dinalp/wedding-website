@@ -13,7 +13,7 @@ function nodes(tree, type) {
   return [...(tree.type === type ? [tree] : []), ...nodes(tree.props?.children, type)];
 }
 
-test("contact chips reveal multiple guests, prefill their values and discard deselected drafts", () => {
+test("contact chips reveal multiple guests, focus their first input and retain deselected drafts", () => {
   const members = [
     { id: "one", name: "First Guest", email: "first@example.test", phone: "+61400111222" },
     { id: "two", name: "Second Guest", email: "", phone: "" },
@@ -24,18 +24,27 @@ test("contact chips reveal multiple guests, prefill their values and discard des
   assert.equal(nodes(render(), "input").length, 0);
   assert.deepEqual(nodes(render(), "button").map((n) => n.props["aria-pressed"]), [false, false]);
   click("one");
-  assert.deepEqual(contacts.one, { email: members[0].email, phone: members[0].phone });
+  assert.deepEqual(contacts.one, { email: members[0].email, phone: members[0].phone, selected: true });
   assert.equal(nodes(render(), "input").length, 2);
+  let focused = false;
+  const firstInput = nodes(render(), "input")[0];
+  firstInput.props.ref({ focus() { focused = true; } });
+  assert.equal(focused, true);
+  assert.equal(firstInput.props.ref, nodes(render(), "input")[0].props.ref, "stable ref must not refocus on every keystroke");
+  assert.equal(nodes(render(), "input")[1].props.ref, undefined);
+  firstInput.props.ref(null);
   click("two");
   assert.equal(nodes(render(), "input").length, 4);
   assert.deepEqual(nodes(render(), "button").map((n) => n.props["aria-pressed"]), [true, true]);
   nodes(render(), "input").find((n) => n.props.id === "email-one").props.onChange({ target: { value: "pending@example.test" } });
   assert.equal(contacts.one.email, "pending@example.test");
   click("one");
-  assert.ok(!Object.hasOwn(contacts, "one"), "deselected fields must be absent from the submission");
+  assert.equal(contacts.one.selected, false);
+  assert.equal(contacts.one.email, "pending@example.test");
+  assert.equal(nodes(render(), "input").length, 2, "deselected fields are hidden");
   assert.ok(Object.hasOwn(contacts, "two"));
   click("one");
-  assert.equal(contacts.one.email, "first@example.test", "reselect starts from persisted values");
+  assert.equal(contacts.one.email, "pending@example.test", "reselect restores the draft");
   const tree = render();
   for (const input of nodes(tree, "input")) {
     assert.ok(nodes(tree, "label").some((label) => label.props.htmlFor === input.props.id));

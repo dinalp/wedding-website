@@ -10,6 +10,19 @@ export function validOptionalContact(value: unknown, kind: "email" | "phone"): b
   return kind === "email" ? validEmail(value.trim()) : !rsvpDetailsError({ phone: value });
 }
 
+/** Use names from the authorized party, never names supplied in the payload. */
+export function memberContactsError(body: Record<string, unknown>, members: { id: string; name: string }[]): string | null {
+  if (!Array.isArray(body.members)) return null;
+  for (const raw of body.members) {
+    if (!raw || typeof raw !== "object") continue;
+    const member = members.find((member) => member.id === raw.id);
+    if (!member) continue;
+    if (!validOptionalContact(raw.email, "email")) return `Please enter a valid email for ${member.name}, or leave it blank.`;
+    if (!validOptionalContact(raw.phone, "phone")) return `Please enter a valid mobile number for ${member.name}, or leave it blank.`;
+  }
+  return null;
+}
+
 /** Shared browser/server checks; accepts local and international phone formats. */
 export function rsvpDetailsError(body: Record<string, unknown>): string | null {
   const phone = typeof body.phone === "string" ? body.phone.trim() : "";

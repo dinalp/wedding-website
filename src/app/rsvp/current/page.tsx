@@ -219,7 +219,8 @@ export default function RSVPPage() {
             events: m.events,
             dietary: m.dietary,
             dietaryNotes: m.dietaryNotes,
-            ...(contactsOpen && m.id !== respondingGuestId ? contacts[m.id] : {}),
+            ...(m.id !== respondingGuestId && contacts[m.id]?.selected
+              ? { email: contacts[m.id].email, phone: contacts[m.id].phone } : {}),
           })),
         }),
       });

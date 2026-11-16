@@ -1,4 +1,5 @@
 import "./rsvp-ui.test.mjs";
+import "./rsvp-pages.test.mjs";
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { parseSubmission, rsvpDetailsError } from '../src/lib/rsvp-validation.ts';
@@ -307,10 +308,27 @@ test("sending late in a lookup renews the challenge for the full code lifetime",
   assert.equal((await verify(h, headers)).status, 200);
 });
 
-test("missing email uses friendly generic help; missing security fields/store fail closed", async () => {
-  const missing = makeHarness(true, { email: "" });
-  const missingHeaders = await challengeHeaders(missing);
-  assert.deepEqual(await (await send(missing, missingHeaders)).json(), { error: HELP });
+test("submitted parties without email get host-contact help and no OTP or session", async () => {
+  for (const email of ["", "   "]) {
+    const h = makeHarness(true, { email });
+    const headers = await challengeHeaders(h);
+    for (const response of [await send(h, headers), await verify(h, headers)]) {
+      assert.equal(response.status, 400);
+      const body = await response.json();
+      assert.match(body.error, /no email address on file/);
+      assert.match(body.error, /contact Dinal & Shayani directly/);
+      assert.equal(body.visit, undefined);
+      assert.equal(response.headers.get("set-cookie"), null);
+    }
+    assert.equal(h.deliveries.length, 0);
+    assert.equal(h.state, undefined);
+    assert.equal((await h.api.get(request("/api/rsvp", undefined, headers))).status, 401);
+    assert.equal((await h.api.post(request("/api/rsvp", payload, headers))).status, 401);
+    assert.equal(h.writes.length, 0);
+  }
+});
+
+test("missing security fields/store fail closed", async () => {
   const h = makeHarness(true); const headers = await challengeHeaders(h);
   const api = createRSVPAPI({ ...h.deps, saveOTPState: async () => { throw new Error("missing schema"); } });
   assert.equal((await api.send(request("/api/rsvp/otp/send", {}, headers))).status, 503);
@@ -437,8 +455,46 @@ test("empty Email can be enrolled once; same first-visit session cannot later ch
   assert.equal((await edited.json()).canChangeEmail, false);
   assert.equal(h.party.email, payload.email);
   h.party.email = "";
-  assert.equal((await h.api.post(request("/api/rsvp", payload, continued))).status, 400,
+  const missingEmail = await h.api.post(request("/api/rsvp", payload, continued));
+  assert.equal(missingEmail.status, 400,
     "a continued name-only session cannot re-enroll a host-cleared submitted email");
+  assert.match((await missingEmail.json()).error, /contact Dinal & Shayani directly/);
+});
+
+test("invalid member contacts name the affected guest using the authorized party record", async () => {
+  const h = makeHarness(false, { members: [
+    { ...payload.members[0], name: "Test Guest" },
+    { ...payload.members[0], id: otherGuest, name: "Second Guest" },
+  ] });
+  const headers = await firstSession(h);
+  for (const [field, value, label] of [["email", "invalid", "email"], ["phone", "123", "mobile number"]]) {
+    const response = await h.api.post(request("/api/rsvp", { ...payload, members: [
+      payload.members[0], { ...payload.members[0], id: otherGuest, name: "Forged Name", [field]: value },
+    ] }, headers));
+    assert.equal(response.status, 400);
+    assert.equal((await response.json()).error, `Please enter a valid ${label} for Second Guest, or leave it blank.`);
+  }
+  assert.equal(h.writes.length, 0);
+});
+
+test("first submissions and verified edits cannot save an empty or invalid party email", async () => {
+  for (const submitted of [false, true]) {
+    const h = makeHarness(submitted);
+    let headers;
+    if (submitted) {
+      const challenge = await challengeHeaders(h);
+      await send(h, challenge);
+      const response = await verify(h, challenge);
+      headers = { cookie: responseCookies(response), "x-rsvp-visit": (await response.json()).visit };
+    } else headers = await firstSession(h);
+    for (const email of [undefined, null, "", "   ", "invalid", "a".repeat(321) + "@test.com"]) {
+      assert.equal(parseSubmission({ ...payload, email }), null);
+      assert.equal((await h.api.post(request("/api/rsvp", { ...payload, email }, headers))).status, 400);
+    }
+    assert.equal(h.writes.length, 0);
+    assert.equal((await h.api.post(request("/api/rsvp", payload, headers))).status, 200);
+    assert.equal(h.writes[0].email, payload.email);
+  }
 });
 
 test("another browser cannot spend a delivered code's attempts, even after its own send", async () => {

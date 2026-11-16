@@ -1,6 +1,6 @@
 import { randomInt } from "node:crypto";
 import { findExactGuest, getParty, saveOTPState, saveRSVP } from "./airtable.ts";
-import { parseSubmission, rsvpDetailsError, validEmail } from "./rsvp-validation.ts";
+import { memberContactsError, parseSubmission, rsvpDetailsError, validEmail } from "./rsvp-validation.ts";
 import { sendCode } from "./rsvp-email.ts";
 import * as store from "./rsvp-store.ts";
 import {
@@ -11,6 +11,8 @@ import {
 
 const defaults = { findExactGuest, getParty, saveRSVP, saveOTPState, sendCode, ...store.createRSVPStore(),
   now: () => Date.now(), code: () => randomInt(0, 1_000_000).toString().padStart(6, "0") };
+
+const MISSING_EMAIL_HELP = "We can’t reopen your RSVP because there’s no email address on file. Please contact Dinal & Shayani directly through your usual message thread and we’ll help you update it.";
 
 function json(body: unknown, status = 200, cookies: string[] = []) {
   const headers = new Headers({ "Content-Type": "application/json", "Cache-Control": "private, no-store, max-age=0",
@@ -105,6 +107,7 @@ export function createRSVPAPI(overrides: Partial<typeof defaults> = {}) {
       // Existing emails always require proof, so the send flow also does not
       // distinguish submitted from unsubmitted parties with an email on file.
       if (!party.email.trim() && !party.submittedAt) return issue(partyId, guestId, null);
+      if (!party.email.trim() && party.submittedAt) throw new RSVPError(MISSING_EMAIL_HELP);
       if (!validEmail(party.email)) throw new RSVPError(HELP);
       const code = d.code();
       const state = { hash: digest(`otp:${partyId}:${challengeId}:${code}`), expires: d.now() + OTP_SECONDS * 1000,
@@ -124,6 +127,7 @@ export function createRSVPAPI(overrides: Partial<typeof defaults> = {}) {
       const body = await readBody(request);
       // Malformed guesses count too; never provide a free verification oracle.
       const code = typeof body.code === "string" && /^\d{6}$/.test(body.code) ? body.code : "invalid";
+      if (!party.email.trim() && party.submittedAt) throw new RSVPError(MISSING_EMAIL_HELP);
       if (!validEmail(party.email)) throw new RSVPError(HELP);
       // The party-level Airtable mirror is diagnostic only: it cannot represent
       // independent challenges. Redis is the authority for readiness and attempts.
@@ -142,10 +146,10 @@ export function createRSVPAPI(overrides: Partial<typeof defaults> = {}) {
       const { party, session } = await authorized(request);
       const body = await readBody(request);
       if (body.partyId !== undefined && body.partyId !== session.partyId) throw new RSVPError("This invitation is not available in your session.", 403);
-      if (party.submittedAt && !party.email.trim() && !session.emailVerified) throw new RSVPError(HELP);
+      if (party.submittedAt && !party.email.trim() && !session.emailVerified) throw new RSVPError(MISSING_EMAIL_HELP);
       const submission = parseSubmission({ ...body, partyId: session.partyId,
         ...((!party.submittedAt || !session.emailVerified) && party.email.trim() ? { email: party.email } : {}) });
-      if (!submission) throw new RSVPError(rsvpDetailsError(body) ?? "Please check the email and mobile details for your party and try again.");
+      if (!submission) throw new RSVPError(memberContactsError(body, party.members) ?? rsvpDetailsError(body) ?? "Please check the email and mobile details for your party and try again.");
       if (submission.members.some((m) => !party.members.some((member) => member.id === m.id))) throw new RSVPError("This guest is not part of your invitation.", 403);
       if (!party.submittedAt) await d.reserveFirstSubmit(party.id, session.visitHash);
       const saved = await d.saveRSVP(submission, session.partyId, session.emailVerified === true);
