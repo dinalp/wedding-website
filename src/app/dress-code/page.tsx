@@ -52,7 +52,7 @@ const EVENTS: DressCodeEvent[] = [
     venue: "Stone Villas Uluwatu",
     code: "Island formal · Sarees welcome · Suits (open collar, ties optional) · We love to see some colour!",
     description: "Dress up with us for an evening by the ocean. Think elegant sarees, flowing formal dresses and suits, with plenty of colour and room to dance.",
-    menswearNote: "Gents, please skip black, and steer clear of dark navy and dark grey if you can. It will be a sweltering day in Bali, and this is a wedding with colour. Choose a lighter colour you love and a breathable fabric so you can look a million dollars and stay cool on the dance floor.",
+    menswearNote: "Please skip black. If you can avoid dark grey and dark navy, that would be great. It will be a sweltering day in Bali, and this is a wedding with colour. Choose a lighter colour you love and a breathable fabric so you can look a million dollars and stay cool on the dance floor.",
     looks: [
       {
         label: "Saree inspiration",
@@ -127,9 +127,14 @@ export default function DressCodePage() {
               </p>
             )}
             {e.menswearNote && (
-              <p className="max-w-2xl font-sans text-sm leading-relaxed text-charcoal/80 mt-3">
-                {e.menswearNote}
-              </p>
+              <div className="mt-4 max-w-2xl">
+                <h3 className="font-[family-name:var(--font-cormorant)] text-xl font-bold text-charcoal">
+                  For the men
+                </h3>
+                <p className="mt-1 font-sans text-sm leading-relaxed text-charcoal/80">
+                  {e.menswearNote}
+                </p>
+              </div>
             )}
             {e.venue.includes("Stone Villas") && (
               <p className="font-sans text-sm mt-1">
