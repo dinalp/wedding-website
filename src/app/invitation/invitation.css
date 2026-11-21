@@ -1,0 +1,270 @@
+/* Digital invitation (/invitation). Everything here is scoped to .invite-stage. */
+
+.invite-stage {
+  --vh: 100vh;
+  /* Card width: fits a phone's width, leaves room above and below for controls. */
+  --cw: max(230px, min(84vw, calc((var(--vh) - 190px) * 5 / 7), 400px));
+  --ch: calc(var(--cw) * 1.4);
+  /* Envelope: a touch wider than the card, landscape 1.41:1. */
+  --ew: calc(var(--cw) * 1.06);
+  --eh: calc(var(--ew) / 1.41);
+  min-height: max(var(--vh), calc(var(--ch) + 190px));
+  background: radial-gradient(120% 90% at 50% 38%, #f7f4eb 0%, #ebe9dd 55%, #d6dbcc 100%);
+  color: #2f2a26;
+}
+
+@supports (height: 100dvh) {
+  .invite-stage {
+    --vh: 100dvh;
+  }
+}
+
+.invite-script {
+  font-family: var(--font-invite-script), "Snell Roundhand", "Apple Chancery", cursive;
+  font-weight: 400;
+}
+
+.invite-caps {
+  font-family: var(--font-invite-caps), var(--font-cormorant), Georgia, serif;
+  text-transform: uppercase;
+}
+
+.invite-serif {
+  font-family: var(--font-cormorant), Georgia, serif;
+}
+
+.invite-balance,
+.invite-balance p {
+  text-wrap: balance;
+}
+
+/* Visible keyboard focus: burgundy on the pale backdrop, ivory on the burgundy card. */
+.invite-stage :is(a, button):focus-visible {
+  outline: 2px solid #6e1a24;
+  outline-offset: 3px;
+}
+
+.invite-details :is(a, button):focus-visible {
+  outline-color: #fbf8f1;
+}
+
+/*
+ * Card headings take focus when a card is swapped in from the keyboard. Show a
+ * ring then (burgundy on the white card, ivory on the burgundy card), but not
+ * when focus arrives without the keyboard.
+ */
+.invite-focus-heading {
+  border-radius: 4px;
+  outline: none;
+}
+
+.invite-focus-heading:focus-visible {
+  outline: 2px solid #6e1a24;
+  outline-offset: 6px;
+}
+
+.invite-details .invite-focus-heading:focus-visible {
+  outline-color: #fbf8f1;
+}
+
+.invite-seal {
+  background: none;
+  border: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.invite-seal:focus-visible {
+  outline-offset: 6px;
+}
+
+/* Primary pill on the backdrop (View details / Back to invitation). */
+.invite-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 24px;
+  border: 1px solid rgb(110 26 36 / 55%);
+  border-radius: 999px;
+  background: rgb(251 248 241 / 75%);
+  color: #6e1a24;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.invite-btn:hover,
+.invite-btn:active {
+  background: #6e1a24;
+  color: #fbf8f1;
+}
+
+/* Quiet text controls on the backdrop (Skip animation / Replay). */
+.invite-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 0;
+  background: none;
+  color: #4c5644;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-decoration: underline;
+  text-decoration-color: rgb(76 86 68 / 35%);
+  text-underline-offset: 4px;
+  cursor: pointer;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.invite-link:hover {
+  color: #6e1a24;
+  text-decoration-color: currentcolor;
+}
+
+/* RSVP call to action on the details card (stands in for the printed QR code). */
+.invite-rsvp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 1.9em;
+  border: 1px solid #fbf8f1;
+  border-radius: 999px;
+  background: rgb(251 248 241 / 10%);
+  color: #fbf8f1;
+  letter-spacing: 0.18em;
+  white-space: nowrap;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.invite-rsvp:hover,
+.invite-rsvp:active,
+.invite-rsvp:focus-visible {
+  background: #fbf8f1;
+  color: #7a1e2e;
+}
+
+.invite-site-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 8px;
+  color: #fbf8f1;
+  font-style: italic;
+  text-decoration: underline;
+  text-decoration-color: rgb(251 248 241 / 45%);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.2s ease;
+}
+
+.invite-site-link:hover {
+  text-decoration-color: currentcolor;
+}
+
+/* Plain-text invitation shown only inside <noscript> (the animated stage is hidden there). */
+.invite-noscript {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  min-height: 100vh;
+  padding: 48px 24px 56px;
+  background: radial-gradient(120% 90% at 50% 38%, #f7f4eb 0%, #ebe9dd 55%, #d6dbcc 100%);
+  color: #2f2a26;
+  text-align: center;
+}
+
+.invite-noscript-label {
+  color: #4c5644;
+  font-size: 12px;
+  letter-spacing: 0.28em;
+}
+
+.invite-noscript-names {
+  display: flex;
+  flex-direction: column;
+  margin: 8px 0;
+  color: #6e1a24;
+  font-size: clamp(40px, 12vw, 60px);
+  line-height: 1.2;
+}
+
+.invite-noscript-amp {
+  font-size: 0.62em;
+}
+
+.invite-noscript-line,
+.invite-noscript-date {
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  line-height: 1.8;
+}
+
+.invite-noscript-date {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.invite-noscript-heading {
+  margin-top: 22px;
+  color: #6e1a24;
+  font-size: 13px;
+  letter-spacing: 0.28em;
+}
+
+.invite-noscript-list,
+.invite-noscript-text {
+  max-width: 22em;
+  font-size: 19px;
+  line-height: 1.45;
+}
+
+.invite-noscript .invite-btn {
+  margin-top: 8px;
+}
+
+.invite-noscript-note {
+  max-width: 24em;
+  color: #4c5644;
+  font-size: 16px;
+  font-style: italic;
+  line-height: 1.45;
+}
+
+.invite-noscript :is(a, button):focus-visible {
+  outline: 2px solid #6e1a24;
+  outline-offset: 3px;
+}
+
+/* Glitter in the organza ribbon: opacity only. */
+@keyframes invite-twinkle {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+.invite-twinkle {
+  animation: invite-twinkle 2.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .invite-twinkle {
+    animation: none;
+    opacity: 0.5;
+  }
+
+  .invite-btn,
+  .invite-link,
+  .invite-rsvp,
+  .invite-site-link {
+    transition: none;
+  }
+}
