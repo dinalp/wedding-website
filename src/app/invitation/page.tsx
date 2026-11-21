@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Cinzel, Pinyon_Script } from "next/font/google";
+import Link from "next/link";
 import { InvitationExperience } from "@/components/invitation/invitation-experience";
 import "./invitation.css";
 
@@ -50,6 +51,46 @@ export default function InvitationPage() {
   return (
     <div className={`${script.variable} ${caps.variable}`}>
       <InvitationExperience />
+      {/* Without JavaScript the envelope can't be opened, so show the invitation as plain text instead. */}
+      <noscript>
+        <style>{".invite-stage{display:none}"}</style>
+        <main className="invite-noscript">
+          <p className="invite-caps invite-noscript-label">You’re invited</p>
+          <h1 className="invite-script invite-noscript-names">
+            <span>Dinal Perera</span>
+            <span className="invite-noscript-amp">&amp;</span>
+            <span>Shayani Jasinge</span>
+          </h1>
+          <p className="invite-caps invite-noscript-line">Invite you to their wedding celebrations</p>
+          <p className="invite-caps invite-noscript-date">19th – 21st May 2027</p>
+          <p className="invite-caps invite-noscript-line">Stone Villas, Uluwatu</p>
+
+          <h2 className="invite-caps invite-noscript-heading">Timeline</h2>
+          <ul className="invite-serif invite-noscript-list">
+            <li>19 May: Welcome dinner</li>
+            <li>20 May: Wedding day</li>
+            <li>21 May: Recovery day</li>
+          </ul>
+
+          <h2 className="invite-caps invite-noscript-heading">Dress code</h2>
+          <p className="invite-serif invite-noscript-text">Island Formal</p>
+
+          <h2 className="invite-caps invite-noscript-heading">RSVP</h2>
+          <p className="invite-serif invite-noscript-text">
+            Please kindly RSVP by 20th January 2027 on our wedding website.
+          </p>
+          <p>
+            <Link href="/rsvp" className="invite-caps invite-btn">
+              RSVP on our website
+            </Link>
+          </p>
+          <p>
+            <Link href="/" className="invite-caps invite-link">
+              Visit our wedding website
+            </Link>
+          </p>
+        </main>
+      </noscript>
     </div>
   );
 }

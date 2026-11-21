@@ -22,13 +22,18 @@ const CARD_SETTLED = 4;
 const RIBBON_UNTIED = 5;
 const REVEALED = 6;
 
-/** When each step after the tap begins, in ms. The last one finishes at about 5.4s. */
+/**
+ * When each step after the tap begins, in ms. The card is centred by about
+ * 3.4s and sits with its bow tied for ~1.2s; the ribbon then unties over
+ * ~1.25s and the names card is held ~2.5s before the details card comes
+ * forward. The whole sequence finishes at about 9.2s.
+ */
 const SEQUENCE: ReadonlyArray<readonly [number, number]> = [
   [550, FLAP_OPEN],
   [1350, CARD_RISING],
   [2250, CARD_SETTLED],
-  [3150, RIBBON_UNTIED],
-  [4500, REVEALED],
+  [4600, RIBBON_UNTIED],
+  [8350, REVEALED],
 ];
 
 /** How long a card swap takes, and when the cards trade places in depth. */
@@ -90,6 +95,10 @@ export function InvitationExperience() {
   const timers = useRef<number[]>([]);
   const lastSwap = useRef(0);
   const stackRef = useRef<HTMLDivElement>(null);
+  const mainHeadingRef = useRef<HTMLHeadingElement>(null);
+  const detailsHeadingRef = useRef<HTMLHeadingElement>(null);
+  /** Set when a swap was triggered from the keyboard, so focus follows to the new card. */
+  const focusCardOnSwap = useRef(false);
 
   const clearTimers = useCallback(() => {
     timers.current.forEach((timer) => window.clearTimeout(timer));
@@ -103,14 +112,26 @@ export function InvitationExperience() {
     if (step === REVEALED) stackRef.current?.focus({ preventScroll: true });
   }, [step]);
 
+  // After a keyboard-triggered swap, move focus to the card that came forward
+  // (it is no longer inert by the time this runs), so reading continues there
+  // rather than from the toggle below it.
+  useEffect(() => {
+    if (!focusCardOnSwap.current) return;
+    focusCardOnSwap.current = false;
+    const heading = view === "details" ? detailsHeadingRef.current : mainHeadingRef.current;
+    heading?.focus({ preventScroll: true });
+  }, [view]);
+
+  /** Starts a swap; returns false if one is already under way. */
   const showView = useCallback(
     (next: View) => {
       const now = Date.now();
-      if (now - lastSwap.current < SWAP_SECONDS * 1000) return;
+      if (now - lastSwap.current < SWAP_SECONDS * 1000) return false;
       lastSwap.current = now;
       setView(next);
       if (reducedMotion) setTopCard(next);
       else timers.current.push(window.setTimeout(() => setTopCard(next), SWAP_DEPTH_MS));
+      return true;
     },
     [reducedMotion],
   );
@@ -143,6 +164,7 @@ export function InvitationExperience() {
   const replay = () => {
     clearTimers();
     lastSwap.current = 0;
+    focusCardOnSwap.current = false;
     setInstant(false);
     setStep(SEALED);
     setView("main");
@@ -150,7 +172,10 @@ export function InvitationExperience() {
     setRunId((id) => id + 1);
   };
 
-  const toggleView = () => showView(view === "details" ? "main" : "details");
+  const toggleView = (fromKeyboard = false) => {
+    const swapped = showView(view === "details" ? "main" : "details");
+    if (swapped && fromKeyboard) focusCardOnSwap.current = true;
+  };
 
   const onPanEnd = (_event: PointerEvent | MouseEvent | TouchEvent, info: PanInfo) => {
     if (step !== REVEALED) return;
@@ -230,7 +255,7 @@ export function InvitationExperience() {
                   width: "var(--cw)",
                   height: "var(--ch)",
                   pointerEvents: revealed ? "auto" : "none",
-                  touchAction: "pan-y",
+                  touchAction: "pan-y pinch-zoom",
                 }}
                 initial={instant ? { opacity: 0 } : false}
                 animate={{ opacity: 1 }}
@@ -254,6 +279,7 @@ export function InvitationExperience() {
                   transition={mainCardTransition(step)}
                 >
                   <MainCard
+                    headingRef={mainHeadingRef}
                     textVisible={step >= CARD_SETTLED}
                     ribbonUntied={step >= RIBBON_UNTIED}
                     reducedMotion={reducedMotion}
@@ -268,7 +294,11 @@ export function InvitationExperience() {
                   animate={revealed ? stackPose(view === "details", reducedMotion) : TUCKED_BEHIND}
                   transition={SWAP_TRANSITION}
                 >
-                  <DetailsCard textVisible={revealed} reducedMotion={reducedMotion} />
+                  <DetailsCard
+                    headingRef={detailsHeadingRef}
+                    textVisible={revealed}
+                    reducedMotion={reducedMotion}
+                  />
                 </motion.div>
               </motion.div>
             </div>
@@ -314,7 +344,12 @@ export function InvitationExperience() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.7, delay: instant ? 0.3 : 0.9 }}
           >
-            <button type="button" className="invite-caps invite-btn" onClick={toggleView}>
+            {/* A click with detail 0 came from the keyboard (Enter/Space) or assistive tech. */}
+            <button
+              type="button"
+              className="invite-caps invite-btn"
+              onClick={(event) => toggleView(event.detail === 0)}
+            >
               {view === "details" ? "Back to invitation" : "View details"}
             </button>
             <button type="button" className="invite-caps invite-link" onClick={replay}>

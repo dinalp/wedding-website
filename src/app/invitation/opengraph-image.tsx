@@ -66,28 +66,35 @@ export default function InvitationOpenGraphImage() {
               paddingTop: 34,
             }}
           >
-            <div style={{ display: "flex", fontSize: 22, letterSpacing: 10, color: INK }}>
+            <div style={{ display: "flex", fontSize: 20, lineHeight: 1.2, letterSpacing: 10, color: INK }}>
               YOU’RE INVITED
             </div>
+            {/* Names stacked over three lines so they sit well inside the gold frame. */}
             <div
               style={{
                 display: "flex",
-                alignItems: "baseline",
-                marginTop: 26,
-                fontSize: 70,
+                flexDirection: "column",
+                alignItems: "center",
+                marginTop: 14,
+                fontSize: 56,
+                lineHeight: 1.15,
                 letterSpacing: 2,
                 color: WAX,
               }}
             >
-              Dinal Perera
-              <span style={{ margin: "0 26px", fontSize: 46, color: GOLD }}>&</span>
-              Shayani Jasinge
+              <div style={{ display: "flex" }}>Dinal Perera</div>
+              <div style={{ display: "flex", fontSize: 32, lineHeight: 1.1, color: GOLD }}>&</div>
+              <div style={{ display: "flex" }}>Shayani Jasinge</div>
             </div>
-            <div style={{ display: "flex", width: 120, height: 2, marginTop: 30, backgroundColor: GOLD }} />
-            <div style={{ display: "flex", marginTop: 30, fontSize: 30, letterSpacing: 9, color: INK }}>
+            <div style={{ display: "flex", width: 120, height: 2, marginTop: 20, backgroundColor: GOLD }} />
+            <div
+              style={{ display: "flex", marginTop: 20, fontSize: 26, lineHeight: 1.2, letterSpacing: 8, color: INK }}
+            >
               19TH – 21ST MAY 2027
             </div>
-            <div style={{ display: "flex", marginTop: 16, fontSize: 24, letterSpacing: 9, color: WAX }}>
+            <div
+              style={{ display: "flex", marginTop: 10, fontSize: 21, lineHeight: 1.2, letterSpacing: 8, color: WAX }}
+            >
               STONE VILLAS · ULUWATU
             </div>
           </div>

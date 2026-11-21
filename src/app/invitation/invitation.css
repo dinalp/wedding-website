@@ -146,6 +146,73 @@
   text-decoration-color: currentcolor;
 }
 
+/* Plain-text invitation shown only inside <noscript> (the animated stage is hidden there). */
+.invite-noscript {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  min-height: 100vh;
+  padding: 48px 24px 56px;
+  background: radial-gradient(120% 90% at 50% 38%, #f7f4eb 0%, #ebe9dd 55%, #d6dbcc 100%);
+  color: #2f2a26;
+  text-align: center;
+}
+
+.invite-noscript-label {
+  color: #4c5644;
+  font-size: 12px;
+  letter-spacing: 0.28em;
+}
+
+.invite-noscript-names {
+  display: flex;
+  flex-direction: column;
+  margin: 8px 0;
+  color: #6e1a24;
+  font-size: clamp(40px, 12vw, 60px);
+  line-height: 1.2;
+}
+
+.invite-noscript-amp {
+  font-size: 0.62em;
+}
+
+.invite-noscript-line,
+.invite-noscript-date {
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  line-height: 1.8;
+}
+
+.invite-noscript-date {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.invite-noscript-heading {
+  margin-top: 22px;
+  color: #6e1a24;
+  font-size: 13px;
+  letter-spacing: 0.28em;
+}
+
+.invite-noscript-list,
+.invite-noscript-text {
+  max-width: 22em;
+  font-size: 19px;
+  line-height: 1.45;
+}
+
+.invite-noscript .invite-btn {
+  margin-top: 8px;
+}
+
+.invite-noscript :is(a, button):focus-visible {
+  outline: 2px solid #6e1a24;
+  outline-offset: 3px;
+}
+
 /* Glitter in the organza ribbon: opacity only. */
 @keyframes invite-twinkle {
   0%,

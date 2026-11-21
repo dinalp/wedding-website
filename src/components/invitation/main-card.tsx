@@ -1,5 +1,6 @@
 "use client";
 
+import type { Ref } from "react";
 import { motion } from "framer-motion";
 import { CallaLily, lilyTransform, type LilyColors } from "./calla-lily";
 import { palette } from "./palette";
@@ -60,10 +61,13 @@ const capsLine = {
  * in burgundy script and the sage ribbon tied down the left edge.
  */
 export function MainCard({
+  headingRef,
   textVisible,
   ribbonUntied,
   reducedMotion,
 }: {
+  /** Focus target when this card is brought forward from the keyboard. */
+  headingRef?: Ref<HTMLHeadingElement>;
   textVisible: boolean;
   ribbonUntied: boolean;
   reducedMotion: boolean;
@@ -101,7 +105,12 @@ export function MainCard({
         initial="hidden"
         animate={textVisible ? "show" : "hidden"}
       >
-        <h1 className="invite-script" style={{ color: palette.wax, fontSize: "11.5cqw", lineHeight: 1.22 }}>
+        <h1
+          ref={headingRef}
+          tabIndex={-1}
+          className="invite-script outline-none"
+          style={{ color: palette.wax, fontSize: "11.5cqw", lineHeight: 1.22 }}
+        >
           <motion.span className="block whitespace-nowrap" variants={item}>
             Dinal Perera
           </motion.span>

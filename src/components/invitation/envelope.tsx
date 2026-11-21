@@ -9,10 +9,20 @@ import { EASE_IN_OUT, palette } from "./palette";
 const VIEW = { width: 564, height: 400 };
 const VIEW_BOX = `0 0 ${VIEW.width} ${VIEW.height}`;
 
+/** Top edge of the front pocket. */
+const POCKET_TOP = 70;
+/**
+ * Where the flap's edge meets the envelope's sides. It sits just below the
+ * pocket's top edge so the closed flap and pocket overlap at the corners and
+ * none of the dark inside shows beside the flap's shoulders.
+ */
+const FLAP_SHOULDER = POCKET_TOP + 4;
 /** Scalloped shoulders curving down to a rounded point in the centre. */
-const FLAP_EDGE =
-  "M564 56Q548 108 486 112Q470 168 392 170Q372 226 300 240Q282 258 264 240Q192 226 172 170Q94 168 78 112Q16 108 0 56";
-const FLAP_PATH = `M0 0H564V56${FLAP_EDGE.slice("M564 56".length)}Z`;
+const FLAP_CURVE = `Q548 108 486 112Q470 168 392 170Q372 226 300 240Q282 258 264 240Q192 226 172 170Q94 168 78 112Q16 108 0 ${FLAP_SHOULDER}`;
+const FLAP_EDGE = `M564 ${FLAP_SHOULDER}${FLAP_CURVE}`;
+const FLAP_PATH = `M0 0H564V${FLAP_SHOULDER}${FLAP_CURVE}Z`;
+/** Sage card showing around the dark inside, so the envelope's outer edge is never burgundy. */
+const INTERIOR_RIM = 3;
 /** The same flap mirrored upwards, as it sits once opened (hinge along the bottom). */
 const FLIP = `translate(0 ${VIEW.height}) scale(1 -1)`;
 
@@ -30,8 +40,24 @@ export function EnvelopeInterior() {
       style={{ borderRadius: 4, boxShadow: "0 26px 44px -20px rgba(52, 62, 44, 0.55)" }}
       aria-hidden="true"
     >
-      <rect width={VIEW.width} height={VIEW.height} rx={5} fill="#3d1822" />
-      <rect width={VIEW.width} height={90} rx={5} fill="#000" opacity={0.18} />
+      <rect width={VIEW.width} height={VIEW.height} rx={5} fill={palette.sage} />
+      <rect
+        x={INTERIOR_RIM}
+        y={INTERIOR_RIM}
+        width={VIEW.width - INTERIOR_RIM * 2}
+        height={VIEW.height - INTERIOR_RIM * 2}
+        rx={3}
+        fill="#3d1822"
+      />
+      <rect
+        x={INTERIOR_RIM}
+        y={INTERIOR_RIM}
+        width={VIEW.width - INTERIOR_RIM * 2}
+        height={90 - INTERIOR_RIM}
+        rx={3}
+        fill="#000"
+        opacity={0.18}
+      />
     </svg>
   );
 }
@@ -47,7 +73,10 @@ export function EnvelopePocket() {
           <stop offset="1" stopColor="#929d87" />
         </linearGradient>
       </defs>
-      <path d="M0 70H252A30 30 0 0 0 312 70H564V395Q564 400 559 400H5Q0 400 0 395Z" fill={`url(#${id})`} />
+      <path
+        d={`M0 ${POCKET_TOP}H252A30 30 0 0 0 312 ${POCKET_TOP}H564V395Q564 400 559 400H5Q0 400 0 395Z`}
+        fill={`url(#${id})`}
+      />
       {/* Side-flap folds meeting under the main flap. */}
       <path
         d="M0 400L246 214M564 400L318 214"
@@ -57,7 +86,7 @@ export function EnvelopePocket() {
         strokeWidth={1.2}
       />
       <path
-        d="M0 70H252A30 30 0 0 0 312 70H564"
+        d={`M0 ${POCKET_TOP}H252A30 30 0 0 0 312 ${POCKET_TOP}H564`}
         fill="none"
         stroke="#fff"
         strokeOpacity={0.3}

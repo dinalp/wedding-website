@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import type { ReactNode, Ref } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ChampagneIcon, LoungerIcon, RingsIcon } from "./icons";
@@ -65,7 +65,16 @@ const heading = { fontSize: "3.3cqw", letterSpacing: "0.28em", lineHeight: 1.3 }
  * The burgundy details card: timeline, dress code and the RSVP call to action
  * (a button to /rsvp in place of the printed card's QR code).
  */
-export function DetailsCard({ textVisible, reducedMotion }: { textVisible: boolean; reducedMotion: boolean }) {
+export function DetailsCard({
+  headingRef,
+  textVisible,
+  reducedMotion,
+}: {
+  /** Focus target when this card is brought forward from the keyboard. */
+  headingRef?: Ref<HTMLHeadingElement>;
+  textVisible: boolean;
+  reducedMotion: boolean;
+}) {
   const item = revealItem(reducedMotion);
 
   return (
@@ -94,7 +103,13 @@ export function DetailsCard({ textVisible, reducedMotion }: { textVisible: boole
         initial="hidden"
         animate={textVisible ? "show" : "hidden"}
       >
-        <motion.h2 className="invite-script" style={{ fontSize: "12cqw", lineHeight: 1 }} variants={item}>
+        <motion.h2
+          ref={headingRef}
+          tabIndex={-1}
+          className="invite-script outline-none"
+          style={{ fontSize: "12cqw", lineHeight: 1 }}
+          variants={item}
+        >
           Details
         </motion.h2>
 
