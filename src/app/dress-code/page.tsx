@@ -52,7 +52,7 @@ const EVENTS: DressCodeEvent[] = [
     venue: "Stone Villas Uluwatu",
     code: "Island formal · Sarees welcome · Suits (open collar, ties optional) · We love to see some colour!",
     description: "Dress up with us for an evening by the ocean. Think elegant sarees, flowing formal dresses and suits, with plenty of colour and room to dance.",
-    menswearNote: "Gents, please skip black and steer clear of dark navy and dark grey if you can. It’ll be a sweltering day in Bali. Choose a lighter colour you love and a breathable fabric so you can look a million dollars and stay cool on the dance floor.",
+    menswearNote: "Gents, please skip black, and steer clear of dark navy and dark grey if you can. It will be a sweltering day in Bali, and this is a wedding with colour. Choose a lighter colour you love and a breathable fabric so you can look a million dollars and stay cool on the dance floor.",
     looks: [
       {
         label: "Saree inspiration",
