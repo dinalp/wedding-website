@@ -1,0 +1,21 @@
+// Colours taken from the physical invitation suite.
+export const palette = {
+  sage: "#9aa58f",
+  sageLight: "#a9b39e",
+  sageDark: "#828d78",
+  sageInk: "#4c5644",
+  wax: "#6e1a24",
+  plum: "#4a1f2a",
+  burgundy: "#7a1e2e",
+  ivory: "#fbf8f1",
+  card: "#faf8f3",
+  gold: "#c9a45c",
+  ink: "#2f2a26",
+} as const;
+
+export type Bezier = [number, number, number, number];
+
+/** Soft "settle" curve used for most of the sequence. */
+export const EASE_OUT: Bezier = [0.22, 1, 0.36, 1];
+export const EASE_IN_OUT: Bezier = [0.45, 0, 0.2, 1];
+export const EASE_IN: Bezier = [0.5, 0, 0.8, 0.3];
