@@ -106,7 +106,7 @@ export function DetailsCard({
         <motion.h2
           ref={headingRef}
           tabIndex={-1}
-          className="invite-script outline-none"
+          className="invite-script invite-focus-heading"
           style={{ fontSize: "12cqw", lineHeight: 1 }}
           variants={item}
         >

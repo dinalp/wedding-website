@@ -108,7 +108,7 @@ export function MainCard({
         <h1
           ref={headingRef}
           tabIndex={-1}
-          className="invite-script outline-none"
+          className="invite-script invite-focus-heading"
           style={{ color: palette.wax, fontSize: "11.5cqw", lineHeight: 1.22 }}
         >
           <motion.span className="block whitespace-nowrap" variants={item}>

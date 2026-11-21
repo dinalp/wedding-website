@@ -48,6 +48,25 @@
   outline-color: #fbf8f1;
 }
 
+/*
+ * Card headings take focus when a card is swapped in from the keyboard. Show a
+ * ring then (burgundy on the white card, ivory on the burgundy card), but not
+ * when focus arrives without the keyboard.
+ */
+.invite-focus-heading {
+  border-radius: 4px;
+  outline: none;
+}
+
+.invite-focus-heading:focus-visible {
+  outline: 2px solid #6e1a24;
+  outline-offset: 6px;
+}
+
+.invite-details .invite-focus-heading:focus-visible {
+  outline-color: #fbf8f1;
+}
+
 .invite-seal {
   background: none;
   border: 0;
@@ -206,6 +225,14 @@
 
 .invite-noscript .invite-btn {
   margin-top: 8px;
+}
+
+.invite-noscript-note {
+  max-width: 24em;
+  color: #4c5644;
+  font-size: 16px;
+  font-style: italic;
+  line-height: 1.45;
 }
 
 .invite-noscript :is(a, button):focus-visible {
