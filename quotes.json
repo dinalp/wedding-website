@@ -311,12 +311,53 @@
       "source": "I Want That Flight",
       "status": "no-results",
       "quotes": []
+    },
+    {
+      "date": "2026-11-23",
+      "checkedAt": "2026-11-23T00:54:38.600693+00:00",
+      "source": "I Want That Flight",
+      "status": "success",
+      "quotes": [
+        {
+          "date": "2026-11-23",
+          "airline": "Virgin Australia",
+          "from": "SYD",
+          "depart": "2027-05-16",
+          "return": "2027-05-23",
+          "price": 602.0,
+          "stops": null,
+          "details": "I Want That Flight \u00b7 Published searches from the last 24 hours; current price may differ. Stops and baggage unconfirmed.",
+          "link": "https://fly.iwantthatflight.com.au/flight.ashx?oc=SYD&dc=DPS&dd=16/May/2027&rd=23/May/2027&po=all"
+        },
+        {
+          "date": "2026-11-23",
+          "airline": "Scoot",
+          "from": "SYD",
+          "depart": "2027-05-17",
+          "return": "2027-05-22",
+          "price": 697.0,
+          "stops": null,
+          "details": "I Want That Flight \u00b7 Published searches from the last 24 hours; current price may differ. Stops and baggage unconfirmed.",
+          "link": "https://fly.iwantthatflight.com.au/flight.ashx?oc=SYD&dc=DPS&dd=17/May/2027&rd=22/May/2027&po=all"
+        },
+        {
+          "date": "2026-11-23",
+          "airline": "Scoot",
+          "from": "SYD",
+          "depart": "2027-05-16",
+          "return": "2027-05-23",
+          "price": 697.0,
+          "stops": null,
+          "details": "I Want That Flight \u00b7 Published searches from the last 24 hours; current price may differ. Stops and baggage unconfirmed.",
+          "link": "https://fly.iwantthatflight.com.au/flight.ashx?oc=SYD&dc=DPS&dd=16/May/2027&rd=23/May/2027&po=all"
+        }
+      ]
     }
   ],
   "lastAttempt": {
-    "date": "2026-11-22",
-    "checkedAt": "2026-11-22T00:21:18.791973+00:00",
+    "date": "2026-11-23",
+    "checkedAt": "2026-11-23T00:54:38.600693+00:00",
     "source": "I Want That Flight",
-    "status": "no-results"
+    "status": "success"
   }
 }
