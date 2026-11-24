@@ -80,18 +80,13 @@ export default function InvitationPage() {
             Please kindly RSVP by 20th January 2027 on our wedding website.
           </p>
           <p>
-            <Link href="/rsvp" className="invite-caps invite-btn">
+            <Link href="/" className="invite-caps invite-btn">
               RSVP on our website
             </Link>
           </p>
           <p className="invite-serif invite-noscript-note">
-            Our online RSVP needs JavaScript. If it won’t open, just reply to the message this invitation came in
-            and we’ll take care of it.
-          </p>
-          <p>
-            <Link href="/" className="invite-caps invite-link">
-              Visit our wedding website
-            </Link>
+            Our wedding website needs JavaScript. If it won’t open, just reply to the message this invitation came
+            in and we’ll take care of it.
           </p>
         </main>
       </noscript>

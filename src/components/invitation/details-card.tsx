@@ -59,11 +59,25 @@ const TIMELINE: ReadonlyArray<{ date: string; label: string; icon: ReactNode }> 
   { date: "21/5", label: "RECOVERY DAY", icon: <LoungerIcon /> },
 ];
 
-const heading = { fontSize: "3.3cqw", letterSpacing: "0.28em", lineHeight: 1.3 } as const;
+/** Section headings. Indented by their tracking so they stay optically centred. */
+const heading = {
+  fontSize: "3.6cqw",
+  fontWeight: 500,
+  letterSpacing: "0.26em",
+  textIndent: "0.26em",
+  lineHeight: 1.3,
+} as const;
+
+/** Smallest caps on the card: about 12px on a 390px phone and 11px on a 360px one. */
+const smallCaps = { fontSize: "3.5cqw", lineHeight: 1.28 } as const;
+
+/** Space above each section, so the card keeps one vertical rhythm. */
+const SECTION_GAP = "3.6cqw";
 
 /**
  * The burgundy details card: timeline, dress code and the RSVP call to action
- * (a button to /rsvp in place of the printed card's QR code).
+ * (a button to the wedding website's landing page in place of the printed
+ * card's QR code; guests find the RSVP from there).
  */
 export function DetailsCard({
   headingRef,
@@ -113,22 +127,28 @@ export function DetailsCard({
           Details
         </motion.h2>
 
-        <motion.section className="w-full" style={{ marginTop: "2cqw" }} variants={item}>
+        <motion.section className="w-full" style={{ marginTop: "2.4cqw" }} variants={item}>
           <h3 className="invite-caps" style={heading}>
             TIMELINE
           </h3>
-          <ul className="grid grid-cols-3" style={{ gap: "1.5cqw", marginTop: "1.6cqw" }}>
+          <ul className="grid grid-cols-3" style={{ gap: "1cqw", marginTop: "1.2cqw" }}>
             {TIMELINE.map((event) => (
               <li key={event.date} className="flex flex-col items-center">
                 <span className="block" style={{ width: "11.5cqw" }}>
                   {event.icon}
                 </span>
-                <span className="invite-serif" style={{ fontSize: "5cqw", lineHeight: 1.15 }}>
+                <span className="invite-serif" style={{ fontSize: "5.2cqw", lineHeight: 1.15 }}>
                   {event.date}
                 </span>
+                {/* One word per line, so all three labels break the same way. */}
                 <span
                   className="invite-caps"
-                  style={{ fontSize: "2.9cqw", letterSpacing: "0.12em", lineHeight: 1.3, maxWidth: "9em" }}
+                  style={{
+                    ...smallCaps,
+                    width: "min-content",
+                    marginTop: "0.6cqw",
+                    letterSpacing: "0.08em",
+                  }}
                 >
                   {event.label}
                 </span>
@@ -137,44 +157,41 @@ export function DetailsCard({
           </ul>
         </motion.section>
 
-        <motion.section style={{ marginTop: "3.2cqw" }} variants={item}>
+        <motion.section style={{ marginTop: SECTION_GAP }} variants={item}>
           <h3 className="invite-caps" style={heading}>
             DRESS CODE
           </h3>
-          <p className="invite-serif italic" style={{ fontSize: "5.4cqw", lineHeight: 1.25 }}>
+          <p className="invite-serif italic" style={{ fontSize: "5.4cqw", lineHeight: 1.25, marginTop: "0.4cqw" }}>
             Island Formal
           </p>
         </motion.section>
 
-        <motion.section style={{ marginTop: "3.2cqw" }} variants={item}>
+        <motion.section style={{ marginTop: SECTION_GAP }} variants={item}>
           <h3 className="invite-caps" style={heading}>
             RSVP
           </h3>
           <p
             className="invite-serif invite-balance"
-            style={{ fontSize: "4.3cqw", lineHeight: 1.22, maxWidth: "64cqw" }}
+            style={{ fontSize: "4.5cqw", lineHeight: 1.24, maxWidth: "66cqw", marginTop: "0.6cqw" }}
           >
             Please kindly RSVP by 20th January 2027 on our wedding website
           </p>
         </motion.section>
 
-        <motion.div className="flex flex-col items-center" style={{ marginTop: "3cqw" }} variants={item}>
-          <Link href="/rsvp" className="invite-caps invite-rsvp" style={{ fontSize: "max(10px, 3.1cqw)" }}>
+        <motion.div style={{ marginTop: "3.4cqw" }} variants={item}>
+          <Link href="/" className="invite-caps invite-rsvp" style={{ fontSize: "max(11px, 3.4cqw)" }}>
             RSVP on our website
-          </Link>
-          <Link href="/" className="invite-serif invite-site-link" style={{ fontSize: "max(13px, 4cqw)" }}>
-            Visit our wedding website
           </Link>
         </motion.div>
 
         <motion.p
           className="invite-caps invite-balance"
           style={{
-            fontSize: "2.9cqw",
-            letterSpacing: "0.16em",
-            lineHeight: 1.45,
-            maxWidth: "62cqw",
-            marginTop: "1.2cqw",
+            ...smallCaps,
+            letterSpacing: "0.13em",
+            lineHeight: 1.5,
+            maxWidth: "68cqw",
+            marginTop: "3.2cqw",
           }}
           variants={item}
         >

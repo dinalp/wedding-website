@@ -3,7 +3,7 @@
 import { useId } from "react";
 import { motion } from "framer-motion";
 import { LinerArt, LINER_SIZE } from "./liner";
-import { EASE_IN_OUT, palette } from "./palette";
+import { DURATION, EASE_IN_OUT, palette } from "./palette";
 
 /** All envelope layers share this 1.41:1 coordinate space. */
 const VIEW = { width: 564, height: 400 };
@@ -37,7 +37,11 @@ export function EnvelopeInterior() {
     <svg
       viewBox={VIEW_BOX}
       className={layer}
-      style={{ borderRadius: 4, boxShadow: "0 26px 44px -20px rgba(52, 62, 44, 0.55)" }}
+      style={{
+        borderRadius: 4,
+        // A tight contact shadow plus a wide soft one, so the envelope rests on the surface.
+        boxShadow: "0 2px 4px rgba(52, 62, 44, 0.22), 0 30px 48px -22px rgba(52, 62, 44, 0.55)",
+      }}
       aria-hidden="true"
     >
       <rect width={VIEW.width} height={VIEW.height} rx={5} fill={palette.sage} />
@@ -117,7 +121,7 @@ export function EnvelopeFlap({ open }: { open: boolean }) {
         style={{ transformStyle: "preserve-3d", originX: 0.5, originY: 0 }}
         initial={false}
         animate={{ rotateX: open ? 180 : 0 }}
-        transition={{ duration: 1.05, ease: EASE_IN_OUT }}
+        transition={{ duration: DURATION.travel, ease: EASE_IN_OUT }}
       >
         <div className="absolute inset-0" style={face}>
           <svg viewBox={VIEW_BOX} className={layer} style={{ overflow: "visible" }} aria-hidden="true">

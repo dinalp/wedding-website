@@ -1,5 +1,5 @@
 import type { Variants } from "framer-motion";
-import { EASE_OUT } from "./palette";
+import { DURATION, EASE_OUT } from "./palette";
 
 /** Parent variants: staggers its children in once `show` is set. */
 export function revealContainer(delayChildren: number): Variants {
@@ -13,6 +13,6 @@ export function revealContainer(delayChildren: number): Variants {
 export function revealItem(reducedMotion: boolean): Variants {
   return {
     hidden: { opacity: 0, y: reducedMotion ? 0 : 8 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: EASE_OUT } },
+    show: { opacity: 1, y: 0, transition: { duration: DURATION.settle, ease: EASE_OUT } },
   };
 }

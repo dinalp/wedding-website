@@ -51,9 +51,12 @@ function EmbossedCorner({ flipX = false, flipY = false }: { flipX?: boolean; fli
 
 const capsLine = {
   color: palette.ink,
-  fontSize: "3cqw",
-  letterSpacing: "0.13em",
-  lineHeight: 2.05,
+  // About 12px on a 390px phone and 11px on a 360px one.
+  fontSize: "3.5cqw",
+  letterSpacing: "0.11em",
+  // Tracked caps: indent by the tracking so each line stays optically centred.
+  textIndent: "0.11em",
+  lineHeight: 1.9,
 } as const;
 
 /**
@@ -81,9 +84,12 @@ export function MainCard({
         style={{
           background: `linear-gradient(160deg, #fffefb 0%, ${palette.card} 55%, #f3f0e8 100%)`,
           borderRadius: "0.8cqw",
-          boxShadow: "0 1px 2px rgba(60, 50, 40, 0.14), 0 22px 44px -14px rgba(60, 50, 40, 0.38)",
+          // Lit top edge and a faint darkening towards the edges, as on thick cotton stock.
+          boxShadow:
+            "inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 0 26px rgba(120, 105, 80, 0.07), 0 1px 2px rgba(60, 50, 40, 0.16), 0 22px 44px -14px rgba(60, 50, 40, 0.38)",
         }}
       >
+        <div className="invite-grain" aria-hidden="true" />
         <svg width="0" height="0" className="absolute" aria-hidden="true">
           <defs>
             <filter id={EMBOSS_FILTER} x="-10%" y="-10%" width="120%" height="120%">
@@ -100,7 +106,7 @@ export function MainCard({
 
       <motion.div
         className="absolute inset-0 flex flex-col items-center justify-center text-center"
-        style={{ padding: "0 13cqw" }}
+        style={{ padding: "0 12cqw" }}
         variants={revealContainer(0.15)}
         initial="hidden"
         animate={textVisible ? "show" : "hidden"}
@@ -109,12 +115,17 @@ export function MainCard({
           ref={headingRef}
           tabIndex={-1}
           className="invite-script invite-focus-heading"
-          style={{ color: palette.wax, fontSize: "11.5cqw", lineHeight: 1.22 }}
+          style={{ color: palette.wax, fontSize: "11.5cqw", lineHeight: 1.2 }}
         >
           <motion.span className="block whitespace-nowrap" variants={item}>
             Dinal Perera
           </motion.span>
-          <motion.span className="block" style={{ fontSize: "0.62em", lineHeight: 1.15 }} variants={item}>
+          {/* The ampersand is a flourish between the names: nearly their size, set tight. */}
+          <motion.span
+            className="block"
+            style={{ fontSize: "0.86em", lineHeight: 1, margin: "0.04em 0 0.1em" }}
+            variants={item}
+          >
             &amp;
           </motion.span>
           <motion.span className="block whitespace-nowrap" variants={item}>
@@ -122,7 +133,7 @@ export function MainCard({
           </motion.span>
         </h1>
 
-        <div className="invite-caps invite-balance" style={{ marginTop: "6cqw" }}>
+        <div className="invite-caps invite-balance" style={{ marginTop: "6.5cqw" }}>
           <motion.p style={capsLine} variants={item}>
             INVITE YOU TO
           </motion.p>
@@ -130,7 +141,15 @@ export function MainCard({
             THEIR WEDDING CELEBRATIONS
           </motion.p>
           <motion.p
-            style={{ ...capsLine, fontSize: "3.5cqw", fontWeight: 500, margin: "2.4cqw 0" }}
+            style={{
+              ...capsLine,
+              fontSize: "4.1cqw",
+              fontWeight: 500,
+              letterSpacing: "0.12em",
+              textIndent: "0.12em",
+              lineHeight: 1.6,
+              margin: "2.6cqw 0",
+            }}
             variants={item}
           >
             19TH - 21ST MAY 2027

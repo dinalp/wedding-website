@@ -5,7 +5,7 @@ import { AnimatePresence, MotionConfig, motion, type PanInfo } from "framer-moti
 import { DetailsCard } from "./details-card";
 import { EnvelopeFlap, EnvelopeInterior, EnvelopePocket } from "./envelope";
 import { MainCard } from "./main-card";
-import { EASE_IN, EASE_IN_OUT, EASE_OUT } from "./palette";
+import { DURATION, EASE_IN, EASE_IN_OUT, EASE_OUT } from "./palette";
 import { DriftingPetals, PetalBurst } from "./petals";
 import { WaxSeal } from "./wax-seal";
 
@@ -23,17 +23,18 @@ const RIBBON_UNTIED = 5;
 const REVEALED = 6;
 
 /**
- * When each step after the tap begins, in ms. The card is centred by about
- * 3.4s and sits with its bow tied for ~1.2s; the ribbon then unties over
- * ~1.25s and the names card is held ~2.5s before the details card comes
- * forward. The whole sequence finishes at about 9.2s.
+ * When each step after the tap begins, in ms. The seal is pressed and cracks
+ * (~0.75s), the flap lifts, and the card is centred by about 3.7s. It sits with
+ * its bow tied for ~1.2s; the ribbon then unties over ~1.4s and the names card
+ * is held ~2.5s before the details card comes forward. The whole sequence
+ * finishes at about 9.7s.
  */
 const SEQUENCE: ReadonlyArray<readonly [number, number]> = [
-  [550, FLAP_OPEN],
-  [1350, CARD_RISING],
-  [2250, CARD_SETTLED],
-  [4600, RIBBON_UNTIED],
-  [8350, REVEALED],
+  [750, FLAP_OPEN],
+  [1600, CARD_RISING],
+  [2550, CARD_SETTLED],
+  [4900, RIBBON_UNTIED],
+  [8800, REVEALED],
 ];
 
 /** How long a card swap takes, and when the cards trade places in depth. */
@@ -78,8 +79,8 @@ function stackPose(front: boolean, reducedMotion: boolean) {
 const SWAP_TRANSITION = { duration: SWAP_SECONDS, ease: EASE_IN_OUT, opacity: { duration: 0.35 } };
 
 function mainCardTransition(step: number) {
-  if (step === CARD_RISING) return { duration: 1, ease: EASE_OUT };
-  if (step < REVEALED) return { duration: 1, delay: 0.12, ease: EASE_IN_OUT };
+  if (step === CARD_RISING) return { duration: DURATION.travel, ease: EASE_OUT };
+  if (step < REVEALED) return { duration: DURATION.travel, delay: 0.1, ease: EASE_IN_OUT };
   return SWAP_TRANSITION;
 }
 
@@ -193,7 +194,7 @@ export function InvitationExperience() {
     animate: envelopeGone
       ? { y: "70%", rotate: -3, opacity: [1, 0.9, 0] }
       : { y: "0%", rotate: 0, opacity: 1 },
-    transition: { duration: 0.85, ease: EASE_IN },
+    transition: { duration: 0.9, ease: EASE_IN, opacity: { duration: 0.9, ease: "linear" as const } },
   };
 
   return (
@@ -204,8 +205,8 @@ export function InvitationExperience() {
 
         <div
           key={runId}
-          className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2"
-          style={{ top: "calc(50% - 24px)", width: "var(--ew)", height: "var(--eh)" }}
+          className="invite-centre absolute left-1/2 -translate-x-1/2 -translate-y-1/2"
+          style={{ width: "var(--ew)", height: "var(--eh)" }}
         >
           <motion.div
             className="absolute inset-0"
@@ -259,7 +260,7 @@ export function InvitationExperience() {
                 }}
                 initial={instant ? { opacity: 0 } : false}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
+                transition={{ duration: DURATION.settle, ease: EASE_OUT }}
                 onPanEnd={onPanEnd}
               >
                 <motion.div
@@ -319,15 +320,12 @@ export function InvitationExperience() {
           <AnimatePresence>
             {step === SEALED && (
               <motion.div
-                className="absolute inset-x-0 top-full flex flex-col items-center gap-2 pt-8 text-center"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.5 }}
+                className="absolute inset-x-0 top-full flex flex-col items-center gap-1 pt-8 text-center"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0, transition: { duration: DURATION.settle, delay: 0.3, ease: EASE_OUT } }}
+                exit={{ opacity: 0, transition: { duration: DURATION.quick } }}
               >
-                <p className="invite-caps" style={{ fontSize: 11, letterSpacing: "0.28em", color: "#4c5644" }}>
-                  Tap the seal to open
-                </p>
+                <p className="invite-caps invite-hint">Tap the seal to open</p>
                 <button type="button" className="invite-caps invite-link" onClick={finish}>
                   Skip animation
                 </button>
@@ -338,11 +336,10 @@ export function InvitationExperience() {
 
         {revealed && (
           <motion.div
-            className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-1 px-4"
-            style={{ paddingBottom: "max(12px, env(safe-area-inset-bottom))" }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.7, delay: instant ? 0.3 : 0.9 }}
+            className="invite-controls absolute inset-x-0 flex flex-col items-center gap-2 px-4"
+            initial={{ opacity: 0, y: reducedMotion ? 0 : 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: DURATION.settle, delay: instant ? 0.3 : 1.1, ease: EASE_OUT }}
           >
             {/* A click with detail 0 came from the keyboard (Enter/Space) or assistive tech. */}
             <button

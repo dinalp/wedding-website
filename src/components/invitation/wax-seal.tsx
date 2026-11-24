@@ -4,7 +4,7 @@ import { useId } from "react";
 import { motion } from "framer-motion";
 import { CallaLily, type LilyColors } from "./calla-lily";
 import { SEAL_POSITION } from "./envelope";
-import { EASE_IN, palette } from "./palette";
+import { DURATION, EASE_IN, EASE_IN_OUT, EASE_OUT, palette } from "./palette";
 
 /** Smooth closed blob through uneven radii, for the irregular poured-wax edge. */
 function blobPath(radii: number[]) {
@@ -78,9 +78,40 @@ function SealFace() {
   );
 }
 
+/** The press before the crack, and how long the halves take to fall away. */
+const PRESS_SECONDS = 0.28;
+const SPLIT_SECONDS = 0.8;
+
 /**
- * The wax seal is the control that opens the invitation. When `broken` it
- * cracks into two halves that split, tumble and fade, with a few wax crumbs.
+ * A slow glint crossing the wax every few seconds while the seal waits to be
+ * opened. Clipped to a circle just inside the poured edge.
+ */
+function Sheen() {
+  return (
+    <span
+      aria-hidden="true"
+      className="pointer-events-none absolute overflow-hidden rounded-full"
+      style={{ inset: "7%" }}
+    >
+      <motion.span
+        className="absolute inset-y-0 block"
+        style={{
+          left: 0,
+          width: "45%",
+          background: "linear-gradient(100deg, transparent 0%, rgba(255, 240, 235, 0.34) 50%, transparent 100%)",
+        }}
+        initial={{ x: "-130%", opacity: 0 }}
+        animate={{ x: "330%", opacity: [0, 1, 1, 0] }}
+        transition={{ duration: 1.5, delay: 1.4, repeat: Infinity, repeatDelay: 4.2, ease: EASE_IN_OUT }}
+      />
+    </span>
+  );
+}
+
+/**
+ * The wax seal is the control that opens the invitation. When `broken` it is
+ * pressed in for a beat, then cracks into two halves that are flung apart,
+ * fall and fade, with a few wax crumbs.
  */
 export function WaxSeal({
   broken,
@@ -92,7 +123,14 @@ export function WaxSeal({
   onOpen: () => void;
 }) {
   const idle = !broken && !reducedMotion;
-  const split = { duration: 0.8, ease: EASE_IN };
+  // Each half is flung sideways and then falls: x eases out while y gathers speed.
+  const split = (delay: number) => ({
+    duration: SPLIT_SECONDS,
+    delay,
+    ease: EASE_IN,
+    x: { duration: SPLIT_SECONDS, delay, ease: EASE_OUT },
+    opacity: { duration: SPLIT_SECONDS, delay, ease: "linear" as const, times: [0, 0.55, 1] },
+  });
 
   return (
     <button
@@ -120,16 +158,25 @@ export function WaxSeal({
         animate={
           idle
             ? { opacity: [0.35, 0.85, 0.35], scale: [0.92, 1.08, 0.92] }
-            : { opacity: broken ? 0 : 0.5, scale: 1 }
+            : broken
+              ? { opacity: [0.7, 1, 0], scale: [1, 1.25, 1.7] }
+              : { opacity: 0.5, scale: 1 }
         }
-        transition={idle ? { duration: 2.8, repeat: Infinity, ease: "easeInOut" } : { duration: 0.3 }}
+        transition={
+          idle
+            ? { duration: 2.8, repeat: Infinity, ease: "easeInOut" }
+            : { duration: broken ? 0.7 : 0.3, ease: EASE_OUT }
+        }
       />
 
+      {/* Pressed in for a beat before it gives: the anticipation ahead of the crack. */}
       <motion.span
         className="absolute inset-0 block"
+        initial={false}
+        animate={broken ? { scale: [1, 0.92, 1.03] } : { scale: 1 }}
         whileHover={broken ? undefined : { scale: 1.05 }}
-        whileTap={broken ? undefined : { scale: 0.95 }}
-        transition={{ duration: 0.25 }}
+        whileTap={broken ? undefined : { scale: 0.94 }}
+        transition={broken ? { duration: PRESS_SECONDS, times: [0, 0.6, 1], ease: EASE_OUT } : { duration: DURATION.quick }}
       >
         <motion.span
           className="absolute inset-0 block"
@@ -140,7 +187,7 @@ export function WaxSeal({
               ? { x: "-34%", y: "78%", rotate: -34, opacity: [1, 1, 0] }
               : { x: "0%", y: "0%", rotate: 0, opacity: 1 }
           }
-          transition={split}
+          transition={split(PRESS_SECONDS * 0.7)}
         >
           <SealFace />
         </motion.span>
@@ -153,10 +200,11 @@ export function WaxSeal({
               ? { x: "38%", y: "92%", rotate: 40, opacity: [1, 1, 0] }
               : { x: "0%", y: "0%", rotate: 0, opacity: 1 }
           }
-          transition={{ ...split, delay: 0.04 }}
+          transition={split(PRESS_SECONDS * 0.7 + 0.04)}
         >
           <SealFace />
         </motion.span>
+        {idle && <Sheen />}
       </motion.span>
 
       {CRUMBS.map((crumb, index) => (
@@ -171,7 +219,7 @@ export function WaxSeal({
               ? { x: [0, crumb.x * 0.6, crumb.x], y: [0, crumb.y * 0.4, crumb.y + 26], opacity: [0, 1, 0] }
               : { x: 0, y: 0, opacity: 0 }
           }
-          transition={{ duration: 0.75, delay: 0.05 + index * 0.03, ease: "easeIn" }}
+          transition={{ duration: 0.75, delay: PRESS_SECONDS * 0.7 + 0.05 + index * 0.03, ease: "easeIn" }}
         />
       ))}
     </button>
