@@ -352,12 +352,19 @@
           "link": "https://fly.iwantthatflight.com.au/flight.ashx?oc=SYD&dc=DPS&dd=16/May/2027&rd=23/May/2027&po=all"
         }
       ]
+    },
+    {
+      "date": "2026-11-24",
+      "checkedAt": "2026-11-24T04:48:09.927777+00:00",
+      "source": "I Want That Flight",
+      "status": "no-results",
+      "quotes": []
     }
   ],
   "lastAttempt": {
-    "date": "2026-11-23",
-    "checkedAt": "2026-11-23T00:54:38.600693+00:00",
+    "date": "2026-11-24",
+    "checkedAt": "2026-11-24T04:48:09.927777+00:00",
     "source": "I Want That Flight",
-    "status": "success"
+    "status": "no-results"
   }
 }
