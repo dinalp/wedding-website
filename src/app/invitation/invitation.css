@@ -20,8 +20,18 @@
   /* Envelope: a touch wider than the card, landscape 1.41:1. */
   --ew: calc(var(--cw) * 1.06);
   --eh: calc(var(--ew) / 1.41);
+  /* Stage height: the viewport, or taller when the smallest card and its controls need more. */
+  --sh: max(var(--vh), calc(var(--ch) + var(--reserve)));
+  /*
+   * While the card rises out of the envelope its top edge reaches 62.6% of the
+   * card's height above the envelope's centre (the RISEN pose in
+   * invitation-experience.tsx: 19.6% travel plus half of the 0.86 scale). Where
+   * the lifted centre leaves less room than that, plus a 12px margin, the
+   * envelope sits this much lower until the card settles. 0 on tall phones.
+   */
+  --rise-drop: max(0px, calc(var(--ch) * 0.626 + 12px - (var(--sh) / 2 - var(--lift))));
   isolation: isolate;
-  min-height: max(var(--vh), calc(var(--ch) + var(--reserve)));
+  min-height: var(--sh);
   /* A pool of warm light on linen, falling off to sage at the edges. */
   background:
     radial-gradient(70% 46% at 50% 44%, rgb(255 253 246 / 85%) 0%, rgb(255 253 246 / 0%) 100%),
@@ -61,11 +71,14 @@
 .invite-stage ::selection,
 .invite-noscript ::selection {
   background: rgb(110 26 36 / 16%);
-  color: inherit;
+  /* Explicit: "inherit" here resolves through the page-wide ::selection rule, not the text. */
+  color: #2f2a26;
 }
 
+/* Ivory on the burgundy card (about 5:1 over the tinted highlight). */
 .invite-details ::selection {
   background: rgb(251 248 241 / 26%);
+  color: #fbf8f1;
 }
 
 /* Where the envelope and cards sit: lifted so the card and its controls read as one centred group. */

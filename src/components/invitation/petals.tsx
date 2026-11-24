@@ -92,7 +92,7 @@ export function PetalBurst({ active }: { active: boolean }) {
         <motion.span
           key={petal.dx}
           className="absolute left-1/2 block"
-          style={{ top: "calc(50% - var(--lift) - 36px)", width: petal.size, marginLeft: -petal.size / 2 }}
+          style={{ top: "calc(50% - var(--lift) + var(--rise-drop) - 36px)", width: petal.size, marginLeft: -petal.size / 2 }}
           initial={false}
           animate={
             active

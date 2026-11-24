@@ -66,6 +66,9 @@ function usePrefersReducedMotion() {
 // Card offsets are percentages of the card's own height, measured from the
 // centre of the envelope: tucked inside, then risen until its foot clears the
 // envelope's bottom edge, then centred.
+// RISEN puts the card's top edge 62.6% of its height above the envelope's centre
+// (19.6% + 0.86 / 2). --rise-drop in invitation.css is derived from that figure:
+// change them together.
 const INSIDE = { x: "0%", y: "19.4%", scale: 0.86, rotate: 0, opacity: 1 };
 const RISEN = { x: "0%", y: "-19.6%", scale: 0.86, rotate: 0, opacity: 1 };
 const CENTRED = { x: "0%", y: "0%", scale: 1, rotate: 0, opacity: 1 };
@@ -211,6 +214,21 @@ export function InvitationExperience() {
           className="invite-centre absolute left-1/2 -translate-x-1/2 -translate-y-1/2"
           style={{ width: "var(--ew)", height: "var(--eh)" }}
         >
+          {/*
+            On shorter viewports the envelope waits a little lower (--rise-drop) so the
+            rising card never meets the top of the stage, then eases up to the lifted
+            position together with the card as it settles. No movement when skipped.
+          */}
+          <div
+            className="absolute inset-0"
+            style={{
+              transform: envelopeGone ? "translateY(0px)" : "translateY(var(--rise-drop))",
+              transition:
+                instant || reducedMotion
+                  ? "none"
+                  : `transform ${DURATION.travel}s cubic-bezier(${EASE_IN_OUT.join(", ")})`,
+            }}
+          >
           <motion.div
             className="absolute inset-0"
             initial={false}
@@ -337,6 +355,7 @@ export function InvitationExperience() {
               </motion.div>
             )}
           </AnimatePresence>
+          </div>
         </div>
 
         {revealed && (
