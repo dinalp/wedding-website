@@ -70,15 +70,15 @@
 /* Text selection in the suite's own colours rather than the browser's blue. */
 .invite-stage ::selection,
 .invite-noscript ::selection {
-  background: rgb(110 26 36 / 16%);
-  /* Explicit: "inherit" here resolves through the page-wide ::selection rule, not the text. */
+  /* Opaque pair so selected text stays readable over any fill (e.g. a hovered burgundy pill). */
+  background: #ecdcd7;
   color: #2f2a26;
 }
 
-/* Ivory on the burgundy card (about 5:1 over the tinted highlight). */
+/* Opaque ivory/burgundy pair on the Details card, readable in every link state (incl. the ivory hover fill). */
 .invite-details ::selection {
-  background: rgb(251 248 241 / 26%);
-  color: #fbf8f1;
+  background: #fbf8f1;
+  color: #7a1e2e;
 }
 
 /* Where the envelope and cards sit: lifted so the card and its controls read as one centred group. */
