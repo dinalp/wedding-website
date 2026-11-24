@@ -5,7 +5,7 @@ import { AnimatePresence, MotionConfig, motion, type PanInfo } from "framer-moti
 import { DetailsCard } from "./details-card";
 import { EnvelopeFlap, EnvelopeInterior, EnvelopePocket } from "./envelope";
 import { MainCard } from "./main-card";
-import { DURATION, EASE_IN, EASE_IN_OUT, EASE_OUT } from "./palette";
+import { DURATION, EASE_IN, EASE_IN_OUT, EASE_OUT, EASE_SINE } from "./palette";
 import { DriftingPetals, PetalBurst } from "./petals";
 import { WaxSeal } from "./wax-seal";
 
@@ -23,18 +23,21 @@ const RIBBON_UNTIED = 5;
 const REVEALED = 6;
 
 /**
- * When each step after the tap begins, in ms. The seal is pressed and cracks
- * (~0.75s), the flap lifts, and the card is centred by about 3.7s. It sits with
- * its bow tied for ~1.2s; the ribbon then unties over ~1.4s and the names card
- * is held ~2.5s before the details card comes forward. The whole sequence
- * finishes at about 9.7s.
+ * When each step after the tap begins, in ms. Each step starts just before the
+ * one ahead of it has come to rest, so the sequence flows without stopping:
+ * the seal is pressed and cracks (~0.75s), the flap lifts, and the card is
+ * drawn forward while it is still easing out of the envelope, centred by about
+ * 3.5s as its wording finishes arriving. It sits with its bow tied for ~1.2s;
+ * the ribbon then unties over ~1.3s and the names card is held ~2.5s (the one
+ * intentional pause) before the details card comes forward. The whole sequence
+ * finishes at about 9.5s.
  */
 const SEQUENCE: ReadonlyArray<readonly [number, number]> = [
   [750, FLAP_OPEN],
   [1600, CARD_RISING],
-  [2550, CARD_SETTLED],
-  [4900, RIBBON_UNTIED],
-  [8800, REVEALED],
+  [2400, CARD_SETTLED],
+  [4700, RIBBON_UNTIED],
+  [8500, REVEALED],
 ];
 
 /** How long a card swap takes, and when the cards trade places in depth. */
@@ -80,7 +83,7 @@ const SWAP_TRANSITION = { duration: SWAP_SECONDS, ease: EASE_IN_OUT, opacity: { 
 
 function mainCardTransition(step: number) {
   if (step === CARD_RISING) return { duration: DURATION.travel, ease: EASE_OUT };
-  if (step < REVEALED) return { duration: DURATION.travel, delay: 0.1, ease: EASE_IN_OUT };
+  if (step < REVEALED) return { duration: DURATION.travel, ease: EASE_IN_OUT };
   return SWAP_TRANSITION;
 }
 
@@ -212,7 +215,9 @@ export function InvitationExperience() {
             className="absolute inset-0"
             initial={false}
             animate={idle ? { y: [0, -7, 0] } : { y: 0 }}
-            transition={idle ? { duration: 4.6, repeat: Infinity, ease: "easeInOut" } : { duration: 0.4 }}
+            transition={
+              idle ? { duration: 4.6, repeat: Infinity, ease: EASE_SINE } : { duration: 0.4, ease: EASE_OUT }
+            }
           >
             {!revealed && (
               <motion.div className="pointer-events-none absolute inset-0" style={{ zIndex: 0 }} {...envelopeLayer}>
@@ -347,7 +352,18 @@ export function InvitationExperience() {
               className="invite-caps invite-btn"
               onClick={(event) => toggleView(event.detail === 0)}
             >
-              {view === "details" ? "Back to invitation" : "View details"}
+              {/* The label changes with a quick crossfade rather than a jump. */}
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.span
+                  key={view}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.16, ease: "linear" }}
+                >
+                  {view === "details" ? "Back to invitation" : "View details"}
+                </motion.span>
+              </AnimatePresence>
             </button>
             <button type="button" className="invite-caps invite-link" onClick={replay}>
               Replay

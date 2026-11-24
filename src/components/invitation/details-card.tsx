@@ -161,7 +161,7 @@ export function DetailsCard({
           <h3 className="invite-caps" style={heading}>
             DRESS CODE
           </h3>
-          <p className="invite-serif italic" style={{ fontSize: "5.4cqw", lineHeight: 1.25, marginTop: "0.4cqw" }}>
+          <p className="invite-italic" style={{ fontSize: "5.4cqw", lineHeight: 1.25, marginTop: "0.4cqw" }}>
             Island Formal
           </p>
         </motion.section>

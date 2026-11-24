@@ -82,11 +82,11 @@ export function MainCard({
       <div
         className="absolute inset-0 overflow-hidden"
         style={{
-          background: `linear-gradient(160deg, #fffefb 0%, ${palette.card} 55%, #f3f0e8 100%)`,
+          background: "linear-gradient(160deg, #fffefc 0%, #fdfbf6 55%, #f8f4ea 100%)",
           borderRadius: "0.8cqw",
           // Lit top edge and a faint darkening towards the edges, as on thick cotton stock.
           boxShadow:
-            "inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 0 26px rgba(120, 105, 80, 0.07), 0 1px 2px rgba(60, 50, 40, 0.16), 0 22px 44px -14px rgba(60, 50, 40, 0.38)",
+            "inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 0 26px rgba(140, 115, 70, 0.05), 0 1px 2px rgba(60, 50, 40, 0.16), 0 22px 44px -14px rgba(60, 50, 40, 0.38)",
         }}
       >
         <div className="invite-grain" aria-hidden="true" />
@@ -120,12 +120,8 @@ export function MainCard({
           <motion.span className="block whitespace-nowrap" variants={item}>
             Dinal Perera
           </motion.span>
-          {/* The ampersand is a flourish between the names: nearly their size, set tight. */}
-          <motion.span
-            className="block"
-            style={{ fontSize: "0.86em", lineHeight: 1, margin: "0.04em 0 0.1em" }}
-            variants={item}
-          >
+          {/* Set in Cormorant's italic, whose ampersand is unmistakable at this size (see .invite-amp). */}
+          <motion.span className="invite-amp" variants={item}>
             &amp;
           </motion.span>
           <motion.span className="block whitespace-nowrap" variants={item}>

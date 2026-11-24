@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { EASE_FALL, EASE_OUT } from "./palette";
 
 /** One calla petal. Sized by its wrapper. */
 function Petal({ tone }: { tone: string }) {
@@ -67,6 +68,22 @@ export function DriftingPetals() {
   );
 }
 
+/**
+ * Each petal is tossed up quickly, slows to its peak about a third of the way
+ * through, then drifts down gathering a little speed as it fades.
+ */
+function burstTransition(duration: number, delay: number) {
+  const arc = { duration, delay, times: [0, 0.36, 1] };
+  return {
+    duration,
+    delay,
+    ease: EASE_OUT,
+    x: { ...arc, ease: [EASE_OUT, "linear" as const] },
+    y: { ...arc, ease: [EASE_OUT, EASE_FALL] },
+    opacity: { duration, delay, times: [0, 0.1, 0.62, 1], ease: "linear" as const },
+  };
+}
+
 /** A one-off flurry of petals from the envelope as it opens. */
 export function PetalBurst({ active }: { active: boolean }) {
   return (
@@ -88,7 +105,7 @@ export function PetalBurst({ active }: { active: boolean }) {
                 }
               : { x: 0, y: 0, rotate: 0, scale: 0.4, opacity: 0 }
           }
-          transition={active ? { duration: petal.duration, delay: index * 0.05, ease: "easeOut" } : { duration: 0 }}
+          transition={active ? burstTransition(petal.duration, index * 0.05) : { duration: 0 }}
         >
           <Petal tone={TONES[index % TONES.length]} />
         </motion.span>

@@ -9,4 +9,6 @@ module.exports = {
     "@font-face { font-family: 'Pinyon Script'; src: local('Times New Roman'); font-weight: 400; }",
   "https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&display=swap":
     "@font-face { font-family: 'Cinzel'; src: local('Times New Roman'); font-weight: 400 500; }",
+  "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500&display=swap":
+    "@font-face { font-family: 'Cormorant Garamond'; font-style: italic; src: local('Times New Roman'); font-weight: 500; }",
 };

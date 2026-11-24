@@ -4,7 +4,7 @@ import { useId } from "react";
 import { motion } from "framer-motion";
 import { CallaLily, type LilyColors } from "./calla-lily";
 import { SEAL_POSITION } from "./envelope";
-import { DURATION, EASE_IN, EASE_IN_OUT, EASE_OUT, palette } from "./palette";
+import { DURATION, EASE_IN, EASE_IN_OUT, EASE_OUT, EASE_SINE, palette } from "./palette";
 
 /** Smooth closed blob through uneven radii, for the irregular poured-wax edge. */
 function blobPath(radii: number[]) {
@@ -164,7 +164,7 @@ export function WaxSeal({
         }
         transition={
           idle
-            ? { duration: 2.8, repeat: Infinity, ease: "easeInOut" }
+            ? { duration: 2.8, repeat: Infinity, ease: EASE_SINE }
             : { duration: broken ? 0.7 : 0.3, ease: EASE_OUT }
         }
       />
@@ -176,7 +176,11 @@ export function WaxSeal({
         animate={broken ? { scale: [1, 0.92, 1.03] } : { scale: 1 }}
         whileHover={broken ? undefined : { scale: 1.05 }}
         whileTap={broken ? undefined : { scale: 0.94 }}
-        transition={broken ? { duration: PRESS_SECONDS, times: [0, 0.6, 1], ease: EASE_OUT } : { duration: DURATION.quick }}
+        transition={
+          broken
+            ? { duration: PRESS_SECONDS, times: [0, 0.6, 1], ease: EASE_OUT }
+            : { duration: DURATION.quick, ease: EASE_OUT }
+        }
       >
         <motion.span
           className="absolute inset-0 block"

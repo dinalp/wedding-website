@@ -19,6 +19,10 @@ export type Bezier = [number, number, number, number];
 export const EASE_OUT: Bezier = [0.22, 1, 0.36, 1];
 export const EASE_IN_OUT: Bezier = [0.45, 0, 0.2, 1];
 export const EASE_IN: Bezier = [0.5, 0, 0.8, 0.3];
+/** Sine in-out, for the slow loops that breathe: the envelope's float, the seal's glow. */
+export const EASE_SINE: Bezier = [0.37, 0, 0.63, 1];
+/** A light thing falling through air: gathers a little speed and never brakes. */
+export const EASE_FALL: Bezier = [0.3, 0, 0.7, 0.7];
 
 /** Shared durations, in seconds, so every part of the sequence moves at a related pace. */
 export const DURATION = {

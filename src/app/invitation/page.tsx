@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cinzel, Pinyon_Script } from "next/font/google";
+import { Cinzel, Cormorant_Garamond, Pinyon_Script } from "next/font/google";
 import Link from "next/link";
 import { InvitationExperience } from "@/components/invitation/invitation-experience";
 import "./invitation.css";
@@ -15,6 +15,15 @@ const caps = Cinzel({
   variable: "--font-invite-caps",
   subsets: ["latin"],
   weight: ["400", "500"],
+});
+
+// The site loads Cormorant upright only; the true italic gives the ampersand
+// between the names its proper form and sets "Island Formal" without a slanted roman.
+const italic = Cormorant_Garamond({
+  variable: "--font-invite-italic",
+  subsets: ["latin"],
+  weight: "500",
+  style: "italic",
 });
 
 const title = "You're invited — Dinal & Shayani | 19–21 May 2027";
@@ -49,16 +58,15 @@ export const viewport: Viewport = {
 
 export default function InvitationPage() {
   return (
-    <div className={`${script.variable} ${caps.variable}`}>
+    <div className={`${script.variable} ${caps.variable} ${italic.variable}`}>
       <InvitationExperience />
       {/* Without JavaScript the envelope can't be opened, so show the invitation as plain text instead. */}
       <noscript>
         <style>{".invite-stage{display:none}"}</style>
         <main className="invite-noscript">
-          <p className="invite-caps invite-noscript-label">You’re invited</p>
           <h1 className="invite-script invite-noscript-names">
             <span>Dinal Perera</span>
-            <span className="invite-noscript-amp">&amp;</span>
+            <span className="invite-amp">&amp;</span>
             <span>Shayani Jasinge</span>
           </h1>
           <p className="invite-caps invite-noscript-line">Invite you to their wedding celebrations</p>
@@ -84,7 +92,7 @@ export default function InvitationPage() {
               RSVP on our website
             </Link>
           </p>
-          <p className="invite-serif invite-noscript-note">
+          <p className="invite-italic invite-noscript-note">
             Our wedding website needs JavaScript. If it won’t open, just reply to the message this invitation came
             in and we’ll take care of it.
           </p>
