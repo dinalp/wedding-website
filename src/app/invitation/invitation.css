@@ -1,0 +1,411 @@
+/* Digital invitation (/invitation). Everything here is scoped to .invite-stage. */
+
+.invite-stage {
+  --vh: 100vh;
+  /* Motion for the controls; the sequence itself uses the same curve from palette.ts. */
+  --invite-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --invite-quick: 0.18s;
+  --invite-soft: 0.32s;
+  /* Home-indicator inset; 0 wherever the browser keeps the page clear of it. */
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  /* Gap between the card and the controls beneath it. */
+  --controls-gap: 28px;
+  /* Height kept clear of the card: the controls beneath it plus a margin above and below. */
+  --reserve: calc(208px + var(--safe-b));
+  /* The card and its controls are centred as one group, so the card sits this far above the middle. */
+  --lift: calc(58px + var(--safe-b) / 2);
+  /* Card width: fills a phone's width and always leaves room for the controls below it. */
+  --cw: max(230px, min(88vw, calc((var(--vh) - var(--reserve)) * 5 / 7), 400px));
+  --ch: calc(var(--cw) * 1.4);
+  /* Envelope: a touch wider than the card, landscape 1.41:1. */
+  --ew: calc(var(--cw) * 1.06);
+  --eh: calc(var(--ew) / 1.41);
+  /* Stage height: the viewport, or taller when the smallest card and its controls need more. */
+  --sh: max(var(--vh), calc(var(--ch) + var(--reserve)));
+  /*
+   * While the card rises out of the envelope its top edge reaches 62.6% of the
+   * card's height above the envelope's centre (the RISEN pose in
+   * invitation-experience.tsx: 19.6% travel plus half of the 0.86 scale). Where
+   * the lifted centre leaves less room than that, plus a 12px margin, the
+   * envelope sits this much lower until the card settles. 0 on tall phones.
+   */
+  --rise-drop: max(0px, calc(var(--ch) * 0.626 + 12px - (var(--sh) / 2 - var(--lift))));
+  isolation: isolate;
+  min-height: var(--sh);
+  /* A pool of warm light on linen, falling off to sage at the edges. */
+  background:
+    radial-gradient(70% 46% at 50% 44%, rgb(255 253 246 / 85%) 0%, rgb(255 253 246 / 0%) 100%),
+    radial-gradient(130% 95% at 50% 40%, #f6f3ea 0%, #e9e7da 52%, #cfd5c4 100%);
+  color: #2f2a26;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/*
+ * A whisper of paper tooth: fine, warm and soft-edged, felt more than seen.
+ * Static images, so they cost nothing while the cards move.
+ */
+.invite-stage::before,
+.invite-grain {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .33 0 0 0 0 .22 1.9 0 0 0 -.72'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  pointer-events: none;
+}
+
+/* On the backdrop, beneath everything that moves. */
+.invite-stage::before {
+  content: "";
+  z-index: -1;
+  opacity: 0.09;
+}
+
+/* On the white card, a little finer; the stock stays a clean warm white. */
+.invite-grain {
+  background-size: 150px 150px;
+  opacity: 0.07;
+}
+
+/* Text selection in the suite's own colours rather than the browser's blue. */
+.invite-stage ::selection,
+.invite-noscript ::selection {
+  /* Opaque pair so selected text stays readable over any fill (e.g. a hovered burgundy pill). */
+  background: #ecdcd7;
+  color: #2f2a26;
+}
+
+/* Opaque ivory/burgundy pair on the Details card, readable in every link state (incl. the ivory hover fill). */
+.invite-details ::selection {
+  background: #fbf8f1;
+  color: #7a1e2e;
+}
+
+/* Where the envelope and cards sit: lifted so the card and its controls read as one centred group. */
+.invite-centre {
+  top: calc(50% - var(--lift));
+}
+
+/* Controls tucked just beneath the card. */
+.invite-controls {
+  top: calc(50% - var(--lift) + var(--ch) / 2 + var(--controls-gap));
+  padding-bottom: var(--safe-b);
+}
+
+/* The line that says how to open the envelope. */
+.invite-hint {
+  color: #4c5644;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  /* Tracked caps: indent by the tracking so the line stays optically centred. */
+  text-indent: 0.26em;
+  line-height: 1.5;
+}
+
+@supports (height: 100dvh) {
+  .invite-stage {
+    --vh: 100dvh;
+  }
+}
+
+.invite-script {
+  font-family: var(--font-invite-script), "Snell Roundhand", "Apple Chancery", cursive;
+  font-weight: 400;
+}
+
+.invite-caps {
+  font-family: var(--font-invite-caps), var(--font-cormorant), Georgia, serif;
+  text-transform: uppercase;
+}
+
+.invite-serif {
+  font-family: var(--font-cormorant), Georgia, serif;
+}
+
+/* True Cormorant italic (loaded for this route), not a slanted roman. */
+.invite-italic {
+  font-family: var(--font-invite-italic), var(--font-cormorant), Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+}
+
+/*
+ * The ampersand between the names: Cormorant's italic "&" rather than the
+ * script's, which reads as a stray mark at this size. Sized between the
+ * script's lowercase and its capitals and set midway between the two names.
+ */
+.invite-amp {
+  display: block;
+  margin: -0.12em 0 0.3em;
+  font-family: var(--font-invite-italic), var(--font-cormorant), Georgia, serif;
+  font-size: 0.72em;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.invite-balance,
+.invite-balance p {
+  text-wrap: balance;
+}
+
+/* Visible keyboard focus: burgundy on the pale backdrop, ivory on the burgundy card. */
+.invite-stage :is(a, button):focus-visible {
+  outline: 2px solid #6e1a24;
+  outline-offset: 3px;
+}
+
+.invite-details :is(a, button):focus-visible {
+  outline-color: #fbf8f1;
+}
+
+/*
+ * Card headings take focus when a card is swapped in from the keyboard. Show a
+ * ring then (burgundy on the white card, ivory on the burgundy card), but not
+ * when focus arrives without the keyboard.
+ */
+.invite-focus-heading {
+  border-radius: 4px;
+  outline: none;
+}
+
+.invite-focus-heading:focus-visible {
+  outline: 2px solid #6e1a24;
+  outline-offset: 6px;
+}
+
+.invite-details .invite-focus-heading:focus-visible {
+  outline-color: #fbf8f1;
+}
+
+.invite-seal {
+  background: none;
+  border: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.invite-seal:focus-visible {
+  outline-offset: 6px;
+}
+
+/* Primary pill on the backdrop (View details / Back to invitation). */
+.invite-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 24px;
+  /* Wide enough for the longer label, so the pill keeps its size when the label changes. */
+  min-width: 19.5em;
+  border: 1px solid rgb(110 26 36 / 60%);
+  border-radius: 999px;
+  background: rgb(251 248 241 / 82%);
+  /* A hairline of light inside the rim, like the edge of thick card. */
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 55%), 0 6px 14px -10px rgb(60 50 40 / 55%);
+  color: #6e1a24;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-indent: 0.2em;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color var(--invite-soft) var(--invite-ease-out),
+    color var(--invite-soft) var(--invite-ease-out),
+    transform var(--invite-quick) var(--invite-ease-out);
+}
+
+.invite-btn:active,
+.invite-rsvp:active {
+  transform: scale(0.97);
+}
+
+/* Filled while pressed everywhere; on hover only where a pointer can really hover, so it never sticks after a tap. */
+.invite-btn:active {
+  background: #6e1a24;
+  color: #fbf8f1;
+}
+
+@media (hover: hover) {
+  .invite-btn:hover {
+    background: #6e1a24;
+    color: #fbf8f1;
+  }
+}
+
+/* Quiet text controls on the backdrop (Skip animation / Replay). */
+.invite-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 0;
+  background: none;
+  color: #4c5644;
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-indent: 0.2em;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: rgb(76 86 68 / 45%);
+  text-underline-offset: 5px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    color var(--invite-soft) var(--invite-ease-out),
+    text-decoration-color var(--invite-soft) var(--invite-ease-out);
+}
+
+.invite-link:active {
+  color: #6e1a24;
+  text-decoration-color: currentcolor;
+}
+
+@media (hover: hover) {
+  .invite-link:hover {
+    color: #6e1a24;
+    text-decoration-color: currentcolor;
+  }
+}
+
+/* RSVP call to action on the details card (stands in for the printed QR code). */
+.invite-rsvp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 1.8em;
+  border: 1px solid #fbf8f1;
+  border-radius: 999px;
+  background: rgb(251 248 241 / 10%);
+  box-shadow: inset 0 0 0 1px rgb(251 248 241 / 14%);
+  color: #fbf8f1;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-indent: 0.15em;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color var(--invite-soft) var(--invite-ease-out),
+    color var(--invite-soft) var(--invite-ease-out),
+    transform var(--invite-quick) var(--invite-ease-out);
+}
+
+.invite-rsvp:active,
+.invite-rsvp:focus-visible {
+  background: #fbf8f1;
+  color: #7a1e2e;
+}
+
+@media (hover: hover) {
+  .invite-rsvp:hover {
+    background: #fbf8f1;
+    color: #7a1e2e;
+  }
+}
+
+/* Plain-text invitation shown only inside <noscript> (the animated stage is hidden there). */
+.invite-noscript {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  --invite-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --invite-quick: 0.18s;
+  --invite-soft: 0.32s;
+  min-height: 100vh;
+  padding: 48px 24px 56px;
+  background: radial-gradient(130% 95% at 50% 40%, #f6f3ea 0%, #e9e7da 52%, #cfd5c4 100%);
+  color: #2f2a26;
+  text-align: center;
+}
+
+.invite-noscript-names {
+  display: flex;
+  flex-direction: column;
+  margin: 8px 0;
+  color: #6e1a24;
+  font-size: clamp(40px, 12vw, 60px);
+  line-height: 1.2;
+}
+
+.invite-noscript-line,
+.invite-noscript-date {
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  line-height: 1.8;
+}
+
+.invite-noscript-date {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.invite-noscript-heading {
+  margin-top: 22px;
+  color: #6e1a24;
+  font-size: 13px;
+  letter-spacing: 0.28em;
+}
+
+.invite-noscript-list,
+.invite-noscript-text {
+  max-width: 22em;
+  font-size: 19px;
+  line-height: 1.45;
+}
+
+.invite-noscript .invite-btn {
+  margin: 10px 0 6px;
+}
+
+.invite-noscript-note {
+  max-width: 24em;
+  color: #4c5644;
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+.invite-noscript :is(a, button):focus-visible {
+  outline: 2px solid #6e1a24;
+  outline-offset: 3px;
+}
+
+/* Glitter in the organza ribbon: opacity only. */
+@keyframes invite-twinkle {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+.invite-twinkle {
+  animation: invite-twinkle 2.6s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .invite-twinkle {
+    animation: none;
+    opacity: 0.5;
+  }
+
+  .invite-btn,
+  .invite-link,
+  .invite-rsvp {
+    transition: none;
+  }
+
+  .invite-btn:active,
+  .invite-rsvp:active {
+    transform: none;
+  }
+}
