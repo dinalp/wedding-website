@@ -316,6 +316,23 @@ export default function Home() {
           </div>
 
           <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="relative aspect-[3/2] max-w-2xl rounded-3xl overflow-hidden mx-auto mt-16 md:mt-24 shadow-[0_24px_60px_-24px_rgba(42,51,24,0.45)] ring-1 ring-charcoal/5"
+          >
+            <Image
+              src="/photos/proposal.jpg"
+              alt="Dinal kneeling to propose to Shayani in a sunlit villa overlooking the lake"
+              fill
+              sizes="(min-width: 672px) 672px, 100vw"
+              quality={85}
+              className="object-cover"
+            />
+          </motion.div>
+
+          <motion.div
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
