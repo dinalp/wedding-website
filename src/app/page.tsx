@@ -266,8 +266,8 @@ export default function Home() {
             className="relative aspect-[3/2] max-w-2xl rounded-3xl overflow-hidden mx-auto mb-16 shadow-[0_24px_60px_-24px_rgba(42,51,24,0.45)] ring-1 ring-charcoal/5"
           >
             <Image
-              src="/photos/about.jpg"
-              alt="Dinal and Shayani at dinner"
+              src="/photos/proposal.jpg"
+              alt="Dinal kneeling to propose to Shayani in a sunlit villa overlooking the lake"
               fill
               sizes="(min-width: 672px) 672px, 100vw"
               quality={85}
