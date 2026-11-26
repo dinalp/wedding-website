@@ -411,11 +411,52 @@
           "link": "https://fly.iwantthatflight.com.au/flight.ashx?oc=SYD&dc=DPS&dd=16/May/2027&rd=23/May/2027&po=all"
         }
       ]
+    },
+    {
+      "date": "2026-11-26",
+      "checkedAt": "2026-11-26T02:51:33.987683+00:00",
+      "source": "I Want That Flight",
+      "status": "success",
+      "quotes": [
+        {
+          "date": "2026-11-26",
+          "airline": "Virgin Australia",
+          "from": "SYD",
+          "depart": "2027-05-16",
+          "return": "2027-05-23",
+          "price": 493.0,
+          "stops": null,
+          "details": "I Want That Flight \u00b7 Published searches from the last 24 hours; current price may differ. Stops and baggage unconfirmed.",
+          "link": "https://fly.iwantthatflight.com.au/flight.ashx?oc=SYD&dc=DPS&dd=16/May/2027&rd=23/May/2027&po=all"
+        },
+        {
+          "date": "2026-11-26",
+          "airline": "Jetstar + Scoot",
+          "from": "SYD",
+          "depart": "2027-05-16",
+          "return": "2027-05-23",
+          "price": 550.0,
+          "stops": null,
+          "details": "I Want That Flight \u00b7 Published searches from the last 24 hours; current price may differ. Stops and baggage unconfirmed.",
+          "link": "https://fly.iwantthatflight.com.au/flight.ashx?oc=SYD&dc=DPS&dd=16/May/2027&rd=23/May/2027&po=all"
+        },
+        {
+          "date": "2026-11-26",
+          "airline": "Scoot",
+          "from": "SYD",
+          "depart": "2027-05-16",
+          "return": "2027-05-23",
+          "price": 615.0,
+          "stops": null,
+          "details": "I Want That Flight \u00b7 Published searches from the last 24 hours; current price may differ. Stops and baggage unconfirmed.",
+          "link": "https://fly.iwantthatflight.com.au/flight.ashx?oc=SYD&dc=DPS&dd=16/May/2027&rd=23/May/2027&po=all"
+        }
+      ]
     }
   ],
   "lastAttempt": {
-    "date": "2026-11-25",
-    "checkedAt": "2026-11-25T03:33:35.821599+00:00",
+    "date": "2026-11-26",
+    "checkedAt": "2026-11-26T02:51:33.987683+00:00",
     "source": "I Want That Flight",
     "status": "success"
   }
