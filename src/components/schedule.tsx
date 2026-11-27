@@ -54,12 +54,13 @@ const DAYS = [
     date: "21",
     weekday: "Friday",
     title: "Recovery Day",
-    photo: "/photos/bali-v2-3.jpg",
-    alt: "A white-sand Bali beach and turquoise water",
-    body: "One last day together before everyone heads home. We're still finalising the plan: it may be a boat party out on the water, or a reserved area at a beach club for all of our guests. Either way, expect sun, food, and a slow, easy end to the celebrations. Details to follow closer to the date.",
+    photo: "/photos/shivanna.jpg",
+    alt: "Aerial view of The Shivanna, a phinisi-style yacht, on the water off Bali at golden hour",
+    objectPosition: "60% 50%",
+    body: "We've chartered The Shivanna for a boat party! We'll sail from Benoa Harbour for one last day on the water together before everyone heads home. Join us on deck for sun, food, drinks and music as we wind down the celebrations. We'll share timings and transport details closer to the date.",
     details: [
-      ["When", "All day"],
-      ["Where", "To be confirmed"],
+      ["When", "Time to be confirmed"],
+      ["Where", "Aboard The Shivanna, departing Benoa Harbour"],
     ],
     wear: "Boat party vibes",
     dressCode: "recovery-day",
@@ -124,6 +125,7 @@ export default function Schedule() {
                       sizes="(min-width: 768px) 384px, 100vw"
                       quality={85}
                       className="object-cover"
+                      style={"objectPosition" in day ? { objectPosition: day.objectPosition } : undefined}
                     />
                   </div>
                 </div>

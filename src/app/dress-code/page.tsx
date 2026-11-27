@@ -82,7 +82,7 @@ const EVENTS: DressCodeEvent[] = [
     id: "recovery-day",
     day: "Friday 21 May",
     title: "Recovery Day",
-    venue: "Venue to be confirmed",
+    venue: "Aboard The Shivanna, Benoa Harbour",
     code: "Boat party vibes – light, breezy, and easy to move in. Save your sarees for the wedding!",
     looks: [{ label: "For her" }, { label: "For him" }],
   },

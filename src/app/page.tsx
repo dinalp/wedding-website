@@ -243,7 +243,7 @@ export default function Home() {
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-16 md:py-32 px-4 md:px-8 bg-cream">
+      <section id="about" className="py-16 md:py-32 px-4 md:px-8 bg-cream overflow-x-clip">
         <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
