@@ -33,8 +33,8 @@ const EVENTS = [
   {
     key: "recoveryDay" as const,
     label: "Recovery Day",
-    detail: "May 21 · All day",
-    description: "A relaxed final day together — plans to be confirmed",
+    detail: "May 21 · Time to be confirmed",
+    description: "Private boat party aboard The Shivanna, departing Benoa Harbour",
   },
 ];
 
