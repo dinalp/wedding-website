@@ -55,8 +55,8 @@ const DAYS = [
     weekday: "Friday",
     title: "Recovery Day",
     photo: "/photos/shivanna.jpg",
-    alt: "The Shivanna, a phinisi-style yacht, on the water off Bali at sunset",
-    objectPosition: "85% 50%",
+    alt: "Aerial view of The Shivanna, a phinisi-style yacht, on the water off Bali at golden hour",
+    objectPosition: "60% 50%",
     body: "We've chartered The Shivanna for a boat party! We'll sail from Benoa Harbour for one last day on the water together before everyone heads home. Join us on deck for sun, food, drinks and music as we wind down the celebrations. We'll share timings and transport details closer to the date.",
     details: [
       ["When", "Time to be confirmed"],
